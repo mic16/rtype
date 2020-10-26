@@ -1,0 +1,7 @@
+# EXECUTABLES
+
+r-type_server
+r-type_client
+
+# BUILD FOLDER
+build/
