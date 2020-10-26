@@ -11,7 +11,7 @@ list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake")
 include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
 conan_basic_setup()
 
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY .)
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ..)
 
 set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTOMOC ON)
