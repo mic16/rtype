@@ -13,11 +13,6 @@ conan_basic_setup()
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ..)
 
-set(CMAKE_AUTOUIC ON)
-set(CMAKE_AUTOMOC ON)
-set(CMAKE_AUTORCC ON)
-set(CMAKE_INCLUDE_CURRENT_DIR ON)
-
 message(STATUS "cmake: ${cmake_res}: ${cmake_out}")
 
 file(GLOB_RECURSE SRCS_SERVER "app/src/server/*.cpp")
