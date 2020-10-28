@@ -7,7 +7,7 @@
 
 #include "server/Class/AServer/AServer.hpp"
 
-AServer::AServer(void)
+AServer::AServer(void): port(0)
 {
 }
 
@@ -24,6 +24,7 @@ bool AServer::configure(const unsigned int port)
     );
 
     if (!acceptor->is_open()) { return (false); }
+    this->port = port;
     return (true);
 }
 
@@ -34,7 +35,7 @@ void AServer::work(void)
 bool AServer::run(void)
 {
     acceptor->listen();
-    address = acceptor->local_endpoint().address().to_string();
+    std::string address = acceptor->local_endpoint().address().to_string();
     port = acceptor->local_endpoint().port();
 
     if (acceptor->is_open()) {
@@ -43,3 +44,5 @@ bool AServer::run(void)
     }
     this->ioService.run();
 }
+
+unsigned int AServer::getPort() const { return (port); }

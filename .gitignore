@@ -11,3 +11,6 @@ r-type_tests.exe
 # BUILD FOLDER
 build/
 out/
+
+# VSCODE
+.vscode/

@@ -20,6 +20,8 @@ file(GLOB_RECURSE SRCS_SERVER "app/src/server/*.cpp")
 file(GLOB_RECURSE SRCS_CLIENT "app/src/client/*.cpp")
 file(GLOB_RECURSE SRCS_LIBS "lib/*.cpp")
 
+file(GLOB_RECURSE SRCS_SERVER_CLASS "app/src/server/Class/*.cpp")
+
 include_directories(${CMAKE_INCLUDE_PATH} "app/include")
 
 add_executable(r-type_server ${SRCS_SERVER} ${SRCS_LIBS})
@@ -28,5 +30,5 @@ target_link_libraries(r-type_server ${CONAN_LIBS})
 add_executable(r-type_client ${SRCS_CLIENT} ${SRCS_LIBS})
 target_link_libraries(r-type_client ${CONAN_LIBS})
 
-add_executable(r-type_tests ${SRCS_TEST} ${SRCS_LIBS})
+add_executable(r-type_tests ${SRCS_TEST} ${SRCS_LIBS} ${SRCS_SERVER_CLASS})
 target_link_libraries(r-type_tests ${CONAN_LIBS})
