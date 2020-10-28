@@ -15,6 +15,7 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ..)
 
 message(STATUS "cmake: ${cmake_res}: ${cmake_out}")
 
+file(GLOB_RECURSE SRCS_TEST "app/tests/*.cpp")
 file(GLOB_RECURSE SRCS_SERVER "app/src/server/*.cpp")
 file(GLOB_RECURSE SRCS_CLIENT "app/src/client/*.cpp")
 file(GLOB_RECURSE SRCS_LIBS "lib/*.cpp")
@@ -26,3 +27,6 @@ target_link_libraries(r-type_server ${CONAN_LIBS})
 
 add_executable(r-type_client ${SRCS_CLIENT} ${SRCS_LIBS})
 target_link_libraries(r-type_client ${CONAN_LIBS})
+
+add_executable(r-type_tests ${SRCS_TEST} ${SRCS_LIBS})
+target_link_libraries(r-type_tests ${CONAN_LIBS})

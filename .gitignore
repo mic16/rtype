@@ -2,9 +2,11 @@
 
 r-type_server
 r-type_client
+r-type_tests
 
 r-type_server.exe
 r-type_client.exe
+r-type_tests.exe
 
 # BUILD FOLDER
 build/
