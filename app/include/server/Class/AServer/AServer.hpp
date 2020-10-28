@@ -18,11 +18,12 @@ class AServer : IServer {
         bool configure(const unsigned int port);
         virtual void work();
 
+        unsigned int getPort() const;
+
         bool run();
     protected:
         boost::asio::io_service ioService;
         std::unique_ptr<boost::asio::ip::tcp::acceptor> acceptor;
-        std::string address;
         unsigned int port;
 };
 

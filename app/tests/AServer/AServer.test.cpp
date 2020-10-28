@@ -10,11 +10,16 @@
 
 BOOST_AUTO_TEST_SUITE(TestsAServer)
 
-BOOST_AUTO_TEST_CASE(class_creation)
+BOOST_AUTO_TEST_CASE(configuration)
 {
-  int i = 1;
-  BOOST_TEST(i);
-  BOOST_TEST(i == 2);
+  AServer *server = new AServer();
+
+  BOOST_TEST(server->getPort() == 0);
+
+  server->configure(3000);
+
+  BOOST_TEST(server->getPort() == 3000);
+  if (server) delete server;
 }
 
 BOOST_AUTO_TEST_SUITE_END()

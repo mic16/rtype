@@ -18,6 +18,8 @@ class IServer {
         virtual bool configure(const unsigned int port) = 0;
         virtual void work() = 0;
         virtual bool run() = 0;
+
+        virtual unsigned int getPort() const = 0;
 };
 
 #endif /* !ISERVER_HPP_ */
