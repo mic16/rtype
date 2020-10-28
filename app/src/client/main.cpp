@@ -5,6 +5,12 @@
 ** main
 */
 
-int main(int ac, char *av[]) {
-    return (0);
+#include "client/Class/Client/Client.hpp"
+
+int main(int argc, char **argv)
+{
+    Client client;
+
+    client.run();
+    return 0;
 }
