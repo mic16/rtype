@@ -20,8 +20,8 @@ class RTypeServer : public AServer {
 
         unsigned int prepareNewClient();
 
-        void handleConnection();
-        void handleClient(const unsigned int client_id);
+        bool handleConnection();
+        bool handleClient(const unsigned int client_id);
 
     private:
         std::map<unsigned int, std::unique_ptr<Client>> clients;

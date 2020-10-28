@@ -31,10 +31,11 @@ unsigned int RTypeServer::prepareNewClient()
     return (key);
 }
 
-void RTypeServer::handleConnection()
+bool RTypeServer::handleConnection()
 {
     unsigned int client_id = prepareNewClient();
 
+    if (clients.count(client_id) <= 0) { return (false); }
     acceptor->async_accept(clients[client_id]->m_socket,
     [this, client_id](const boost::system::error_code &errc) {
         if (!errc) {
@@ -45,10 +46,12 @@ void RTypeServer::handleConnection()
             std::cout << "Failed connection client" << std::endl;
         }
     });
+    return (true);
 }
 
-void RTypeServer::handleClient(const unsigned int client_id)
+bool RTypeServer::handleClient(const unsigned int client_id)
 {
+    if (clients.count(client_id) <= 0) { return (false); }
     /*client->m_socket.async_read_some(boost::asio::buffer(client->m_packet, 1024),
     [this, &client](const boost::system::error_code &errc, std::size_t bytes_transferred) {
         if (!errc) {
@@ -56,4 +59,5 @@ void RTypeServer::handleClient(const unsigned int client_id)
         } else {
         }
     });*/
+    return (true);
 }
