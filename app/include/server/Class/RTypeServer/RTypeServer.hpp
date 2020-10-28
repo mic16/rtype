@@ -10,15 +10,12 @@
 
 #include "server/Class/AServer/AServer.hpp"
 
-class RTypeServer : AServer {
+class RTypeServer : public AServer {
     public:
         RTypeServer();
         ~RTypeServer();
 
         void work() override;
-
-    protected:
-    private:
 };
 
 #endif /* !RTYPESERVER_HPP_ */

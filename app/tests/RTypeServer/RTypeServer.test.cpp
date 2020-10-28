@@ -2,17 +2,17 @@
 ** EPITECH PROJECT, 2020
 ** B-CPP-501-MPL-5-1-rtype-antoine.maillard
 ** File description:
-** AServer.test
+** RTypeServer.test
 */
 
 #include <boost/test/unit_test.hpp>
-#include "server/Class/AServer/AServer.hpp"
+#include "server/Class/RTypeServer/RTypeServer.hpp"
 
-BOOST_AUTO_TEST_SUITE(TestsAServer)
+BOOST_AUTO_TEST_SUITE(TestsRTypeServer)
 
 BOOST_AUTO_TEST_CASE(configuration)
 {
-  AServer *server = new AServer();
+  RTypeServer *server = new RTypeServer();
 
   BOOST_TEST(server->getPort() == 0);
 

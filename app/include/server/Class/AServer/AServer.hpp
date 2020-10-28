@@ -10,17 +10,17 @@
 
 #include "server/Interfaces/IServer.hpp"
 
-class AServer : IServer {
+class AServer : public IServer {
     public:
         AServer();
         ~AServer();
 
-        bool configure(const unsigned int port);
+        virtual bool configure(const unsigned int port);
         virtual void work();
 
-        unsigned int getPort() const;
+        virtual unsigned int getPort() const;
 
-        bool run();
+        virtual bool run();
     protected:
         boost::asio::io_service ioService;
         std::unique_ptr<boost::asio::ip::tcp::acceptor> acceptor;
