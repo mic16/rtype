@@ -13,6 +13,7 @@
 #include <memory>
 #include <string>
 #include <vector>
+#include <map>
 
 class IServer {
     public:

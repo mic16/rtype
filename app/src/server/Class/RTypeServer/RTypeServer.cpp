@@ -20,15 +20,26 @@ void RTypeServer::work()
     handleConnection();
 }
 
+unsigned int RTypeServer::prepareNewClient()
+{
+    static unsigned int key = 0;
+
+    key += 1;
+    std::pair<std::map<unsigned int, std::unique_ptr<Client>>::iterator, bool>
+        inserted = clients.insert(std::make_pair(key, std::make_unique<Client>(ioService)));
+    if (!inserted.second) { return (0); }
+    return (key);
+}
+
 void RTypeServer::handleConnection()
 {
-    clients.emplace_back(std::make_unique<Client>(ioService));
+    unsigned int client_id = prepareNewClient();
 
-    acceptor->async_accept(clients[clients.size() - 1]->m_socket,
-    [this](const boost::system::error_code &errc) {
+    acceptor->async_accept(clients[client_id]->m_socket,
+    [this, client_id](const boost::system::error_code &errc) {
         if (!errc) {
-            clients[clients.size() - 1]->setClient();
-            this->handleClient(clients[clients.size() - 1]);
+            clients[client_id]->setClient();
+            this->handleClient(client_id);
             this->handleConnection();
         } else {
             std::cout << "Failed connection client" << std::endl;
@@ -36,6 +47,13 @@ void RTypeServer::handleConnection()
     });
 }
 
-void RTypeServer::handleClient(const Client &client)
+void RTypeServer::handleClient(const unsigned int client_id)
 {
+    /*client->m_socket.async_read_some(boost::asio::buffer(client->m_packet, 1024),
+    [this, &client](const boost::system::error_code &errc, std::size_t bytes_transferred) {
+        if (!errc) {
+            this->handleClient(client);
+        } else {
+        }
+    });*/
 }

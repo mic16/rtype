@@ -18,11 +18,13 @@ class RTypeServer : public AServer {
 
         void work() override;
 
+        unsigned int prepareNewClient();
+
         void handleConnection();
-        void handleClient(const Client &client);
+        void handleClient(const unsigned int client_id);
 
     private:
-        std::vector<std::unique_ptr<Client>> clients;
+        std::map<unsigned int, std::unique_ptr<Client>> clients;
 };
 
 #endif /* !RTYPESERVER_HPP_ */
