@@ -52,6 +52,7 @@ bool RTypeServer::handleConnection()
 bool RTypeServer::handleClient(const unsigned int client_id)
 {
     if (clients.count(client_id) <= 0) { return (false); }
+    std::cout << clients[client_id]->getAddress() << ':' << clients[client_id]->getPort() << std::endl;
     /*client->m_socket.async_read_some(boost::asio::buffer(client->m_packet, 1024),
     [this, &client](const boost::system::error_code &errc, std::size_t bytes_transferred) {
         if (!errc) {
