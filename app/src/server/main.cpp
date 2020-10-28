@@ -5,10 +5,10 @@
 ** main
 */
 
-#include "server/Class/AServer/AServer.hpp"
+#include "server/Class/RTypeServer/RTypeServer.hpp"
 
 int main(int ac, char *av[]) {
-    AServer server;
+    RTypeServer server;
 
     server.configure(3000);
 

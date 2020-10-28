@@ -15,12 +15,12 @@ class AServer : public IServer {
         AServer();
         ~AServer();
 
-        virtual bool configure(const unsigned int port);
+        bool configure(const unsigned int port);
         virtual void work();
 
-        virtual unsigned int getPort() const;
+        unsigned int getPort() const;
 
-        virtual bool run();
+        bool run();
     protected:
         boost::asio::io_service ioService;
         std::unique_ptr<boost::asio::ip::tcp::acceptor> acceptor;

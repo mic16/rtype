@@ -9,6 +9,7 @@
 #define RTYPESERVER_HPP_
 
 #include "server/Class/AServer/AServer.hpp"
+#include "server/Class/Client/Client.hpp"
 
 class RTypeServer : public AServer {
     public:
@@ -16,6 +17,12 @@ class RTypeServer : public AServer {
         ~RTypeServer();
 
         void work() override;
+
+        void handleConnection();
+        void handleClient(const Client &client);
+
+    private:
+        std::vector<std::unique_ptr<Client>> clients;
 };
 
 #endif /* !RTYPESERVER_HPP_ */

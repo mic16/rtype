@@ -17,4 +17,25 @@ RTypeServer::~RTypeServer()
 
 void RTypeServer::work()
 {
+    handleConnection();
+}
+
+void RTypeServer::handleConnection()
+{
+    clients.emplace_back(std::make_unique<Client>(ioService));
+
+    acceptor->async_accept(clients[clients.size() - 1]->m_socket,
+    [this](const boost::system::error_code &errc) {
+        if (!errc) {
+            clients[clients.size() - 1]->setClient();
+            this->handleClient(clients[clients.size() - 1]);
+            this->handleConnection();
+        } else {
+            std::cout << "Failed connection client" << std::endl;
+        }
+    });
+}
+
+void RTypeServer::handleClient(const Client &client)
+{
 }
