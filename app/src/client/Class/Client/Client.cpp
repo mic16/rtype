@@ -5,7 +5,7 @@
 ** Client
 */
 
-#include "client/Client/Client.hpp"
+#include "client/Class/Client/Client.hpp"
 #include <unistd.h>
 
 Client::Client(): running(false), socket(this->ioService)
@@ -24,7 +24,7 @@ bool Client::isRunning() const
 void Client::run()
 {
     std::cout << "Client Running." << std::endl;
-    this->connectTo(boost::asio::ip::tcp::endpoint(boost::asio::ip::address::from_string("127.0.0.1"), 3000));
+    this->connectTo(boost::asio::ip::tcp::endpoint(boost::asio::ip::address::from_string("10.101.52.74"), 3000));
     this->ioService.run();
 }
 

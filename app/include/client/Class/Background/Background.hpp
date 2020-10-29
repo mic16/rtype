@@ -9,12 +9,14 @@
 #define BACKGROUND_HPP_
 
 #include <SFML/Graphics.hpp>
-#include "client/Interfaces/Drawable.hpp"
+#include "client/Class/ADrawable/ADrawable.hpp"
 
-class Background: public Drawable {
+class Background: public ADrawable {
     public:
-        Background(sf::RenderWindow window);
+        Background();
         ~Background();
+        void update();
+        void draw();
 
 
     protected:

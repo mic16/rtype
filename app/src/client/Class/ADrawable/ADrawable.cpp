@@ -5,9 +5,9 @@
 ** Drawable
 */
 
-#include "client/Interfaces/Drawable.hpp"
+#include "client/Class/ADrawable/ADrawable.hpp"
 
-void Drawable::setPosition(short x, short y)
+void ADrawable::setPosition(short x, short y)
 {
     this->x = x;
     this->y = y;
