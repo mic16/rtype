@@ -5,6 +5,10 @@
 ** main
 */
 
-int main(int ac, char *av[]) {
-    return (0);
+#include "SFML/Graphics.hpp"
+#include "Class/Window.hpp"
+
+int main()
+{
+    Window window;
 }
