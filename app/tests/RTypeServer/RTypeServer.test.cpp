@@ -22,4 +22,21 @@ BOOST_AUTO_TEST_CASE(configuration)
   if (server) delete server;
 }
 
+BOOST_AUTO_TEST_CASE(adding_clients)
+{
+  RTypeServer *server = new RTypeServer();
+  unsigned int client_id = 0;
+
+  BOOST_TEST(server->getClients().size() == 0);
+
+  BOOST_TEST((client_id = server->prepareNewClient()) != 0);
+
+  BOOST_TEST(server->getClients().size() > 0);
+
+  BOOST_TEST(server->disconnectClient(client_id));
+
+  BOOST_TEST(server->getClients().size() == 0);
+}
+
+
 BOOST_AUTO_TEST_SUITE_END()

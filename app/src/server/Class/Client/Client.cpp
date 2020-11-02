@@ -9,10 +9,13 @@
 
 Client::Client(boost::asio::io_service &service): m_socket(service)
 {
+    m_packet = new unsigned char[1024];
 }
 
 Client::~Client()
 {
+    if (m_packet) delete m_packet;
+    if (m_username) delete m_username;
 }
 
 bool Client::setClient()
@@ -29,3 +32,6 @@ const std::string &Client::getAddress() const
 
 const unsigned int Client::getPort() const
 { return (m_port); }
+
+unsigned char *Client::getPacket() const
+{ return (m_packet); }

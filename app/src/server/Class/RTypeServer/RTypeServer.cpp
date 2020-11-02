@@ -35,7 +35,7 @@ bool RTypeServer::handleConnection()
 {
     unsigned int client_id = prepareNewClient();
 
-    if (clients.count(client_id) <= 0) { return (false); }
+    if (!isClientConnected(client_id)) { return (false); }
     acceptor->async_accept(clients[client_id]->m_socket,
     [this, client_id](const boost::system::error_code &errc) {
         if (!errc) {
@@ -51,14 +51,32 @@ bool RTypeServer::handleConnection()
 
 bool RTypeServer::handleClient(const unsigned int client_id)
 {
-    if (clients.count(client_id) <= 0) { return (false); }
+    if (!isClientConnected(client_id)) { return (false); }
     std::cout << clients[client_id]->getAddress() << ':' << clients[client_id]->getPort() << std::endl;
-    /*client->m_socket.async_read_some(boost::asio::buffer(client->m_packet, 1024),
-    [this, &client](const boost::system::error_code &errc, std::size_t bytes_transferred) {
+    clients[client_id]->m_socket.async_read_some(boost::asio::buffer(clients[client_id]->getPacket(), 1024),
+    [this, client_id](const boost::system::error_code &errc, std::size_t bytes_transferred) {
         if (!errc) {
-            this->handleClient(client);
+            this->handleClient(client_id);
         } else {
+            disconnectClient(client_id);
         }
-    });*/
+    });
     return (true);
+}
+
+bool RTypeServer::disconnectClient(const unsigned int client_id)
+{
+    if (!isClientConnected(client_id)) { return (false); }
+    clients.erase(client_id);
+    return (true);
+}
+
+bool RTypeServer::isClientConnected(const unsigned int client_id)
+{
+    return (clients.count(client_id) > 0);
+}
+
+const std::map<unsigned int, std::unique_ptr<Client>> &RTypeServer::getClients() const
+{
+    return (clients);
 }
