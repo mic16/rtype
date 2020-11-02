@@ -20,18 +20,15 @@ class GameServer : public UDPServer {
 
         void work() override;
 
-        unsigned int prepareNewClient();
-
         bool isClientConnected(const unsigned int client_id);
 
         bool handleConnection();
-        bool handleClient(const unsigned int client_id);
 
         bool disconnectClient(const unsigned int client_id);
 
-        const std::map<unsigned int, std::unique_ptr<UDPClient>> &getClients() const;
+        const std::unique_ptr<UDPClient> &getClients() const;
     private:
-        std::map<unsigned int, std::unique_ptr<UDPClient>> clients;
+        std::unique_ptr<UDPClient> client;
 };
 
 #endif /* !GAMESERVER_HPP_ */
