@@ -25,8 +25,8 @@ unsigned int GameServer::prepareNewClient()
     static unsigned int key = 0;
 
     key += 1;
-    std::pair<std::map<unsigned int, boost::asio::ip::udp::endpoint>::iterator, bool>
-        inserted = clients.insert(std::make_pair(key, boost::asio::ip::udp::endpoint()));
+    std::pair<std::map<unsigned int, std::unique_ptr<UDPClient>>::iterator, bool>
+        inserted = clients.insert(std::make_pair(key, std::make_unique<UDPClient>()));
     if (!inserted.second) { return (0); }
     return (key);
 }
@@ -35,7 +35,7 @@ bool GameServer::handleConnection()
 {
     unsigned int client_id = prepareNewClient();
 
-    // if (!isClientConnected(client_id)) { return (false); }
+    if (!isClientConnected(client_id)) { return (false); }
     // acceptor->async_accept(clients[client_id],
     // [this, client_id](const boost::system::error_code &errc) {
         // if (!errc) {
@@ -76,7 +76,7 @@ bool GameServer::isClientConnected(const unsigned int client_id)
     return (clients.count(client_id) > 0);
 }
 
-const std::map<unsigned int, boost::asio::ip::udp::endpoint> &GameServer::getClients() const
+const std::map<unsigned int, std::unique_ptr<UDPClient>> &GameServer::getClients() const
 {
     return (clients);
 }

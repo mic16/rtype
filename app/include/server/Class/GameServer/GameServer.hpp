@@ -9,6 +9,9 @@
 #define GAMESERVER_HPP_
 
 #include "lib/Server/UDPServer/UDPServer.hpp"
+#include "server/Class/UDPClient/UDPClient.hpp"
+
+#include <memory>
 
 class GameServer : public UDPServer {
     public:
@@ -26,9 +29,9 @@ class GameServer : public UDPServer {
 
         bool disconnectClient(const unsigned int client_id);
 
-        const std::map<unsigned int, boost::asio::ip::udp::endpoint> &getClients() const;
+        const std::map<unsigned int, std::unique_ptr<UDPClient>> &getClients() const;
     private:
-        std::map<unsigned int, boost::asio::ip::udp::endpoint> clients;
+        std::map<unsigned int, std::unique_ptr<UDPClient>> clients;
 };
 
 #endif /* !GAMESERVER_HPP_ */
