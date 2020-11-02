@@ -2,21 +2,21 @@
 ** EPITECH PROJECT, 2020
 ** B-CPP-501-MPL-5-1-rtype-antoine.maillard
 ** File description:
-** AServer
+** TCPServer
 */
 
-#include "server/Class/AServer/AServer.hpp"
+#include "server/Class/TCPServer/TCPServer.hpp"
 
-AServer::AServer(void): port(0)
+TCPServer::TCPServer(void): port(0)
 {
 }
 
-AServer::~AServer(void)
+TCPServer::~TCPServer(void)
 {
     if (acceptor->is_open()) acceptor->close();
 }
 
-bool AServer::configure(const unsigned int port)
+bool TCPServer::configure(const unsigned int port)
 {
     acceptor = std::make_unique<boost::asio::ip::tcp::acceptor>(
         ioService,
@@ -28,11 +28,11 @@ bool AServer::configure(const unsigned int port)
     return (true);
 }
 
-void AServer::work(void)
+void TCPServer::work(void)
 {
 }
 
-bool AServer::run(void)
+bool TCPServer::run(void)
 {
     acceptor->listen();
     std::string address = acceptor->local_endpoint().address().to_string();
@@ -45,4 +45,4 @@ bool AServer::run(void)
     this->ioService.run();
 }
 
-unsigned int AServer::getPort() const { return (port); }
+unsigned int TCPServer::getPort() const { return (port); }

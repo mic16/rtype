@@ -8,10 +8,10 @@
 #ifndef RTYPESERVER_HPP_
 #define RTYPESERVER_HPP_
 
-#include "server/Class/AServer/AServer.hpp"
+#include "server/Class/TCPServer/TCPServer.hpp"
 #include "server/Class/Client/Client.hpp"
 
-class RTypeServer : public AServer {
+class RTypeServer : public TCPServer {
     public:
         RTypeServer();
         ~RTypeServer();
