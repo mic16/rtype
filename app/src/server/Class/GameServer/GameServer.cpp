@@ -36,16 +36,19 @@ bool GameServer::handleConnection()
     unsigned int client_id = prepareNewClient();
 
     if (!isClientConnected(client_id)) { return (false); }
-    // acceptor->async_accept(clients[client_id],
-    // [this, client_id](const boost::system::error_code &errc) {
-        // if (!errc) {
-            // clients[client_id]->setClient();
-            // this->handleClient(client_id);
-            // this->handleConnection();
-        // } else {
-            // std::cout << "Failed connection client" << std::endl;
-        // }
-    // });
+    acceptor->async_receive_from(boost::asio::buffer(clients[client_id]->getPacket(), 1024),
+    clients[client_id]->m_endpoint,
+    [this, client_id](const boost::system::error_code &errc,  std::size_t bytes_transferred) {
+        if (!errc) {
+            clients[client_id]->setClient();
+            std::cout << "New UDP connection on " << clients[client_id]->getAddress() << ':'
+                << clients[client_id]->getPort() << std::endl;
+            this->handleClient(client_id);
+            this->handleConnection();
+        } else {
+            std::cout << "Failed connection client" << std::endl;
+        }
+    });
     return (true);
 }
 
