@@ -8,7 +8,7 @@
 #ifndef RTYPESERVER_HPP_
 #define RTYPESERVER_HPP_
 
-#include "server/Class/TCPServer/TCPServer.hpp"
+#include "lib/Server/TCPServer/TCPServer.hpp"
 #include "server/Class/Client/Client.hpp"
 #include "server/Class/GameServer/GameServer.hpp"
 

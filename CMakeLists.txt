@@ -18,7 +18,7 @@ message(STATUS "cmake: ${cmake_res}: ${cmake_out}")
 file(GLOB_RECURSE SRCS_TEST "app/tests/*.cpp")
 file(GLOB_RECURSE SRCS_SERVER "app/src/server/*.cpp")
 file(GLOB_RECURSE SRCS_CLIENT "app/src/client/*.cpp")
-file(GLOB_RECURSE SRCS_LIBS "lib/*.cpp")
+file(GLOB_RECURSE SRCS_LIBS "app/lib/*.cpp")
 
 file(GLOB_RECURSE SRCS_SERVER_CLASS "app/src/server/Class/*.cpp")
 

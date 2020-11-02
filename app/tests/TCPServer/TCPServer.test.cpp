@@ -6,7 +6,7 @@
 */
 
 #include <boost/test/unit_test.hpp>
-#include "server/Class/TCPServer/TCPServer.hpp"
+#include "lib/Server/TCPServer/TCPServer.hpp"
 
 BOOST_AUTO_TEST_SUITE(TestsTCPServer)
 

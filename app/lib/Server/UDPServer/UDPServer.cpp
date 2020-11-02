@@ -2,25 +2,25 @@
 ** EPITECH PROJECT, 2020
 ** B-CPP-501-MPL-5-1-rtype-antoine.maillard
 ** File description:
-** TCPServer
+** UDPServer
 */
 
-#include "server/Class/TCPServer/TCPServer.hpp"
+#include "lib/Server/UDPServer/UDPServer.hpp"
 
-TCPServer::TCPServer(void): port(0)
+UDPServer::UDPServer(void): port(0)
 {
 }
 
-TCPServer::~TCPServer(void)
+UDPServer::~UDPServer(void)
 {
     if (acceptor->is_open()) acceptor->close();
 }
 
-bool TCPServer::configure(const unsigned int port)
+bool UDPServer::configure(const unsigned int port)
 {
-    acceptor = std::make_unique<boost::asio::ip::tcp::acceptor>(
+    acceptor = std::make_unique<boost::asio::ip::udp::socket>(
         ioService,
-        boost::asio::ip::tcp::endpoint(boost::asio::ip::tcp::v4(), port)
+        boost::asio::ip::udp::endpoint(boost::asio::ip::udp::v4(), port)
     );
 
     if (!acceptor->is_open()) { return (false); }
@@ -28,13 +28,13 @@ bool TCPServer::configure(const unsigned int port)
     return (true);
 }
 
-void TCPServer::work(void)
+void UDPServer::work(void)
 {
 }
 
-bool TCPServer::run(void)
+bool UDPServer::run(void)
 {
-    acceptor->listen();
+    // acceptor->listen();
     std::string address = acceptor->local_endpoint().address().to_string();
     port = acceptor->local_endpoint().port();
 
@@ -45,4 +45,4 @@ bool TCPServer::run(void)
     this->ioService.run();
 }
 
-unsigned int TCPServer::getPort() const { return (port); }
+unsigned int UDPServer::getPort() const { return (port); }

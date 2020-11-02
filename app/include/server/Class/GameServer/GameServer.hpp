@@ -8,7 +8,7 @@
 #ifndef GAMESERVER_HPP_
 #define GAMESERVER_HPP_
 
-#include "server/Class/UDPServer/UDPServer.hpp"
+#include "lib/Server/UDPServer/UDPServer.hpp"
 
 class GameServer : public UDPServer {
     public:
