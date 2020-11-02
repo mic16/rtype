@@ -7,7 +7,7 @@
 
 #include "server/Class/RTypeServer/RTypeServer.hpp"
 
-RTypeServer::RTypeServer() : AServer()
+RTypeServer::RTypeServer() : TCPServer()
 {
 }
 

@@ -2,18 +2,18 @@
 ** EPITECH PROJECT, 2020
 ** B-CPP-501-MPL-5-1-rtype-antoine.maillard
 ** File description:
-** AServer
+** TCPServer
 */
 
-#ifndef ASERVER_HPP_
-#define ASERVER_HPP_
+#ifndef TCPSERVER_HPP_
+#define TCPSERVER_HPP_
 
-#include "server/Interfaces/IServer.hpp"
+#include "lib/Interfaces/IServer.hpp"
 
-class AServer : public IServer {
+class TCPServer : public IServer {
     public:
-        AServer();
-        ~AServer();
+        TCPServer();
+        ~TCPServer();
 
         bool configure(const unsigned int port);
         virtual void work();
@@ -27,4 +27,4 @@ class AServer : public IServer {
         unsigned int port;
 };
 
-#endif /* !ASERVER_HPP_ */
+#endif /* !TCPSERVER_HPP_ */
