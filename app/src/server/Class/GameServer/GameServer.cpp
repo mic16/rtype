@@ -41,8 +41,6 @@ bool GameServer::handleConnection()
     [this, client_id](const boost::system::error_code &errc,  std::size_t bytes_transferred) {
         if (!errc) {
             clients[client_id]->setClient();
-            std::cout << "New UDP connection on " << clients[client_id]->getAddress() << ':'
-                << clients[client_id]->getPort() << std::endl;
             this->handleClient(client_id);
             this->handleConnection();
         } else {
@@ -54,16 +52,18 @@ bool GameServer::handleConnection()
 
 bool GameServer::handleClient(const unsigned int client_id)
 {
-    // if (!isClientConnected(client_id)) { return (false); }
-    // std::cout << clients[client_id]->getAddress() << ':' << clients[client_id]->getPort() << std::endl;
-    // clients[client_id]->m_socket.async_read_some(boost::asio::buffer(clients[client_id]->getPacket(), 1024),
-    // [this, client_id](const boost::system::error_code &errc, std::size_t bytes_transferred) {
-    //     if (!errc) {
-    //         this->handleClient(client_id);
-    //     } else {
-    //         disconnectClient(client_id);
-    //     }
-    // });
+    if (!isClientConnected(client_id)) { return (false); }
+    std::cout << "New UDP connection on " << clients[client_id]->getAddress() << ':'
+        << clients[client_id]->getPort() << std::endl;
+    acceptor->async_receive_from(boost::asio::buffer(clients[client_id]->getPacket(), 1024),
+    clients[client_id]->m_endpoint,
+    [this, client_id](const boost::system::error_code &errc, std::size_t bytes_transferred) {
+        if (!errc) {
+            this->handleClient(client_id);
+        } else {
+            disconnectClient(client_id);
+        }
+    });
     return (true);
 }
 
