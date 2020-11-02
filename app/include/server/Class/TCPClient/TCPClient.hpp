@@ -2,19 +2,19 @@
 ** EPITECH PROJECT, 2020
 ** B-CPP-501-MPL-5-1-rtype-antoine.maillard
 ** File description:
-** Client
+** TCPClient
 */
 
-#ifndef CLIENT_HPP_
-#define CLIENT_HPP_
+#ifndef TCPCLIENT_HPP_
+#define TCPCLIENT_HPP_
 
 #include <boost/asio.hpp>
 #include <string>
 
-class Client {
+class TCPClient {
     public:
-        Client(boost::asio::io_service &service);
-        ~Client();
+        TCPClient(boost::asio::io_service &service);
+        ~TCPClient();
 
         bool setClient(void);
 
@@ -31,4 +31,4 @@ class Client {
         char *m_username = nullptr;
 };
 
-#endif /* !CLIENT_HPP_ */
+#endif /* !TCPCLIENT_HPP_ */

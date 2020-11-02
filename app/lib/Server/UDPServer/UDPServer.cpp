@@ -34,7 +34,6 @@ void UDPServer::work(void)
 
 bool UDPServer::run(void)
 {
-    // acceptor->listen();
     std::string address = acceptor->local_endpoint().address().to_string();
     port = acceptor->local_endpoint().port();
 

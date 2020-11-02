@@ -16,8 +16,19 @@ class GameServer : public UDPServer {
         ~GameServer();
 
         void work() override;
-    protected:
+
+        unsigned int prepareNewClient();
+
+        bool isClientConnected(const unsigned int client_id);
+
+        bool handleConnection();
+        bool handleClient(const unsigned int client_id);
+
+        bool disconnectClient(const unsigned int client_id);
+
+        const std::map<unsigned int, boost::asio::ip::udp::endpoint> &getClients() const;
     private:
+        std::map<unsigned int, boost::asio::ip::udp::endpoint> clients;
 };
 
 #endif /* !GAMESERVER_HPP_ */

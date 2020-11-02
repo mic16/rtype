@@ -9,7 +9,7 @@
 #define RTYPESERVER_HPP_
 
 #include "lib/Server/TCPServer/TCPServer.hpp"
-#include "server/Class/Client/Client.hpp"
+#include "server/Class/TCPClient/TCPClient.hpp"
 #include "server/Class/GameServer/GameServer.hpp"
 
 class RTypeServer : public TCPServer {
@@ -28,9 +28,9 @@ class RTypeServer : public TCPServer {
 
         bool disconnectClient(const unsigned int client_id);
 
-        const std::map<unsigned int, std::unique_ptr<Client>> &getClients() const;
+        const std::map<unsigned int, std::unique_ptr<TCPClient>> &getClients() const;
     private:
-        std::map<unsigned int, std::unique_ptr<Client>> clients;
+        std::map<unsigned int, std::unique_ptr<TCPClient>> clients;
 };
 
 #endif /* !RTYPESERVER_HPP_ */

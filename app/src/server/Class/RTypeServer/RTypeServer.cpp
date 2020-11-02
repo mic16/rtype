@@ -25,8 +25,8 @@ unsigned int RTypeServer::prepareNewClient()
     static unsigned int key = 0;
 
     key += 1;
-    std::pair<std::map<unsigned int, std::unique_ptr<Client>>::iterator, bool>
-        inserted = clients.insert(std::make_pair(key, std::make_unique<Client>(ioService)));
+    std::pair<std::map<unsigned int, std::unique_ptr<TCPClient>>::iterator, bool>
+        inserted = clients.insert(std::make_pair(key, std::make_unique<TCPClient>(ioService)));
     if (!inserted.second) { return (0); }
     return (key);
 }
@@ -76,7 +76,7 @@ bool RTypeServer::isClientConnected(const unsigned int client_id)
     return (clients.count(client_id) > 0);
 }
 
-const std::map<unsigned int, std::unique_ptr<Client>> &RTypeServer::getClients() const
+const std::map<unsigned int, std::unique_ptr<TCPClient>> &RTypeServer::getClients() const
 {
     return (clients);
 }
