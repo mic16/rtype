@@ -22,9 +22,11 @@ class Client {
         const unsigned int getPort() const;
 
         boost::asio::ip::tcp::socket m_socket;
-    private:
+        unsigned char *getPacket() const;
 
+    private:
         std::string m_address;
+        unsigned char *m_packet = nullptr;
         unsigned int m_port;
         char *m_username = nullptr;
 };
