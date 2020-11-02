@@ -8,11 +8,14 @@
 #ifndef GAMESERVER_HPP_
 #define GAMESERVER_HPP_
 
-class GameServer {
+#include "server/Class/UDPServer/UDPServer.hpp"
+
+class GameServer : public UDPServer {
     public:
         GameServer();
         ~GameServer();
 
+        void work() override;
     protected:
     private:
 };

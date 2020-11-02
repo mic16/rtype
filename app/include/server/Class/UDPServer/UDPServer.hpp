@@ -2,18 +2,18 @@
 ** EPITECH PROJECT, 2020
 ** B-CPP-501-MPL-5-1-rtype-antoine.maillard
 ** File description:
-** TCPServer
+** UDPServer
 */
 
-#ifndef TCPSERVER_HPP_
-#define TCPSERVER_HPP_
+#ifndef UDPSERVER_HPP_
+#define UDPSERVER_HPP_
 
 #include "server/Interfaces/IServer.hpp"
 
-class TCPServer : public IServer {
+class UDPServer : public IServer {
     public:
-        TCPServer();
-        ~TCPServer();
+        UDPServer();
+        ~UDPServer();
 
         bool configure(const unsigned int port);
         virtual void work();
@@ -23,8 +23,8 @@ class TCPServer : public IServer {
         bool run();
     protected:
         boost::asio::io_service ioService;
-        std::unique_ptr<boost::asio::ip::tcp::acceptor> acceptor;
+        std::unique_ptr<boost::asio::ip::udp::socket> acceptor;
         unsigned int port;
 };
 
-#endif /* !TCPSERVER_HPP_ */
+#endif /* !UDPSERVER_HPP_ */

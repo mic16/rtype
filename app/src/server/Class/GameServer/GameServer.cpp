@@ -7,10 +7,15 @@
 
 #include "server/Class/GameServer/GameServer.hpp"
 
-GameServer::GameServer()
+GameServer::GameServer(): UDPServer()
 {
 }
 
 GameServer::~GameServer()
 {
+}
+
+void GameServer::work()
+{
+    std::cout<<"test"<<std::endl;
 }

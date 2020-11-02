@@ -10,6 +10,7 @@
 
 #include "server/Class/TCPServer/TCPServer.hpp"
 #include "server/Class/Client/Client.hpp"
+#include "server/Class/GameServer/GameServer.hpp"
 
 class RTypeServer : public TCPServer {
     public:
