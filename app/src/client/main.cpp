@@ -5,12 +5,12 @@
 ** main
 */
 
-#include "client/Class/Client/Client.hpp"
+#include "client/Class/GameLoop.hpp"
 
 int main(int argc, char **argv)
 {
-    Client client;
-
-    client.run();
+    GameLoop game;
+    
+    game.loop();
     return 0;
 }

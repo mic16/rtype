@@ -13,6 +13,7 @@
 
 class Background: public ADrawable {
     public:
+        Background(sf::RenderWindow &window);
         Background();
         ~Background();
         void update();
@@ -21,7 +22,11 @@ class Background: public ADrawable {
 
     protected:
     private:
-        sf::RenderWindow window;
+        sf::RenderWindow &window;
+        sf::Texture texture;
+        sf::Sprite sprite;
+        sf::View view;
+        short speed;
 };
 
 #endif /* !BACKGROUND_HPP_ */
