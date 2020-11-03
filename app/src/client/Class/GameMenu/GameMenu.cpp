@@ -9,8 +9,14 @@
 
 GameMenu::GameMenu(): scene(MENU),
 client(std::make_unique<TCPClient>()),
-window(std::make_unique<sf::RenderWindow>(sf::VideoMode(1600, 800), "R-Type Menu", sf::Style::Close | sf::Style::Titlebar))
+loadedTextures("./app/assets/Menu/"),
+window(std::make_unique<sf::RenderWindow>(
+    sf::VideoMode(1600, 800),
+    "R-Type Menu",
+    sf::Style::Close | sf::Style::Titlebar)
+)
 {
+    initFixedSprites();
 }
 
 GameMenu::~GameMenu()
@@ -28,9 +34,18 @@ int GameMenu::run()
     }
 
     while (window->isOpen()) {
+        draw();
         handleEvents();
     }
     return (0);
+}
+
+void GameMenu::draw()
+{
+    const std::vector<sf::Sprite> &sprites = fixedSprites.at(scene);
+
+    for (size_t i = 0; i < sprites.size(); i++)
+        window->draw(sprites[i]);
 }
 
 void GameMenu::handleEvents()
