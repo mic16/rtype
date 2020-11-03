@@ -14,9 +14,11 @@ window(std::make_unique<sf::RenderWindow>(
     sf::VideoMode(1600, 800),
     "R-Type Menu",
     sf::Style::Close | sf::Style::Titlebar)
-)
+),
+displayThread(std::make_unique<std::thread>(&GameMenu::handleDisplay, this))
 {
     initFixedSprites();
+    window->setFramerateLimit(60);
 }
 
 GameMenu::~GameMenu()
@@ -32,26 +34,39 @@ int GameMenu::run()
         std::cout << ec.what() << std::endl;
         return (1);
     }
-
-    while (window->isOpen()) {
-        draw();
-        handleEvents();
-    }
+    displayThread->join();
     return (0);
 }
 
 void GameMenu::draw()
 {
-    const std::vector<sf::Sprite> &sprites = fixedSprites.at(scene);
+    const std::vector<std::unique_ptr<sf::Sprite>> &sprites = fixedSprites.at(scene);
 
-    for (size_t i = 0; i < sprites.size(); i++)
-        window->draw(sprites[i]);
+    window->clear(sf::Color::White);
+    for (size_t i = 0; i < sprites.size(); i++) {
+        window->draw(*sprites[i]);
+    }
+    window->display();
+}
+
+bool GameMenu::isOpen()
+{
+    return (window->isOpen());
 }
 
 void GameMenu::handleEvents()
 {
     while (window->pollEvent(event)) {
-        if (event.type == sf::Event::Closed)
+        if (event.type == sf::Event::Closed) {
             window->close();
+        }
+    }
+}
+
+void GameMenu::handleDisplay()
+{
+    while (isOpen()) {
+        handleEvents();
+        draw();
     }
 }

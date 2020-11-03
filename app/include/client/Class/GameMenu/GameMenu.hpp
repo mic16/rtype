@@ -10,10 +10,12 @@
 
 #include "SFML/Graphics.hpp"
 #include <memory>
+#include <thread>
 #include <map>
 
 #include "client/Class/TCPClient/TCPClient.hpp"
 #include "client/Class/ResourceLoader/ResourceLoader.hpp"
+#include "client/Class/Exceptions/EFinished.hpp"
 
 #define LAST_FIXED_SPRITE(sceneName) fixedSprites.at(sceneName)[fixedSprites.at(sceneName).size() - 1]
 
@@ -28,6 +30,9 @@ class GameMenu {
 
         void draw();
         void handleEvents();
+        bool isOpen();
+
+        void handleDisplay();
     private:
         void initFixedSprites();
         void initFixedMenuSprites();
@@ -36,9 +41,11 @@ class GameMenu {
         std::unique_ptr<TCPClient> client;
 
         ResourceLoader loadedTextures;
-        std::map<sceneName, std::vector<sf::Sprite>> fixedSprites;
+        std::map<sceneName, std::vector<std::unique_ptr<sf::Sprite>>> fixedSprites;
         std::unique_ptr<sf::RenderWindow> window;
         sf::Event event;
+
+        std::unique_ptr<std::thread> displayThread;
 };
 
 #endif /* !GAMEMENU_HPP_ */

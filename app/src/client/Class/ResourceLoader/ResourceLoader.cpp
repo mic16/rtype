@@ -19,9 +19,10 @@ ResourceLoader::ResourceLoader(const std::string &path)
             std::cout << fileStr << " found." << std::endl;
             if (std::regex_search(fileStr, file_match, fileReg)) {
                 std::cout << fileStr << " is loading." << std::endl;
-                resources.insert(std::pair<std::string, sf::Texture>(file_match[1], sf::Texture()));
+                std::string filename = file_match[1];
+                resources.insert(std::pair<std::string, std::shared_ptr<sf::Texture>>(filename, std::make_shared<sf::Texture>()));
                 boost::erase_all(fileStr, "\"");
-                if (resources[file_match[1]].loadFromFile(fileStr)) {
+                if (resources.at(filename)->loadFromFile(fileStr)) {
                     std::cout << fileStr << " is loaded." << std::endl;
                 } else {
                     std::cout << fileStr << " cannot be loaded." << std::endl;
@@ -39,7 +40,7 @@ ResourceLoader::~ResourceLoader()
 {
 }
 
-const sf::Texture &ResourceLoader::operator[](const std::string &resource)
+std::shared_ptr<sf::Texture> &ResourceLoader::operator[](const std::string &resource)
 {
     return (resources.at(resource));
 }

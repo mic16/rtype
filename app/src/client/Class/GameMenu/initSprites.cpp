@@ -9,13 +9,15 @@
 
 void GameMenu::initFixedSprites()
 {
-    fixedSprites.insert(std::pair<sceneName, std::vector<sf::Sprite>>(sceneName::MENU, std::vector<sf::Sprite>()));
+    fixedSprites.insert(std::pair<sceneName, std::vector<std::unique_ptr<sf::Sprite>>>(sceneName::MENU, std::vector<std::unique_ptr<sf::Sprite>>()));
 
     initFixedMenuSprites();
 }
 
 void GameMenu::initFixedMenuSprites()
 {
-    fixedSprites.at(sceneName::MENU).push_back(sf::Sprite());
-    LAST_FIXED_SPRITE(sceneName::MENU).setTexture(loadedTextures["background"]);
+    fixedSprites.at(sceneName::MENU).push_back(std::make_unique<sf::Sprite>());
+    LAST_FIXED_SPRITE(sceneName::MENU)->setTexture(*loadedTextures["background"]);
+    LAST_FIXED_SPRITE(sceneName::MENU)->setOrigin(sf::Vector2f(960, 480));
+    LAST_FIXED_SPRITE(sceneName::MENU)->setPosition(sf::Vector2f(800, 400));
 }

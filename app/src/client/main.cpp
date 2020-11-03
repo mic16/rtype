@@ -10,7 +10,6 @@
 
 int main()
 {
-    // ResourceLoader rl("./app/assets/");
     GameMenu menu;
 
     return menu.run();

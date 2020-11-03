@@ -16,6 +16,7 @@
 #include <regex>
 #include <string>
 #include <iostream>
+#include <memory>
 #include <map>
 
 class ResourceLoader {
@@ -23,9 +24,9 @@ class ResourceLoader {
         ResourceLoader(const std::string &path);
         ~ResourceLoader();
 
-        const sf::Texture &operator[](const std::string &resource);
+        std::shared_ptr<sf::Texture> &operator[](const std::string &resource);
     private:
-        std::map<std::string, sf::Texture> resources;
+        std::map<std::string, std::shared_ptr<sf::Texture>> resources;
 };
 
 #endif /* !RESOURCELOADER_HPP_ */
