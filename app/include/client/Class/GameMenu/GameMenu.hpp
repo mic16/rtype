@@ -17,7 +17,7 @@
 #include "client/Class/ResourceLoader/ResourceLoader.hpp"
 #include "client/Class/Exceptions/EFinished.hpp"
 
-#define LAST_FIXED_SPRITE(sceneName) fixedSprites.at(sceneName)[fixedSprites.at(sceneName).size() - 1]
+#define LAST_FIXED_SPRITE(sceneName) fixedDrawables.at(sceneName)[fixedDrawables.at(sceneName).size() - 1]
 
 enum sceneName { LOGIN, MENU, SEARCH, WAITING_ROOM };
 
@@ -34,14 +34,15 @@ class GameMenu {
 
         void handleDisplay();
     private:
-        void initFixedSprites();
-        void initFixedLoginSprites();
+        void initDrawables();
+        void initFixedLoginDrawables();
 
         sceneName scene;
         std::unique_ptr<TCPClient> client;
 
         ResourceLoader loadedTextures;
-        std::map<sceneName, std::vector<std::unique_ptr<sf::Drawable>>> fixedSprites;
+        std::map<sceneName, std::vector<std::unique_ptr<sf::Drawable>>> fixedDrawables;
+        std::map<sceneName, std::map<std::string, std::unique_ptr<sf::Drawable>>> modDrawables;
         std::unique_ptr<sf::RenderWindow> window;
         sf::Event event;
         sf::Font mainFont;

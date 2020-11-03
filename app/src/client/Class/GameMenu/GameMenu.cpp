@@ -17,7 +17,7 @@ window(std::make_unique<sf::RenderWindow>(
 ),
 displayThread(std::make_unique<std::thread>(&GameMenu::handleDisplay, this))
 {
-    initFixedSprites();
+    initDrawables();
     window->setFramerateLimit(60);
 }
 
@@ -40,7 +40,7 @@ int GameMenu::run()
 
 void GameMenu::draw()
 {
-    const std::vector<std::unique_ptr<sf::Drawable>> &sprites = fixedSprites.at(scene);
+    const std::vector<std::unique_ptr<sf::Drawable>> &sprites = fixedDrawables.at(scene);
 
     window->clear(sf::Color::White);
     for (size_t i = 0; i < sprites.size(); i++) {

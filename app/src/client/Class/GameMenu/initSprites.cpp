@@ -7,21 +7,21 @@
 
 #include "client/Class/GameMenu/GameMenu.hpp"
 
-void GameMenu::initFixedSprites()
+void GameMenu::initDrawables()
 {
-    fixedSprites.insert(std::pair<sceneName, std::vector<std::unique_ptr<sf::Drawable>>>(sceneName::LOGIN, std::vector<std::unique_ptr<sf::Drawable>>()));
+    fixedDrawables.insert(std::pair<sceneName, std::vector<std::unique_ptr<sf::Drawable>>>(sceneName::LOGIN, std::vector<std::unique_ptr<sf::Drawable>>()));
 
-    initFixedLoginSprites();
+    initFixedLoginDrawables();
 }
 
-void GameMenu::initFixedLoginSprites()
+void GameMenu::initFixedLoginDrawables()
 {
-    fixedSprites.at(sceneName::LOGIN).push_back(std::make_unique<sf::Sprite>());
+    fixedDrawables.at(sceneName::LOGIN).push_back(std::make_unique<sf::Sprite>());
     dynamic_cast<sf::Sprite *>(LAST_FIXED_SPRITE(sceneName::LOGIN).get())->setTexture(*loadedTextures["background"]);
     dynamic_cast<sf::Sprite *>(LAST_FIXED_SPRITE(sceneName::LOGIN).get())->setOrigin(sf::Vector2f(960, 480));
     dynamic_cast<sf::Sprite *>(LAST_FIXED_SPRITE(sceneName::LOGIN).get())->setPosition(sf::Vector2f(800, 400));
 
-    fixedSprites.at(sceneName::LOGIN).push_back(std::make_unique<sf::Text>());
+    fixedDrawables.at(sceneName::LOGIN).push_back(std::make_unique<sf::Text>());
     mainFont.loadFromFile("./app/assets/fonts/pixelart.ttf");
     dynamic_cast<sf::Text *>(LAST_FIXED_SPRITE(sceneName::LOGIN).get())->setFont(mainFont);
     dynamic_cast<sf::Text *>(LAST_FIXED_SPRITE(sceneName::LOGIN).get())->setString("Enter your Username:");
@@ -30,7 +30,7 @@ void GameMenu::initFixedLoginSprites()
     dynamic_cast<sf::Text *>(LAST_FIXED_SPRITE(sceneName::LOGIN).get())->setStyle(sf::Text::Bold);
     dynamic_cast<sf::Text *>(LAST_FIXED_SPRITE(sceneName::LOGIN).get())->setPosition(sf::Vector2f(520, 280));
 
-    fixedSprites.at(sceneName::LOGIN).push_back(std::make_unique<sf::Sprite>());
+    fixedDrawables.at(sceneName::LOGIN).push_back(std::make_unique<sf::Sprite>());
     sf::Texture backInput;
     backInput.create(600, 80);
     dynamic_cast<sf::Sprite *>(LAST_FIXED_SPRITE(sceneName::LOGIN).get())->setTexture(backInput);
@@ -38,9 +38,9 @@ void GameMenu::initFixedLoginSprites()
     dynamic_cast<sf::Sprite *>(LAST_FIXED_SPRITE(sceneName::LOGIN).get())->setOrigin(sf::Vector2f(300, 40));
     dynamic_cast<sf::Sprite *>(LAST_FIXED_SPRITE(sceneName::LOGIN).get())->setPosition(sf::Vector2f(800, 400));
 
-    fixedSprites.at(sceneName::LOGIN).push_back(std::make_unique<sf::Text>());
+    fixedDrawables.at(sceneName::LOGIN).push_back(std::make_unique<sf::Text>());
     dynamic_cast<sf::Text *>(LAST_FIXED_SPRITE(sceneName::LOGIN).get())->setFont(mainFont);
-    dynamic_cast<sf::Text *>(LAST_FIXED_SPRITE(sceneName::LOGIN).get())->setString("username");
+    dynamic_cast<sf::Text *>(LAST_FIXED_SPRITE(sceneName::LOGIN).get())->setString("...");
     dynamic_cast<sf::Text *>(LAST_FIXED_SPRITE(sceneName::LOGIN).get())->setCharacterSize(35);
     dynamic_cast<sf::Text *>(LAST_FIXED_SPRITE(sceneName::LOGIN).get())->setFillColor(sf::Color::White);
     dynamic_cast<sf::Text *>(LAST_FIXED_SPRITE(sceneName::LOGIN).get())->setStyle(sf::Text::Bold);
