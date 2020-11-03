@@ -11,6 +11,8 @@
 #include "SFML/Graphics.hpp"
 #include <memory>
 
+enum sceneName { MENU, SEARCH, WAITING_ROOM };
+
 class GameMenu {
     public:
         GameMenu();
@@ -19,6 +21,8 @@ class GameMenu {
         int run();
         void handleEvents();
     private:
+        sceneName scene;
+
         std::unique_ptr<sf::RenderWindow> window;
         sf::Event event;
 };

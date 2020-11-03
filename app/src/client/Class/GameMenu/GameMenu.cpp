@@ -7,7 +7,7 @@
 
 #include "client/Class/GameMenu/GameMenu.hpp"
 
-GameMenu::GameMenu(): window(std::make_unique<sf::RenderWindow>(sf::VideoMode(1600, 800), "R-Type Menu", sf::Style::Close | sf::Style::Titlebar))
+GameMenu::GameMenu(): scene(MENU), window(std::make_unique<sf::RenderWindow>(sf::VideoMode(1600, 800), "R-Type Menu", sf::Style::Close | sf::Style::Titlebar))
 {
 }
 
