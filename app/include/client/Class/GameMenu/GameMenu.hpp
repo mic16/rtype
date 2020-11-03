@@ -11,6 +11,8 @@
 #include "SFML/Graphics.hpp"
 #include <memory>
 
+#include "client/Class/TCPClient/TCPClient.hpp"
+
 enum sceneName { MENU, SEARCH, WAITING_ROOM };
 
 class GameMenu {
@@ -22,6 +24,7 @@ class GameMenu {
         void handleEvents();
     private:
         sceneName scene;
+        std::unique_ptr<TCPClient> client;
 
         std::unique_ptr<sf::RenderWindow> window;
         sf::Event event;
