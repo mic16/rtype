@@ -19,7 +19,7 @@
 
 #define LAST_FIXED_SPRITE(sceneName) fixedSprites.at(sceneName)[fixedSprites.at(sceneName).size() - 1]
 
-enum sceneName { MENU, SEARCH, WAITING_ROOM };
+enum sceneName { LOGIN, MENU, SEARCH, WAITING_ROOM };
 
 class GameMenu {
     public:
@@ -35,15 +35,16 @@ class GameMenu {
         void handleDisplay();
     private:
         void initFixedSprites();
-        void initFixedMenuSprites();
+        void initFixedLoginSprites();
 
         sceneName scene;
         std::unique_ptr<TCPClient> client;
 
         ResourceLoader loadedTextures;
-        std::map<sceneName, std::vector<std::unique_ptr<sf::Sprite>>> fixedSprites;
+        std::map<sceneName, std::vector<std::unique_ptr<sf::Drawable>>> fixedSprites;
         std::unique_ptr<sf::RenderWindow> window;
         sf::Event event;
+        sf::Font mainFont;
 
         std::unique_ptr<std::thread> displayThread;
 };

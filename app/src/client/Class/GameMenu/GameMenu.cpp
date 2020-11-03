@@ -7,7 +7,7 @@
 
 #include "client/Class/GameMenu/GameMenu.hpp"
 
-GameMenu::GameMenu(): scene(MENU),
+GameMenu::GameMenu(): scene(LOGIN),
 client(std::make_unique<TCPClient>()),
 loadedTextures("./app/assets/Menu/"),
 window(std::make_unique<sf::RenderWindow>(
@@ -40,7 +40,7 @@ int GameMenu::run()
 
 void GameMenu::draw()
 {
-    const std::vector<std::unique_ptr<sf::Sprite>> &sprites = fixedSprites.at(scene);
+    const std::vector<std::unique_ptr<sf::Drawable>> &sprites = fixedSprites.at(scene);
 
     window->clear(sf::Color::White);
     for (size_t i = 0; i < sprites.size(); i++) {
