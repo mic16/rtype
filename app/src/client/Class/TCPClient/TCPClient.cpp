@@ -7,7 +7,7 @@
 
 #include "client/Class/TCPClient/TCPClient.hpp"
 
-TCPClient::TCPClient(): socket(ioService), m_packet(new unsigned char[1024]);
+TCPClient::TCPClient(): socket(ioService), m_packet(new unsigned char[1024])
 {
 }
 
