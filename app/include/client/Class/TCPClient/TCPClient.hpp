@@ -21,11 +21,14 @@ class TCPClient {
 
         void run();
         void connectTo(const boost::asio::ip::tcp::endpoint &endpoint);
+
         void handleData();
+        void sendData(const char *buff, const size_t buffLen);
     private:
         boost::asio::io_service ioService;
         boost::asio::ip::tcp::socket socket;
         boost::asio::ip::tcp::endpoint endpoint;
+        unsigned char *m_packet = nullptr;
 };
 
 #endif /* !TCPCLIENT_HPP_ */

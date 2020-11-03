@@ -7,12 +7,13 @@
 
 #include "client/Class/TCPClient/TCPClient.hpp"
 
-TCPClient::TCPClient(): socket(ioService)
+TCPClient::TCPClient(): socket(ioService), m_packet(new unsigned char[1024]);
 {
 }
 
 TCPClient::~TCPClient()
 {
+    if (m_packet) delete m_packet;
 }
 
 void TCPClient::run()
@@ -36,15 +37,25 @@ void TCPClient::connectTo(const boost::asio::ip::tcp::endpoint &endpoint)
 
 void TCPClient::handleData()
 {
-    // boost::asio::async_read(this->socket, boost::asio::buffer(msg, 17), [this, msg](const boost::system::error_code& error, std::size_t bytes_transferred)
-    // {
-        // if (!error) {
-            // std::cout << "Data received : len : " << bytes_transferred << std::endl;
-            // for (int i = 0; i < 17; i++)
-                // std::cout << msg[i] << std::endl;
-            // this->handleData();
-        // } else {
-            // std::cout << "Connection failed." << std::endl;
-        // }
-    // });
+    boost::asio::async_read(socket, boost::asio::buffer(m_packet, 1024), [this](const boost::system::error_code& error, std::size_t bytes_transferred)
+    {
+        if (!error) {
+            std::cout << "Data received : len : " << bytes_transferred << std::endl;
+            this->handleData();
+        } else {
+            std::cout << "Connection failed." << std::endl;
+        }
+    });
+}
+
+void TCPClient::sendData(const char *buff, const size_t buffLen)
+{
+    boost::asio::async_write(socket, boost::asio::buffer(buff, buffLen),
+    [this](const boost::system::error_code &ec, std::size_t bytes_transferred) {
+        if (!ec) {
+            std::cout << "Data is wrote : " << bytes_transferred << std::endl;
+        } else {
+            std::cout << "Data isn't sent" << std::endl;
+        }
+    });
 }
