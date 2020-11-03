@@ -6,9 +6,11 @@
 */
 
 #include "SFML/Graphics.hpp"
-#include "Class/Window.hpp"
+#include "client/Class/GameMenu/GameMenu.hpp"
 
 int main()
 {
-    Window window;
+    GameMenu menu;
+
+    return menu.run();
 }
