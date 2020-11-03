@@ -17,8 +17,10 @@ class GameMenu {
         ~GameMenu();
 
         int run();
+        void handleEvents();
     private:
         std::unique_ptr<sf::RenderWindow> window;
+        sf::Event event;
 };
 
 #endif /* !GAMEMENU_HPP_ */
