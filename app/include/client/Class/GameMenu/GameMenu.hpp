@@ -17,6 +17,7 @@
 #include "client/Class/TCPClient/TCPClient.hpp"
 #include "client/Class/ResourceLoader/ResourceLoader.hpp"
 #include "client/Class/Exceptions/EFinished.hpp"
+#include "lib/ByteBuffer/ByteBuffer.hpp"
 
 #define LAST_FIXED_SPRITE(sceneName) fixedDrawables.at(sceneName)[fixedDrawables.at(sceneName).size() - 1]
 
@@ -39,6 +40,7 @@ class GameMenu {
         void handleKeyReleased();
 
         void handleDisplay();
+        void tryLogIn();
     private:
         void initDrawables();
         void initFixedLoginDrawables();
@@ -56,6 +58,7 @@ class GameMenu {
         sf::Font mainFont;
 
         std::unique_ptr<std::thread> displayThread;
+        ByteBuffer buffer;
 };
 
 #endif /* !GAMEMENU_HPP_ */

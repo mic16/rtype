@@ -22,13 +22,18 @@ class RTypeServer : public TCPServer {
         unsigned int prepareNewClient();
 
         bool isClientConnected(const unsigned int client_id);
+        bool isUsernameTaken(const std::string &username);
+        bool disconnectClient(const unsigned int client_id);
+        bool sendData(const unsigned int client_id);
+
+        const std::map<unsigned int, std::unique_ptr<TCPClient>> &getClients() const;
 
         bool handleConnection();
         bool handleClient(const unsigned int client_id);
 
-        bool disconnectClient(const unsigned int client_id);
+        void handleRequests(const unsigned int client_id);
 
-        const std::map<unsigned int, std::unique_ptr<TCPClient>> &getClients() const;
+        void responseLogin(const unsigned int client_id);
     private:
         std::map<unsigned int, std::unique_ptr<TCPClient>> clients;
 };

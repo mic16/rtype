@@ -48,8 +48,8 @@ void GameMenu::handleKeyReleased()
             }
         }
     } else if (event.key.code == sf::Keyboard::Enter || event.key.code == sf::Keyboard::Space) {
-        if (!isUsernameValid()) {
-            /* DISPLAY ERROR */
+        if (isUsernameValid()) {
+            tryLogIn();
         }
     }
 }

@@ -11,6 +11,10 @@
 #include <boost/asio.hpp>
 #include <string>
 
+#include "lib/ByteBuffer/ByteBuffer.hpp"
+#include "lib/request.h"
+#include "lib/response.h"
+
 class TCPClient {
     public:
         TCPClient(boost::asio::io_service &service);
@@ -18,17 +22,23 @@ class TCPClient {
 
         bool setClient(void);
 
+        void setUsername(const std::string &username);
+        const std::string &getUsername() const;
+
+        ByteBuffer &getBuffer();
+
         const std::string &getAddress() const;
         const unsigned int getPort() const;
 
         boost::asio::ip::tcp::socket m_socket;
-        unsigned char *getPacket() const;
+        char *getPacket() const;
 
     private:
         std::string m_address;
-        unsigned char *m_packet = nullptr;
+        char *m_packet = nullptr;
         unsigned int m_port;
-        char *m_username = nullptr;
+        std::string m_username;
+        ByteBuffer buffer;
 };
 
 #endif /* !TCPCLIENT_HPP_ */

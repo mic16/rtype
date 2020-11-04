@@ -16,7 +16,8 @@ window(std::make_unique<sf::RenderWindow>(
     "R-Type Menu",
     sf::Style::Close | sf::Style::Titlebar)
 ),
-displayThread(std::make_unique<std::thread>(&GameMenu::handleDisplay, this))
+displayThread(std::make_unique<std::thread>(&GameMenu::handleDisplay, this)),
+buffer(1024)
 {
     initDrawables();
     window->setFramerateLimit(60);

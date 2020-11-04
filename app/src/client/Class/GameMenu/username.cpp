@@ -9,6 +9,7 @@
 
 bool GameMenu::isUsernameValid()
 {
+    if (username.length() < 3) return (false);
     for (size_t i = 0; i < username.length(); i++) {
         if (!std::isalnum(username[i]))
             return (false);

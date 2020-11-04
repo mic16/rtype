@@ -7,15 +7,14 @@
 
 #include "server/Class/TCPClient/TCPClient.hpp"
 
-TCPClient::TCPClient(boost::asio::io_service &service): m_socket(service)
+TCPClient::TCPClient(boost::asio::io_service &service): m_socket(service), buffer(1024)
 {
-    m_packet = new unsigned char[1024];
+    m_packet = new char[1024];
 }
 
 TCPClient::~TCPClient()
 {
     if (m_packet) delete m_packet;
-    if (m_username) delete m_username;
 }
 
 bool TCPClient::setClient()
@@ -33,5 +32,16 @@ const std::string &TCPClient::getAddress() const
 const unsigned int TCPClient::getPort() const
 { return (m_port); }
 
-unsigned char *TCPClient::getPacket() const
+char *TCPClient::getPacket() const
 { return (m_packet); }
+
+void TCPClient::setUsername(const std::string &username)
+{
+    m_username = username;
+}
+
+const std::string &TCPClient::getUsername() const
+{ return (m_username); }
+
+ByteBuffer &TCPClient::getBuffer()
+{ return (buffer); }

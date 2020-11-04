@@ -48,7 +48,7 @@ void TCPClient::handleData()
     });
 }
 
-void TCPClient::sendData(const char *buff, const size_t buffLen)
+void TCPClient::sendData(const unsigned char *buff, const size_t buffLen)
 {
     boost::asio::async_write(socket, boost::asio::buffer(buff, buffLen),
     [this](const boost::system::error_code &ec, std::size_t bytes_transferred) {

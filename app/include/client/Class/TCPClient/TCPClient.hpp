@@ -13,6 +13,8 @@
 #include <vector>
 
 #include "client/Class/Exceptions/EConnection.hpp"
+#include "lib/request.h"
+#include "lib/response.h"
 
 class TCPClient {
     public:
@@ -23,7 +25,7 @@ class TCPClient {
         void connectTo(const boost::asio::ip::tcp::endpoint &endpoint);
 
         void handleData();
-        void sendData(const char *buff, const size_t buffLen);
+        void sendData(const unsigned char *buff, const size_t buffLen);
     private:
         boost::asio::io_service ioService;
         boost::asio::ip::tcp::socket socket;
