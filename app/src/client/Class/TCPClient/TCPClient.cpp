@@ -7,7 +7,7 @@
 
 #include "client/Class/TCPClient/TCPClient.hpp"
 
-TCPClient::TCPClient(): socket(ioService), m_packet(new unsigned char[1024])
+TCPClient::TCPClient(IGameMenu *gameMenu): socket(ioService), m_packet(new unsigned char[1024]), menu(gameMenu)
 {
 }
 

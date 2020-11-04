@@ -23,7 +23,7 @@
 
 enum sceneName { LOGIN, MENU, SEARCH, WAITING_ROOM };
 
-class GameMenu {
+class GameMenu : public IGameMenu {
     public:
         GameMenu();
         ~GameMenu();

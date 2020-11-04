@@ -8,7 +8,6 @@
 #include "client/Class/GameMenu/GameMenu.hpp"
 
 GameMenu::GameMenu(): scene(LOGIN),
-client(std::make_unique<TCPClient>()),
 username("..."),
 loadedTextures("./app/assets/Menu/"),
 window(std::make_unique<sf::RenderWindow>(
@@ -19,6 +18,7 @@ window(std::make_unique<sf::RenderWindow>(
 displayThread(std::make_unique<std::thread>(&GameMenu::handleDisplay, this)),
 buffer(1024)
 {
+    client = std::make_unique<TCPClient>(this);
     initDrawables();
     window->setFramerateLimit(60);
 }

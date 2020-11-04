@@ -11,14 +11,16 @@
 #include <boost/asio.hpp>
 #include <iostream>
 #include <vector>
+#include <memory>
 
 #include "client/Class/Exceptions/EConnection.hpp"
+#include "client/Interfaces/IGameMenu.hpp"
 #include "lib/request.h"
 #include "lib/response.h"
 
 class TCPClient {
     public:
-        TCPClient();
+        TCPClient(IGameMenu *gameMenu);
         ~TCPClient();
 
         void run();
@@ -31,6 +33,7 @@ class TCPClient {
         boost::asio::ip::tcp::socket socket;
         boost::asio::ip::tcp::endpoint endpoint;
         unsigned char *m_packet = nullptr;
+        std::shared_ptr<IGameMenu> menu;
 };
 
 #endif /* !TCPCLIENT_HPP_ */
