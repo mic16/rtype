@@ -11,6 +11,7 @@
 #include "SFML/Graphics.hpp"
 #include <memory>
 #include <thread>
+#include <mutex>
 #include <map>
 #include <cctype>
 
@@ -20,8 +21,6 @@
 #include "lib/ByteBuffer/ByteBuffer.hpp"
 
 #define LAST_FIXED_SPRITE(sceneName) fixedDrawables.at(sceneName)[fixedDrawables.at(sceneName).size() - 1]
-
-enum sceneName { LOGIN, MENU, SEARCH, WAITING_ROOM };
 
 class GameMenu : public IGameMenu {
     public:
@@ -41,10 +40,17 @@ class GameMenu : public IGameMenu {
 
         void handleDisplay();
         void tryLogIn();
+
+        const sceneName getScene();
+        void setScene(const sceneName sc_name);
     private:
         void initDrawables();
+
         void initFixedLoginDrawables();
         void initModLoginDrawables();
+
+        void initFixedMenuDrawables();
+        void initModMenuDrawables();
 
         sceneName scene;
         std::unique_ptr<TCPClient> client;
@@ -59,6 +65,8 @@ class GameMenu : public IGameMenu {
 
         std::unique_ptr<std::thread> displayThread;
         ByteBuffer buffer;
+
+        std::mutex scene_mutex;
 };
 
 #endif /* !GAMEMENU_HPP_ */

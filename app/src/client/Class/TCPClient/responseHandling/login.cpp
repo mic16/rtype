@@ -16,4 +16,5 @@ void TCPClient::handleLogIn()
         return;
     }
     std::cout << "LogIn success." << std::endl;
+    menu->setScene(sceneName::MENU);
 }

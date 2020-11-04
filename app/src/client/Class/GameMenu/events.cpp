@@ -27,13 +27,14 @@ void GameMenu::handleTextEntered()
     char charTyped = static_cast<char>(event.text.unicode);
 
     if (std::isalnum(charTyped)) {
-        if (scene == sceneName::LOGIN) {
+        if (getScene() == sceneName::LOGIN) {
             if (username == "...") {
                 username = "";
             }
             if (username.length() < 16)
                 username += charTyped;
             dynamic_cast<sf::Text *>(modDrawables.at(sceneName::LOGIN)["usernameInput"].get())->setString(username);
+            dynamic_cast<sf::Text *>(modDrawables.at(sceneName::MENU)["username"].get())->setString(username);
         }
     }
 }
@@ -41,10 +42,11 @@ void GameMenu::handleTextEntered()
 void GameMenu::handleKeyReleased()
 {
     if (event.key.code == sf::Keyboard::Backspace) {
-        if (scene == sceneName::LOGIN) {
+        if (getScene() == sceneName::LOGIN) {
             if (username.length() > 0) {
                 username.erase(username.size() - 1, 1);
                 dynamic_cast<sf::Text *>(modDrawables.at(sceneName::LOGIN)["usernameInput"].get())->setString(username);
+                dynamic_cast<sf::Text *>(modDrawables.at(sceneName::MENU)["username"].get())->setString(username);
             }
         }
     } else if (event.key.code == sf::Keyboard::Enter || event.key.code == sf::Keyboard::Space) {

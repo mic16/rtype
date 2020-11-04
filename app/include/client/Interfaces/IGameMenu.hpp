@@ -8,6 +8,8 @@
 #ifndef IGAMEMENU_HPP_
 #define IGAMEMENU_HPP_
 
+enum sceneName { LOGIN, MENU, SEARCH, WAITING_ROOM };
+
 class IGameMenu {
     public:
         virtual int run() = 0;
@@ -23,6 +25,9 @@ class IGameMenu {
 
         virtual void handleDisplay() = 0;
         virtual void tryLogIn() = 0;
+
+        virtual const sceneName getScene() = 0;
+        virtual void setScene(const sceneName sc_name) = 0;
 };
 
 #endif /* !IGAMEMENU_HPP_ */

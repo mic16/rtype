@@ -65,3 +65,15 @@ void GameMenu::handleDisplay()
         draw();
     }
 }
+
+const sceneName GameMenu::getScene()
+{
+    const std::lock_guard<std::mutex> lock(scene_mutex);
+    return (scene);
+}
+
+void GameMenu::setScene(const sceneName sc_name)
+{
+    const std::lock_guard<std::mutex> lock(scene_mutex);
+    scene = sc_name;
+}
