@@ -32,6 +32,8 @@ class GameMenu {
         void draw();
         bool isOpen();
 
+        bool isUsernameValid();
+
         void handleEvents();
         void handleTextEntered();
         void handleKeyReleased();

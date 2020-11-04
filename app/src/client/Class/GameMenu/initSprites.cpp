@@ -39,6 +39,14 @@ void GameMenu::initFixedLoginDrawables()
     dynamic_cast<sf::Sprite *>(LAST_FIXED_SPRITE(sceneName::LOGIN).get())->setColor(sf::Color::Black);
     dynamic_cast<sf::Sprite *>(LAST_FIXED_SPRITE(sceneName::LOGIN).get())->setOrigin(sf::Vector2f(300, 40));
     dynamic_cast<sf::Sprite *>(LAST_FIXED_SPRITE(sceneName::LOGIN).get())->setPosition(sf::Vector2f(800, 400));
+
+    fixedDrawables.at(sceneName::LOGIN).push_back(std::make_unique<sf::Text>());
+    dynamic_cast<sf::Text *>(LAST_FIXED_SPRITE(sceneName::LOGIN).get())->setFont(mainFont);
+    dynamic_cast<sf::Text *>(LAST_FIXED_SPRITE(sceneName::LOGIN).get())->setString("Only alphanumeric username is authorized.");
+    dynamic_cast<sf::Text *>(LAST_FIXED_SPRITE(sceneName::LOGIN).get())->setCharacterSize(30);
+    dynamic_cast<sf::Text *>(LAST_FIXED_SPRITE(sceneName::LOGIN).get())->setFillColor(sf::Color::Red);
+    dynamic_cast<sf::Text *>(LAST_FIXED_SPRITE(sceneName::LOGIN).get())->setStyle(sf::Text::Bold);
+    dynamic_cast<sf::Text *>(LAST_FIXED_SPRITE(sceneName::LOGIN).get())->setPosition(sf::Vector2f(350, 480));
 }
 
 void GameMenu::initModLoginDrawables()
