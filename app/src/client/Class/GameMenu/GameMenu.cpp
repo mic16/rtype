@@ -9,6 +9,7 @@
 
 GameMenu::GameMenu(): scene(LOGIN),
 client(std::make_unique<TCPClient>()),
+username("..."),
 loadedTextures("./app/assets/Menu/"),
 window(std::make_unique<sf::RenderWindow>(
     sf::VideoMode(1600, 800),
@@ -41,26 +42,19 @@ int GameMenu::run()
 void GameMenu::draw()
 {
     const std::vector<std::unique_ptr<sf::Drawable>> &sprites = fixedDrawables.at(scene);
+    std::map<std::string, std::unique_ptr<sf::Drawable>> &spritesMod = modDrawables.at(scene);
 
     window->clear(sf::Color::White);
-    for (size_t i = 0; i < sprites.size(); i++) {
+    for (size_t i = 0; i < sprites.size(); i++)
         window->draw(*sprites[i]);
-    }
+    for (std::map<std::string, std::unique_ptr<sf::Drawable>>::iterator it = spritesMod.begin(); it != spritesMod.end(); ++it)
+        window->draw(*(it->second));
     window->display();
 }
 
 bool GameMenu::isOpen()
 {
     return (window->isOpen());
-}
-
-void GameMenu::handleEvents()
-{
-    while (window->pollEvent(event)) {
-        if (event.type == sf::Event::Closed) {
-            window->close();
-        }
-    }
 }
 
 void GameMenu::handleDisplay()

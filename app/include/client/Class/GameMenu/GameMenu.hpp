@@ -12,6 +12,7 @@
 #include <memory>
 #include <thread>
 #include <map>
+#include <cctype>
 
 #include "client/Class/TCPClient/TCPClient.hpp"
 #include "client/Class/ResourceLoader/ResourceLoader.hpp"
@@ -29,16 +30,21 @@ class GameMenu {
         int run();
 
         void draw();
-        void handleEvents();
         bool isOpen();
+
+        void handleEvents();
+        void handleTextEntered();
+        void handleKeyReleased();
 
         void handleDisplay();
     private:
         void initDrawables();
         void initFixedLoginDrawables();
+        void initModLoginDrawables();
 
         sceneName scene;
         std::unique_ptr<TCPClient> client;
+        std::string username;
 
         ResourceLoader loadedTextures;
         std::map<sceneName, std::vector<std::unique_ptr<sf::Drawable>>> fixedDrawables;

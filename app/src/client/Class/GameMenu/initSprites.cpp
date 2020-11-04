@@ -10,8 +10,10 @@
 void GameMenu::initDrawables()
 {
     fixedDrawables.insert(std::pair<sceneName, std::vector<std::unique_ptr<sf::Drawable>>>(sceneName::LOGIN, std::vector<std::unique_ptr<sf::Drawable>>()));
+    modDrawables.insert(std::pair<sceneName, std::map<std::string, std::unique_ptr<sf::Drawable>>>(sceneName::LOGIN, std::map<std::string, std::unique_ptr<sf::Drawable>>()));
 
     initFixedLoginDrawables();
+    initModLoginDrawables();
 }
 
 void GameMenu::initFixedLoginDrawables()
@@ -37,12 +39,15 @@ void GameMenu::initFixedLoginDrawables()
     dynamic_cast<sf::Sprite *>(LAST_FIXED_SPRITE(sceneName::LOGIN).get())->setColor(sf::Color::Black);
     dynamic_cast<sf::Sprite *>(LAST_FIXED_SPRITE(sceneName::LOGIN).get())->setOrigin(sf::Vector2f(300, 40));
     dynamic_cast<sf::Sprite *>(LAST_FIXED_SPRITE(sceneName::LOGIN).get())->setPosition(sf::Vector2f(800, 400));
+}
 
-    fixedDrawables.at(sceneName::LOGIN).push_back(std::make_unique<sf::Text>());
-    dynamic_cast<sf::Text *>(LAST_FIXED_SPRITE(sceneName::LOGIN).get())->setFont(mainFont);
-    dynamic_cast<sf::Text *>(LAST_FIXED_SPRITE(sceneName::LOGIN).get())->setString("...");
-    dynamic_cast<sf::Text *>(LAST_FIXED_SPRITE(sceneName::LOGIN).get())->setCharacterSize(35);
-    dynamic_cast<sf::Text *>(LAST_FIXED_SPRITE(sceneName::LOGIN).get())->setFillColor(sf::Color::White);
-    dynamic_cast<sf::Text *>(LAST_FIXED_SPRITE(sceneName::LOGIN).get())->setStyle(sf::Text::Bold);
-    dynamic_cast<sf::Text *>(LAST_FIXED_SPRITE(sceneName::LOGIN).get())->setPosition(sf::Vector2f(520, 375));
+void GameMenu::initModLoginDrawables()
+{
+    modDrawables.at(sceneName::LOGIN).insert(std::pair<std::string, std::unique_ptr<sf::Drawable>>("usernameInput", std::make_unique<sf::Text>()));
+    dynamic_cast<sf::Text *>(modDrawables.at(sceneName::LOGIN)["usernameInput"].get())->setFont(mainFont);
+    dynamic_cast<sf::Text *>(modDrawables.at(sceneName::LOGIN)["usernameInput"].get())->setString(username);
+    dynamic_cast<sf::Text *>(modDrawables.at(sceneName::LOGIN)["usernameInput"].get())->setCharacterSize(35);
+    dynamic_cast<sf::Text *>(modDrawables.at(sceneName::LOGIN)["usernameInput"].get())->setFillColor(sf::Color::White);
+    dynamic_cast<sf::Text *>(modDrawables.at(sceneName::LOGIN)["usernameInput"].get())->setStyle(sf::Text::Bold);
+    dynamic_cast<sf::Text *>(modDrawables.at(sceneName::LOGIN)["usernameInput"].get())->setPosition(sf::Vector2f(520, 375));
 }
