@@ -6,12 +6,12 @@
 */
 
 #include "client/Class/Client/Client.hpp"
-#include "client/Class/Window/Window.hpp"
+#include "client/Class/GameWindow/GameWindow.hpp"
 
 int main(int argc, char **argv)
 {
     Client client;
-    Window window;
+    GameWindow gameWindow;
 
     client.run();
     return 0;

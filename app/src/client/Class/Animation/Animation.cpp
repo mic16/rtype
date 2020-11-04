@@ -48,7 +48,6 @@ void Animation::update(int row, float deltaTime, bool up, bool down)
         if (currentImage.x >= imageCount.x) {
             currentImage.x--;
         } else if (currentImage.x <= 0) {
-            std::cout << currentImage.x << std::endl;
             currentImage.x++;
         }
     }
