@@ -53,5 +53,11 @@ void GameMenu::handleKeyReleased()
         if (isUsernameValid()) {
             tryLogIn();
         }
+    } else if (event.key.code == sf::Keyboard::Down || event.key.code == sf::Keyboard::Up) {
+        if (getScene() == sceneName::MENU) {
+            dynamic_cast<sf::Text *>(modDrawables.at(sceneName::MENU)[menuButtons[actualButton]].get())->setFillColor(sf::Color::White);
+            actualButton = actualButton == 0 ? 1 : 0;
+            dynamic_cast<sf::Text *>(modDrawables.at(sceneName::MENU)[menuButtons[actualButton]].get())->setFillColor(sf::Color::Yellow);
+        }
     }
 }

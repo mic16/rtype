@@ -16,7 +16,8 @@ window(std::make_unique<sf::RenderWindow>(
     sf::Style::Close | sf::Style::Titlebar)
 ),
 displayThread(std::make_unique<std::thread>(&GameMenu::handleDisplay, this)),
-buffer(1024)
+buffer(1024),
+actualButton(0)
 {
     client = std::make_unique<TCPClient>(this);
     initDrawables();

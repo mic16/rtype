@@ -24,4 +24,20 @@ void GameMenu::initModMenuDrawables()
     dynamic_cast<sf::Text *>(modDrawables.at(sceneName::MENU)["username"].get())->setFillColor(sf::Color::Yellow);
     dynamic_cast<sf::Text *>(modDrawables.at(sceneName::MENU)["username"].get())->setStyle(sf::Text::Bold);
     dynamic_cast<sf::Text *>(modDrawables.at(sceneName::MENU)["username"].get())->setPosition(sf::Vector2f(20, 15));
+
+    modDrawables.at(sceneName::MENU).insert(std::pair<std::string, std::unique_ptr<sf::Drawable>>("createRoom", std::make_unique<sf::Text>()));
+    dynamic_cast<sf::Text *>(modDrawables.at(sceneName::MENU)["createRoom"].get())->setFont(mainFont);
+    dynamic_cast<sf::Text *>(modDrawables.at(sceneName::MENU)["createRoom"].get())->setString("Create a room");
+    dynamic_cast<sf::Text *>(modDrawables.at(sceneName::MENU)["createRoom"].get())->setCharacterSize(70);
+    dynamic_cast<sf::Text *>(modDrawables.at(sceneName::MENU)["createRoom"].get())->setFillColor(sf::Color::Yellow);
+    dynamic_cast<sf::Text *>(modDrawables.at(sceneName::MENU)["createRoom"].get())->setStyle(sf::Text::Bold);
+    dynamic_cast<sf::Text *>(modDrawables.at(sceneName::MENU)["createRoom"].get())->setPosition(sf::Vector2f(500, 255));
+
+    modDrawables.at(sceneName::MENU).insert(std::pair<std::string, std::unique_ptr<sf::Drawable>>("joinRoom", std::make_unique<sf::Text>()));
+    dynamic_cast<sf::Text *>(modDrawables.at(sceneName::MENU)["joinRoom"].get())->setFont(mainFont);
+    dynamic_cast<sf::Text *>(modDrawables.at(sceneName::MENU)["joinRoom"].get())->setString("Join a room");
+    dynamic_cast<sf::Text *>(modDrawables.at(sceneName::MENU)["joinRoom"].get())->setCharacterSize(70);
+    dynamic_cast<sf::Text *>(modDrawables.at(sceneName::MENU)["joinRoom"].get())->setFillColor(sf::Color::White);
+    dynamic_cast<sf::Text *>(modDrawables.at(sceneName::MENU)["joinRoom"].get())->setStyle(sf::Text::Bold);
+    dynamic_cast<sf::Text *>(modDrawables.at(sceneName::MENU)["joinRoom"].get())->setPosition(sf::Vector2f(550, 455));
 }

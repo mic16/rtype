@@ -65,8 +65,14 @@ class GameMenu : public IGameMenu {
 
         std::unique_ptr<std::thread> displayThread;
         ByteBuffer buffer;
+        short actualButton;
 
         std::mutex scene_mutex;
+};
+
+static const std::string menuButtons[] = {
+    "createRoom",
+    "joinRoom"
 };
 
 #endif /* !GAMEMENU_HPP_ */
