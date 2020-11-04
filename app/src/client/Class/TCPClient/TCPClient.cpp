@@ -7,7 +7,7 @@
 
 #include "client/Class/TCPClient/TCPClient.hpp"
 
-TCPClient::TCPClient(IGameMenu *gameMenu): socket(ioService), m_packet(new unsigned char[1024]), menu(gameMenu)
+TCPClient::TCPClient(IGameMenu *gameMenu): socket(ioService), m_packet(new char[1024]), menu(gameMenu), buffer(1024)
 {
 }
 
@@ -25,7 +25,8 @@ void TCPClient::run()
 void TCPClient::connectTo(const boost::asio::ip::tcp::endpoint &endpoint)
 {
     this->endpoint = endpoint;
-    socket.async_connect(this->endpoint, [this](const boost::system::error_code& error){
+    socket.async_connect(this->endpoint,
+    [this](const boost::system::error_code& error){
         if (!error) {
             std::cout << "Connection succedded." << std::endl;
             this->handleData();
@@ -37,10 +38,20 @@ void TCPClient::connectTo(const boost::asio::ip::tcp::endpoint &endpoint)
 
 void TCPClient::handleData()
 {
-    boost::asio::async_read(socket, boost::asio::buffer(m_packet, 1024), [this](const boost::system::error_code& error, std::size_t bytes_transferred)
+    socket.async_read_some(boost::asio::buffer(m_packet, 1024),
+    [this](const boost::system::error_code& error, std::size_t bytes_transferred)
     {
         if (!error) {
             std::cout << "Data received : len : " << bytes_transferred << std::endl;
+            buffer.clear();
+            buffer.append(m_packet, bytes_transferred);
+            const unsigned int expectedDataLen = buffer.readUInt(nullptr);
+            if (expectedDataLen == bytes_transferred - 4) {
+                std::cout << "Data size is correct sized." << std::endl;
+                this->handleResponses();
+            } else {
+                std::cout << "Data size is not correct." << std::endl;
+            }
             this->handleData();
         } else {
             std::cout << "Connection failed." << std::endl;
@@ -50,7 +61,7 @@ void TCPClient::handleData()
 
 void TCPClient::sendData(const unsigned char *buff, const size_t buffLen)
 {
-    boost::asio::async_write(socket, boost::asio::buffer(buff, buffLen),
+    socket.async_write_some(boost::asio::buffer(buff, buffLen),
     [this](const boost::system::error_code &ec, std::size_t bytes_transferred) {
         if (!ec) {
             std::cout << "Data is wrote : " << bytes_transferred << std::endl;

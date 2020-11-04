@@ -15,6 +15,7 @@
 
 #include "client/Class/Exceptions/EConnection.hpp"
 #include "client/Interfaces/IGameMenu.hpp"
+#include "lib/ByteBuffer/ByteBuffer.hpp"
 #include "lib/request.h"
 #include "lib/response.h"
 
@@ -28,12 +29,17 @@ class TCPClient {
 
         void handleData();
         void sendData(const unsigned char *buff, const size_t buffLen);
+
+        void handleResponses();
+
+        void handleLogIn();
     private:
         boost::asio::io_service ioService;
         boost::asio::ip::tcp::socket socket;
         boost::asio::ip::tcp::endpoint endpoint;
-        unsigned char *m_packet = nullptr;
+        char *m_packet = nullptr;
         std::shared_ptr<IGameMenu> menu;
+        ByteBuffer buffer;
 };
 
 #endif /* !TCPCLIENT_HPP_ */
