@@ -19,7 +19,6 @@ class Background: public ADrawable {
         void update();
         void draw();
 
-
     protected:
     private:
         sf::RenderWindow &window;

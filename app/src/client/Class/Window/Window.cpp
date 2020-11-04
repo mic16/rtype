@@ -7,7 +7,7 @@
 
 #include "client/Class/Window/Window.hpp"
 
-Window::Window()
+Window::Window() : gameEntities()
 {
     window = std::make_shared<sf::RenderWindow>(sf::VideoMode(800, 600), "SFML window", sf::Style::Close | sf::Style::Titlebar | sf::Style::Resize);
     player = std::make_shared<Player>();
@@ -100,6 +100,7 @@ void Window::checkKeyPressed(sf::Keyboard::Key key)
 void Window::draw()
 {
     window.get()->clear(sf::Color(150, 150, 150));
-    window.get()->draw(player->getPlayerShape()[0]);
+    // window.get()->draw(player->getPlayerShape()[0]);
+    gameEntities.draw(window);
     window.get()->display();
 }

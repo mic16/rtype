@@ -12,6 +12,7 @@
 #include "lib/Utility.hpp"
 
 #include "client/Class/Player/Player.hpp"
+#include "client/Class/GameEntities/GameEntities.hpp"
 
 class Window {
     public:
@@ -35,6 +36,7 @@ class Window {
         std::shared_ptr<sf::RenderWindow> window;
         std::shared_ptr<Player> player;
         bool isDirectionMaintained[4];
+        GameEntities gameEntities;
 };
 
 #endif /* !WINDOW_HPP_ */
