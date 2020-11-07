@@ -17,7 +17,7 @@ window(std::make_unique<sf::RenderWindow>(
 ),
 displayThread(std::make_unique<std::thread>(&GameMenu::handleDisplay, this)),
 buffer(1024),
-actualButton(menuButton::CREATE)
+actualButton(menuButton::B_CREATE)
 {
     client = std::make_unique<TCPClient>(this);
     initDrawables();

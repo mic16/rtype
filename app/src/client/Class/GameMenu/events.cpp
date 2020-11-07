@@ -35,6 +35,13 @@ void GameMenu::handleTextEntered()
                 username += charTyped;
             dynamic_cast<sf::Text *>(modDrawables.at(sceneName::LOGIN)["usernameInput"].get())->setString(username);
             dynamic_cast<sf::Text *>(modDrawables.at(sceneName::MENU)["username"].get())->setString(username);
+        } else if (getScene() == sceneName::CREATE || getScene() == sceneName::JOIN) {
+            if (roomname == "...") {
+                roomname = "";
+            }
+            if (roomname.length() < 16)
+                roomname += charTyped;
+            dynamic_cast<sf::Text *>(modDrawables.at(getScene())["roomnameInput"].get())->setString(roomname);
         }
     }
 }
@@ -48,18 +55,30 @@ void GameMenu::handleKeyReleased()
                 dynamic_cast<sf::Text *>(modDrawables.at(sceneName::LOGIN)["usernameInput"].get())->setString(username);
                 dynamic_cast<sf::Text *>(modDrawables.at(sceneName::MENU)["username"].get())->setString(username);
             }
+        } else if (getScene() == sceneName::CREATE || getScene() == sceneName::JOIN) {
+            if (roomname.length() > 0) {
+                roomname.erase(roomname.size() - 1, 1);
+                dynamic_cast<sf::Text *>(modDrawables.at(getScene())["roomnameInput"].get())->setString(roomname);
+            }
         }
     } else if (event.key.code == sf::Keyboard::Enter || event.key.code == sf::Keyboard::Space) {
         if (getScene() == sceneName::LOGIN) {
-            if (isUsernameValid()) {
+            if (isNameValid(username)) {
                 tryLogIn();
             }
         } else if (getScene() == sceneName::MENU) {
+            if (actualButton == menuButton::B_CREATE) {
+                setScene(sceneName::CREATE);
+            } else if (actualButton == menuButton::B_JOIN) {
+                setScene(sceneName::JOIN);
+            }
+        } else if (getScene() == sceneName::CREATE) {
+        } else if (getScene() == sceneName::JOIN) {
         }
     } else if (event.key.code == sf::Keyboard::Down || event.key.code == sf::Keyboard::Up) {
         if (getScene() == sceneName::MENU) {
             dynamic_cast<sf::Text *>(modDrawables.at(sceneName::MENU)[menuButtons[actualButton]].get())->setFillColor(sf::Color::White);
-            actualButton = actualButton == menuButton::CREATE ? menuButton::JOIN : menuButton::CREATE;
+            actualButton = actualButton == menuButton::B_CREATE ? menuButton::B_JOIN : menuButton::B_CREATE;
             dynamic_cast<sf::Text *>(modDrawables.at(sceneName::MENU)[menuButtons[actualButton]].get())->setFillColor(sf::Color::Yellow);
         }
     }

@@ -32,7 +32,7 @@ class GameMenu : public IGameMenu {
         void draw();
         bool isOpen();
 
-        bool isUsernameValid();
+        bool isNameValid(const std::string &name);
 
         void handleEvents();
         void handleTextEntered();
@@ -52,9 +52,16 @@ class GameMenu : public IGameMenu {
         void initFixedMenuDrawables();
         void initModMenuDrawables();
 
+        void initFixedCreateDrawables();
+        void initModCreateDrawables();
+
+        void initFixedJoinDrawables();
+        void initModJoinDrawables();
+
         sceneName scene;
         std::unique_ptr<TCPClient> client;
         std::string username;
+        std::string roomname;
 
         ResourceLoader loadedTextures;
         std::map<sceneName, std::vector<std::unique_ptr<sf::Drawable>>> fixedDrawables;

@@ -7,11 +7,11 @@
 
 #include "client/Class/GameMenu/GameMenu.hpp"
 
-bool GameMenu::isUsernameValid()
+bool GameMenu::isNameValid(const std::string &name)
 {
-    if (username.length() < 3) return (false);
-    for (size_t i = 0; i < username.length(); i++) {
-        if (!std::isalnum(username[i]))
+    if (name.length() < 3) return (false);
+    for (size_t i = 0; i < name.length(); i++) {
+        if (!std::isalnum(name[i]))
             return (false);
     }
     return (true);

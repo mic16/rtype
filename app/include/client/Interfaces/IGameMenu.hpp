@@ -8,9 +8,9 @@
 #ifndef IGAMEMENU_HPP_
 #define IGAMEMENU_HPP_
 
-enum sceneName { LOGIN, MENU, SEARCH, WAITING_ROOM };
+enum sceneName { LOGIN, MENU, CREATE, JOIN, WAITING_ROOM };
 
-enum menuButton { CREATE = 0, JOIN };
+enum menuButton { B_CREATE, B_JOIN };
 
 class IGameMenu {
     public:
@@ -19,7 +19,7 @@ class IGameMenu {
         virtual void draw() = 0;
         virtual bool isOpen() = 0;
 
-        virtual bool isUsernameValid() = 0;
+        virtual bool isNameValid(const std::string &name) = 0;
 
         virtual void handleEvents() = 0;
         virtual void handleTextEntered() = 0;
