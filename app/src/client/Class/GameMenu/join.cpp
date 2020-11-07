@@ -7,6 +7,18 @@
 
 #include "client/Class/GameMenu/GameMenu.hpp"
 
+void GameMenu::tryJoinRoom()
+{
+    buffer.clear();
+
+    buffer.writeUInt(sizeof(int) + sizeof(unsigned int) + roomname.length() + 1);
+    buffer.writeInt(req::Type::JoinRoom);
+    buffer.writeCharBuffer(roomname.c_str());
+
+    std::cout << "TryJoinRoom: sending " << buffer.getSize() << " bytes." << std::endl;
+    client->sendData(buffer.flush(), buffer.getSize());
+}
+
 void GameMenu::initFixedJoinDrawables()
 {
     fixedDrawables.at(sceneName::JOIN).push_back(std::make_unique<sf::Sprite>());

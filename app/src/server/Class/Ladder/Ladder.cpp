@@ -31,7 +31,8 @@ unsigned int Ladder::getId() const
 
 void Ladder::join(const unsigned int player_id)
 {
-    players.push_back(player_id);
+    if (getNbPlayers() < getMaxPlayers())
+        players.push_back(player_id);
 }
 
 const std::vector<unsigned int> &Ladder::getPlayers()

@@ -27,6 +27,8 @@ class IGameMenu {
 
         virtual void handleDisplay() = 0;
         virtual void tryLogIn() = 0;
+        virtual void tryCreateRoom() = 0;
+        virtual void tryJoinRoom() = 0;
 
         virtual const sceneName getScene() = 0;
         virtual void setScene(const sceneName sc_name) = 0;

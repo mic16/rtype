@@ -10,7 +10,9 @@
 
 namespace res {
     enum Type {
-        LogIn
+        LogIn,
+        CreateRoom,
+        JoinRoom
     };
 };
 

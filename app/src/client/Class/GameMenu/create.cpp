@@ -7,6 +7,18 @@
 
 #include "client/Class/GameMenu/GameMenu.hpp"
 
+void GameMenu::tryCreateRoom()
+{
+    buffer.clear();
+
+    buffer.writeUInt(sizeof(int) + sizeof(unsigned int) + roomname.length() + 1);
+    buffer.writeInt(req::Type::CreateRoom);
+    buffer.writeCharBuffer(roomname.c_str());
+
+    std::cout << "TryCreateRoom: sending " << buffer.getSize() << " bytes." << std::endl;
+    client->sendData(buffer.flush(), buffer.getSize());
+}
+
 void GameMenu::initFixedCreateDrawables()
 {
     fixedDrawables.at(sceneName::CREATE).push_back(std::make_unique<sf::Sprite>());

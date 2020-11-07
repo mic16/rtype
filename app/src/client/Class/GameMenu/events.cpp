@@ -73,7 +73,9 @@ void GameMenu::handleKeyReleased()
                 setScene(sceneName::JOIN);
             }
         } else if (getScene() == sceneName::CREATE) {
+            tryCreateRoom();
         } else if (getScene() == sceneName::JOIN) {
+            tryJoinRoom();
         }
     } else if (event.key.code == sf::Keyboard::Down || event.key.code == sf::Keyboard::Up) {
         if (getScene() == sceneName::MENU) {
