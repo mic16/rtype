@@ -42,6 +42,7 @@ void GameMenu::handleTextEntered()
             if (roomname.length() < 16)
                 roomname += charTyped;
             dynamic_cast<sf::Text *>(modDrawables.at(getScene())["roomnameInput"].get())->setString(roomname);
+            dynamic_cast<sf::Text *>(modDrawables.at(sceneName::ROOM)["roomname"].get())->setString(roomname);
         }
     }
 }
@@ -59,6 +60,7 @@ void GameMenu::handleKeyReleased()
             if (roomname.length() > 0) {
                 roomname.erase(roomname.size() - 1, 1);
                 dynamic_cast<sf::Text *>(modDrawables.at(getScene())["roomnameInput"].get())->setString(roomname);
+                dynamic_cast<sf::Text *>(modDrawables.at(sceneName::ROOM)["roomname"].get())->setString(roomname);
             }
         }
     } else if (event.key.code == sf::Keyboard::Enter || event.key.code == sf::Keyboard::Space) {

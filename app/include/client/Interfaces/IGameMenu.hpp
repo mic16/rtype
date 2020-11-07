@@ -8,7 +8,7 @@
 #ifndef IGAMEMENU_HPP_
 #define IGAMEMENU_HPP_
 
-enum sceneName { LOGIN, MENU, CREATE, JOIN, WAITING_ROOM };
+enum sceneName { LOGIN, MENU, CREATE, JOIN, ROOM };
 
 enum menuButton { B_CREATE, B_JOIN };
 

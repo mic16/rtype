@@ -16,5 +16,5 @@ void TCPClient::handleCreateRoom()
         return;
     }
     std::cout << "CreateRoom success." << std::endl;
-    menu->setScene(sceneName::MENU);
+    menu->setScene(sceneName::ROOM);
 }

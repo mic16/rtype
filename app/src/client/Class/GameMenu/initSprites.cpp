@@ -21,6 +21,10 @@ void GameMenu::initDrawables()
     fixedDrawables.insert(std::pair<sceneName, std::vector<std::unique_ptr<sf::Drawable>>>(sceneName::JOIN, std::vector<std::unique_ptr<sf::Drawable>>()));
     modDrawables.insert(std::pair<sceneName, std::map<std::string, std::unique_ptr<sf::Drawable>>>(sceneName::JOIN, std::map<std::string, std::unique_ptr<sf::Drawable>>()));
 
+    fixedDrawables.insert(std::pair<sceneName, std::vector<std::unique_ptr<sf::Drawable>>>(sceneName::ROOM, std::vector<std::unique_ptr<sf::Drawable>>()));
+    modDrawables.insert(std::pair<sceneName, std::map<std::string, std::unique_ptr<sf::Drawable>>>(sceneName::ROOM, std::map<std::string, std::unique_ptr<sf::Drawable>>()));
+
+
     initFixedLoginDrawables();
     initModLoginDrawables();
 
@@ -32,4 +36,7 @@ void GameMenu::initDrawables()
 
     initFixedJoinDrawables();
     initModJoinDrawables();
+
+    initFixedRoomDrawables();
+    initModRoomDrawables();
 }

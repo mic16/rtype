@@ -60,6 +60,9 @@ class GameMenu : public IGameMenu {
         void initFixedJoinDrawables();
         void initModJoinDrawables();
 
+        void initFixedRoomDrawables();
+        void initModRoomDrawables();
+
         sceneName scene;
         std::unique_ptr<TCPClient> client;
         std::string username;

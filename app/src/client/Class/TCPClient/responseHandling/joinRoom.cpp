@@ -16,5 +16,5 @@ void TCPClient::handleJoinRoom()
         return;
     }
     std::cout << "JoinRoom success." << std::endl;
-    menu->setScene(sceneName::MENU);
+    menu->setScene(sceneName::ROOM);
 }

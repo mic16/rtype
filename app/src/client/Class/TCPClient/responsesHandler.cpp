@@ -14,6 +14,14 @@ void TCPClient::handleResponses()
             std::cout << "Handle LogIn response." << std::endl;
             handleLogIn();
             break;
+        case res::Type::CreateRoom:
+            std::cout << "Handle CreateRoom response." << std::endl;
+            handleCreateRoom();
+            break;
+        case res::Type::JoinRoom:
+            std::cout << "Handle JoinRoom response." << std::endl;
+            handleJoinRoom();
+            break;
         default:
             std::cout << "Unknown / Unhandled response." << std::endl;
     }

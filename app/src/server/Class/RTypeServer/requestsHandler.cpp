@@ -20,7 +20,7 @@ void RTypeServer::handleRequests(const unsigned int client_id)
             break;
         case req::Type::JoinRoom:
             std::cout << "JoinRoom request." << std::endl;
-            // responseJoinRoom(client_id);
+            responseJoinRoom(client_id);
             break;
         default:
             std::cout << "Unknown request type." << std::endl;
