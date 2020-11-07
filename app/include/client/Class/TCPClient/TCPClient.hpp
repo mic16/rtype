@@ -33,6 +33,8 @@ class TCPClient {
         void handleResponses();
 
         void handleLogIn();
+        void handleCreateRoom();
+        void handleJoinRoom();
     private:
         boost::asio::io_service ioService;
         boost::asio::ip::tcp::socket socket;
