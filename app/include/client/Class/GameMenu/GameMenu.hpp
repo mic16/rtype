@@ -65,7 +65,7 @@ class GameMenu : public IGameMenu {
 
         std::unique_ptr<std::thread> displayThread;
         ByteBuffer buffer;
-        short actualButton;
+        menuButton actualButton;
 
         std::mutex scene_mutex;
 };

@@ -10,6 +10,8 @@
 
 enum sceneName { LOGIN, MENU, SEARCH, WAITING_ROOM };
 
+enum menuButton { CREATE = 0, JOIN };
+
 class IGameMenu {
     public:
         virtual int run() = 0;

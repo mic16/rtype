@@ -50,13 +50,16 @@ void GameMenu::handleKeyReleased()
             }
         }
     } else if (event.key.code == sf::Keyboard::Enter || event.key.code == sf::Keyboard::Space) {
-        if (isUsernameValid()) {
-            tryLogIn();
+        if (getScene() == sceneName::LOGIN) {
+            if (isUsernameValid()) {
+                tryLogIn();
+            }
+        } else if (getScene() == sceneName::MENU) {
         }
     } else if (event.key.code == sf::Keyboard::Down || event.key.code == sf::Keyboard::Up) {
         if (getScene() == sceneName::MENU) {
             dynamic_cast<sf::Text *>(modDrawables.at(sceneName::MENU)[menuButtons[actualButton]].get())->setFillColor(sf::Color::White);
-            actualButton = actualButton == 0 ? 1 : 0;
+            actualButton = actualButton == menuButton::CREATE ? menuButton::JOIN : menuButton::CREATE;
             dynamic_cast<sf::Text *>(modDrawables.at(sceneName::MENU)[menuButtons[actualButton]].get())->setFillColor(sf::Color::Yellow);
         }
     }
