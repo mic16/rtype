@@ -25,4 +25,5 @@ void RTypeServer::responseJoinRoom(const unsigned int client_id)
     clients[client_id]->getBuffer().writeBool(true);
     rooms.at(roomname)->join(client_id);
     sendData(client_id);
+    responseListPlayersInRoom(roomname);
 }

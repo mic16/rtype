@@ -18,3 +18,26 @@ void TCPClient::handleCreateRoom()
     std::cout << "CreateRoom success." << std::endl;
     menu->setScene(sceneName::ROOM);
 }
+
+void TCPClient::handleListPlayersInRoom()
+{
+    int err = 0;
+    unsigned int nbPlayers = buffer.readUInt(&err);
+    for (size_t i = 0; i < nbPlayers; i++) {
+        char *username = nullptr;
+        if (i < nbPlayers) {
+            username = buffer.readCharBuffer(&err);
+            std::cout << username << " is in the lobby." << std::endl;
+            menu->setDrawableTextStr(menu->getScene(), "users" + std::to_string(i + 1), username);
+            if (menu->getUsername() == std::string(username))
+                menu->setDrawableTextColor(menu->getScene(), "users" + std::to_string(i + 1), sf::Color::Yellow);
+        } else {
+            menu->setDrawableTextStr(menu->getScene(), "users" + std::to_string(i + 1), "Waiting for players...");
+        }
+    }
+    if (err) {
+        std::cout << "List players in room error!" << std::endl;
+        return;
+    }
+    std::cout << "ListPlayerInRoom success." << std::endl;
+}

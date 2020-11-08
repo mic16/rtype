@@ -12,7 +12,8 @@ namespace res {
     enum Type {
         LogIn,
         CreateRoom,
-        JoinRoom
+        JoinRoom,
+        listPlayersInRoom
     };
 };
 

@@ -33,16 +33,16 @@ void GameMenu::handleTextEntered()
             }
             if (username.length() < 16)
                 username += charTyped;
-            dynamic_cast<sf::Text *>(modDrawables.at(sceneName::LOGIN)["usernameInput"].get())->setString(username);
-            dynamic_cast<sf::Text *>(modDrawables.at(sceneName::MENU)["username"].get())->setString(username);
+            setDrawableTextStr(sceneName::LOGIN, "usernameInput", username);
+            setDrawableTextStr(sceneName::MENU, "username", username);
         } else if (getScene() == sceneName::CREATE || getScene() == sceneName::JOIN) {
             if (roomname == "...") {
                 roomname = "";
             }
             if (roomname.length() < 16)
                 roomname += charTyped;
-            dynamic_cast<sf::Text *>(modDrawables.at(getScene())["roomnameInput"].get())->setString(roomname);
-            dynamic_cast<sf::Text *>(modDrawables.at(sceneName::ROOM)["roomname"].get())->setString(roomname);
+            setDrawableTextStr(getScene(), "roomnameInput", roomname);
+            setDrawableTextStr(sceneName::ROOM, "roomname", roomname);
         }
     }
 }
@@ -53,14 +53,14 @@ void GameMenu::handleKeyReleased()
         if (getScene() == sceneName::LOGIN) {
             if (username.length() > 0) {
                 username.erase(username.size() - 1, 1);
-                dynamic_cast<sf::Text *>(modDrawables.at(sceneName::LOGIN)["usernameInput"].get())->setString(username);
-                dynamic_cast<sf::Text *>(modDrawables.at(sceneName::MENU)["username"].get())->setString(username);
+                setDrawableTextStr(sceneName::LOGIN, "usernameInput", username);
+                setDrawableTextStr(sceneName::MENU, "username", username);
             }
         } else if (getScene() == sceneName::CREATE || getScene() == sceneName::JOIN) {
             if (roomname.length() > 0) {
                 roomname.erase(roomname.size() - 1, 1);
-                dynamic_cast<sf::Text *>(modDrawables.at(getScene())["roomnameInput"].get())->setString(roomname);
-                dynamic_cast<sf::Text *>(modDrawables.at(sceneName::ROOM)["roomname"].get())->setString(roomname);
+                setDrawableTextStr(getScene(), "roomnameInput", roomname);
+                setDrawableTextStr(sceneName::ROOM, "roomname", roomname);
             }
         }
     } else if (event.key.code == sf::Keyboard::Enter || event.key.code == sf::Keyboard::Space) {

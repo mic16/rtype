@@ -69,6 +69,9 @@ bool RTypeServer::handleClient(const unsigned int client_id)
             this->handleClient(client_id);
         } else {
             disconnectClient(client_id);
+            for (std::map<std::string, std::unique_ptr<Ladder>>::iterator it = rooms.begin(); it != rooms.end(); ++it) {
+                it->second->disconnect(client_id);
+            }
         }
     });
     return (true);
@@ -87,6 +90,24 @@ bool RTypeServer::sendData(const unsigned int client_id)
             std::cout << "Data failed to be sent." << std::endl;
         }
     });
+    return (true);
+}
+
+bool RTypeServer::sendData(const ByteBuffer &buff, const std::vector<unsigned int> &clients_id)
+{
+    for (size_t i = 0; i < clients_id.size(); i++) {
+        if (!isClientConnected(clients_id[i])) break;
+        clients[clients_id[i]]->m_socket.async_write_some(
+        boost::asio::buffer(buff.flush(), buff.getSize()),
+        [this, clients_id, i](const boost::system::error_code &ec, std::size_t bytes_transferred)
+        {
+            if (!ec) {
+                std::cout << "Server send " << bytes_transferred << " bytes to " << clients[clients_id[i]]->getUsername() << '.' << std::endl;
+            } else {
+                std::cout << "Data failed to be sent." << std::endl;
+            }
+        });
+    }
     return (true);
 }
 

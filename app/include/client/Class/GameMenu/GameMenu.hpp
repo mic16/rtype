@@ -8,7 +8,6 @@
 #ifndef GAMEMENU_HPP_
 #define GAMEMENU_HPP_
 
-#include "SFML/Graphics.hpp"
 #include <memory>
 #include <thread>
 #include <mutex>
@@ -33,6 +32,7 @@ class GameMenu : public IGameMenu {
         bool isOpen();
 
         bool isNameValid(const std::string &name);
+        const std::string &getUsername();
 
         void handleEvents();
         void handleTextEntered();
@@ -45,6 +45,9 @@ class GameMenu : public IGameMenu {
 
         const sceneName getScene();
         void setScene(const sceneName sc_name);
+        const std::unique_ptr<sf::Drawable> &getDrawable(sceneName scene, const std::string &key);
+        void setDrawableTextStr(sceneName scene, const std::string &key, const std::string &text);
+        void setDrawableTextColor(sceneName scene, const std::string &key, const sf::Color &color);
     private:
         void initDrawables();
 
@@ -81,6 +84,7 @@ class GameMenu : public IGameMenu {
         menuButton actualButton;
 
         std::mutex scene_mutex;
+        std::mutex drawables_mutex;
 };
 
 static const std::string menuButtons[] = {

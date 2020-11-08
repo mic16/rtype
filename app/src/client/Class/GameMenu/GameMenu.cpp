@@ -43,14 +43,16 @@ int GameMenu::run()
 
 void GameMenu::draw()
 {
-    const std::vector<std::unique_ptr<sf::Drawable>> &sprites = fixedDrawables.at(scene);
-    std::map<std::string, std::unique_ptr<sf::Drawable>> &spritesMod = modDrawables.at(scene);
+    const std::vector<std::unique_ptr<sf::Drawable>> &sprites = fixedDrawables.at(getScene());
+    std::map<std::string, std::unique_ptr<sf::Drawable>> &spritesMod = modDrawables.at(getScene());
 
     window->clear(sf::Color::White);
     for (size_t i = 0; i < sprites.size(); i++)
         window->draw(*sprites[i]);
-    for (std::map<std::string, std::unique_ptr<sf::Drawable>>::iterator it = spritesMod.begin(); it != spritesMod.end(); ++it)
-        window->draw(*(it->second));
+    for (std::map<std::string, std::unique_ptr<sf::Drawable>>::iterator it = spritesMod.begin(); it != spritesMod.end(); ++it) {
+        if (modDrawables.at(scene).find(it->first) != modDrawables.at(scene).end())
+            window->draw(*(getDrawable(getScene(), it->first)));
+    }
     window->display();
 }
 
@@ -77,4 +79,22 @@ void GameMenu::setScene(const sceneName sc_name)
 {
     const std::lock_guard<std::mutex> lock(scene_mutex);
     scene = sc_name;
+}
+
+const std::unique_ptr<sf::Drawable> &GameMenu::getDrawable(sceneName scene, const std::string &key)
+{
+    const std::lock_guard<std::mutex> lock(drawables_mutex);
+    return (modDrawables.at(scene)[key]);
+}
+
+void GameMenu::setDrawableTextStr(sceneName scene, const std::string &key, const std::string &text)
+{
+    const std::lock_guard<std::mutex> lock(drawables_mutex);
+    dynamic_cast<sf::Text *>(modDrawables.at(scene)[key].get())->setString(text);
+}
+
+void GameMenu::setDrawableTextColor(sceneName scene, const std::string &key, const sf::Color &color)
+{
+    const std::lock_guard<std::mutex> lock(drawables_mutex);
+    dynamic_cast<sf::Text *>(modDrawables.at(scene)[key].get())->setFillColor(color);
 }

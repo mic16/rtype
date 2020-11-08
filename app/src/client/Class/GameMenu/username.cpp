@@ -16,3 +16,8 @@ bool GameMenu::isNameValid(const std::string &name)
     }
     return (true);
 }
+
+const std::string &GameMenu::getUsername()
+{
+    return (username);
+}

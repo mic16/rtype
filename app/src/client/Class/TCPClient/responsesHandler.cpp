@@ -22,6 +22,10 @@ void TCPClient::handleResponses()
             std::cout << "Handle JoinRoom response." << std::endl;
             handleJoinRoom();
             break;
+        case res::Type::listPlayersInRoom:
+            std::cout << "Handler listing players response." << std::endl;
+            handleListPlayersInRoom();
+            break;
         default:
             std::cout << "Unknown / Unhandled response." << std::endl;
     }

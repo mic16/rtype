@@ -27,6 +27,7 @@ class RTypeServer : public TCPServer {
         bool isRoomNameExists(const std::string &roomname);
         bool disconnectClient(const unsigned int client_id);
         bool sendData(const unsigned int client_id);
+        bool sendData(const ByteBuffer &buff, const std::vector<unsigned int> &clients_id);
 
         const std::map<unsigned int, std::unique_ptr<TCPClient>> &getClients() const;
 
@@ -38,6 +39,7 @@ class RTypeServer : public TCPServer {
         void responseLogin(const unsigned int client_id);
         void responseCreateRoom(const unsigned int client_id);
         void responseJoinRoom(const unsigned int client_id);
+        void responseListPlayersInRoom(const std::string &roomname);
     private:
         std::map<unsigned int, std::unique_ptr<TCPClient>> clients;
         std::map<std::string, std::unique_ptr<Ladder>> rooms;
