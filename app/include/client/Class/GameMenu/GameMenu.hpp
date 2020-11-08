@@ -67,6 +67,7 @@ class GameMenu : public IGameMenu {
         std::unique_ptr<TCPClient> client;
         std::string username;
         std::string roomname;
+        std::string users[4];
 
         ResourceLoader loadedTextures;
         std::map<sceneName, std::vector<std::unique_ptr<sf::Drawable>>> fixedDrawables;
