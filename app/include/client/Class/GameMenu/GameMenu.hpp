@@ -48,6 +48,7 @@ class GameMenu : public IGameMenu {
         const std::unique_ptr<sf::Drawable> &getDrawable(sceneName scene, const std::string &key);
         void setDrawableTextStr(sceneName scene, const std::string &key, const std::string &text);
         void setDrawableTextColor(sceneName scene, const std::string &key, const sf::Color &color);
+        void setDrawableSpriteTexture(sceneName scene, const std::string &key, const std::string &texture);
     private:
         void initDrawables();
 
