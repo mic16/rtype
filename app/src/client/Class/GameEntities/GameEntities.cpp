@@ -8,19 +8,27 @@
 #include "client/Class/GameEntities/GameEntities.hpp"
 #include <boost/algorithm/string.hpp>
 
-GameEntities::GameEntities()
+GameEntities::GameEntities(std::shared_ptr<sf::RenderWindow> window)
 {
+    this->window = window;
+    for (int i = 0; i != 4 ; i++)
+        isDirectionMaintained[i] = false;
     loadResources("app/assets/resources.txt");
 }
 
 void GameEntities::init()
 {
+
+    ecs.newEntityModel<Position, Animation, Drawable>("Player")
+        .addTags({ "Friendly", "EntityLiving", "PlayerControlled", "AnimatedPlayer" })
+        .finish();
+
     ecs.newEntityModel<Position, Velocity, Drawable>("Background")
         .addTags({"background", "drawable"})
         .finish();
 
     ecs.getEntityGenerator("Background")
-        .instanciate(1, Position{0, 0}, Velocity{ -1, 0, 1}, resources[0]);
+        .instanciate(1, Position{0, 0}, Velocity{ -1, 0, 0.3}, resources[1]);
     
     ecs.newSystem<Position, Velocity, Drawable>("back_scroll")
         .withTags({ "background" })
@@ -30,43 +38,104 @@ void GameEntities::init()
                 Velocity* velocity = entity.getComponent<Velocity>(1);
                 Drawable* drawable = entity.getComponent<Drawable>(2);
 
-                position->x += velocity->vx * velocity->speed;
-                position->y += velocity->vy * velocity->speed;
-                if (position->x == 1226)
+                position->x += velocity->vx * velocity->speed * delta;
+                position->y += velocity->vy * velocity->speed * delta;
+                if (position->x <= -1226)
                     position->x = 0;
                 drawable->sprite->setPosition(position->x, position->y);
                 entity.next();
             }
         }).finish();
 
-                std::cout << "draw" << std::endl;
-    ecs.newSystem<Position, Velocity, Drawable>("draw_back")
-        .withTags({ "background" })
-        .each([this](float delta, EntityIterator<Position, Velocity, Drawable> &entity) {
-            while (entity.hasNext()) {
-                Drawable* drawable = entity.getComponent<Drawable>(2);
-                
-                if (drawable->visible == true)
-                    this->getWindow()->draw(*drawable->sprite);
-                
-                entity.next();
-            }
-    }).finish();
+    ecs.newSystem<Position, Animation, Drawable>("Movement")
+        .withTags({ "PlayerControlled" })
+        .each([this](float delta, EntityIterator<Position, Animation, Drawable> &entity) {
+                while (entity.hasNext()) {
+                    entity.next();
 
-    ecs.newSystem<Position, Velocity, Drawable>("draw_front")
-        .withoutTags( { "background" })
-        .each([this](float delta, EntityIterator<Position, Velocity, Drawable> &entity) {
+                    Position* position = entity.getComponent<Position>(0);
+                    Animation* animation = entity.getComponent<Animation>(1);
+                    Drawable* drawable = entity.getComponent<Drawable>(2);
+
+                    if (isDirectionMaintained[DIRECTION::UP])
+                        position->y -= 100 * delta;
+                    if (isDirectionMaintained[DIRECTION::DOWN])
+                        position->y += 100 * delta;
+                    if (isDirectionMaintained[DIRECTION::LEFT])
+                        position->x -= 100 * delta;
+                    if (isDirectionMaintained[DIRECTION::RIGHT]) {
+                        position->x += 100 * delta;
+                    }
+                    
+                    drawable->sprite->setPosition(position->x, position->y);
+                }
+            })
+        .finish();
+
+        ecs.newSystem<Animation, Drawable>("AnimatePlayer")
+        .withTags({ "AnimatedPlayer" })
+        .each([this](float delta, EntityIterator<Animation, Drawable> &entity){
+                while (entity.hasNext()) {
+                    entity.next();
+
+                    Animation *animation = entity.getComponent<Animation>(0);
+                    Drawable *drawable = entity.getComponent<Drawable>(1);
+
+                    animation->currentImage.y = row;
+                    animation->totalTime += deltaTime;
+                    if (animation->totalTime >= animation->switchTime) {
+                        animation->totalTime -= animation->switchTime;
+                        if (isDirectionMaintained[DIRECTION::UP])
+                            animation->currentImage.x++;
+                        else if (isDirectionMaintained[DIRECTION::DOWN])
+                            animation->currentImage.x--;
+                        if (animation->currentImage.x >= animation->imageCount.x) {
+                            animation->currentImage.x--;
+                        } else if (animation->currentImage.x <= 0) {
+                            animation->currentImage.x++;
+                        }
+                    }
+                    animation->uvRect.left = animation->currentImage.x * animation->uvRect.width;
+                    animation->uvRect.top = animation->currentImage.y * animation->uvRect.height;
+                    drawable->sprite->setTextureRect(animation->uvRect);
+                }
+            })
+        .finish();
+
+        ecs.newSystem<Drawable>("Draw_background")
+        .withTags({ "background" })
+        .each([this](float delta, EntityIterator<Drawable> &entity) {
             while (entity.hasNext()) {
-                Drawable* drawable = entity.getComponent<Drawable>(2);
-                
-                if (drawable->visible == true)
-                    this->getWindow()->draw(*drawable->sprite);
-                
                 entity.next();
+
+                Drawable *drawable = entity.getComponent<Drawable>(0);
+                this->window->draw(*drawable->sprite);
             }
-    }).finish();
+        })
+        .finish();
+
+        ecs.newSystem<Drawable>("Draw")
+        .withTags({ "Friendly" })
+        .withoutTags({"background"})
+        .each([this](float delta, EntityIterator<Drawable> &entity) {
+            while (entity.hasNext()) {
+                entity.next();
+
+                Drawable *drawable = entity.getComponent<Drawable>(0);
+                this->window->draw(*drawable->sprite);
+            }
+        })
+        .finish();
 
     ecs.compile();
+
+    auto playerGenerator = ecs.getEntityGenerator("Player");
+    playerGenerator.reserve(1);
+    playerGenerator
+        .instanciate(1, Position{ 200, 200 },
+        Animation{sf::Vector2u(5, 5), sf::Vector2i(2, 0), 0, 0.05f,
+        sf::IntRect(0, 0, resources[0].sprite->getTexture()->getSize().x / 5.0f, resources[0].sprite->getTexture()->getSize().y / 5.0f),
+        false}, resources[0]);
 }
 
 GameEntities::~GameEntities()
@@ -89,7 +158,7 @@ void GameEntities::loadResources(std::string filename)
         texture.loadFromFile(words[0]);
         sprite.setTexture(texture);
 
-        if (words.size() >= 3)
+        // if (words.size() >= 3)
             sprite.setScale(std::stoi(words[1]), std::stoi(words[2]));
 
         res.texture = std::make_shared<sf::Texture>(texture);
@@ -99,7 +168,11 @@ void GameEntities::loadResources(std::string filename)
     }
 }
 
-void GameEntities::update()
+void GameEntities::update(bool *isDirectionMaintained, float deltaTime, std::shared_ptr<sf::RenderWindow> window)
 {
-    ecs.update(1.f);
+    for (int i = 0; i != 4; i++)
+        this->isDirectionMaintained[i] = isDirectionMaintained[i];
+    this->deltaTime = deltaTime;
+    this->window = window;
+    ecs.update(deltaTime);
 }

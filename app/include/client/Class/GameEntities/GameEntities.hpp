@@ -32,23 +32,59 @@ struct Drawable {
     std::shared_ptr<sf::Sprite> sprite;
 };
 
+struct Status {
+    bool isAlive;
+    size_t hp;
+    size_t maxhp;
+};
+
+struct ProjectileStats {
+    size_t damage;
+    uint8_t type;
+};
+
+struct Hitbox {
+    size_t x;
+    size_t y;
+    size_t w;
+    size_t h;
+};
+
+struct Animation {
+    sf::Vector2u imageCount;
+    sf::Vector2i currentImage;
+    float totalTime = 0;
+    float switchTime;
+    sf::IntRect uvRect;
+    bool reverse = false;
+};
+
 class GameEntities {
     public:
-        GameEntities();
+        GameEntities(std::shared_ptr<sf::RenderWindow> window);
         ~GameEntities();
         void init();
-        void update();
-        void setWindow(std::shared_ptr<sf::RenderWindow> window) { this->window = window; };
         std::shared_ptr<sf::RenderWindow> getWindow() { return window; };
         ECS getEcs() { return ecs; };
+
+        void update(bool *isDirectionMaintained, float deltaTime, std::shared_ptr<sf::RenderWindow> window);
+
+        enum DIRECTION {
+            UP,
+            DOWN,
+            LEFT,
+            RIGHT
+        };
 
     protected:
     private:
         void loadResources(std::string filename);
-    
         std::shared_ptr<sf::RenderWindow> window;
         std::vector<Drawable> resources;
         ECS ecs;
+        bool isDirectionMaintained[4];
+        int row = 0;
+        float deltaTime = 0.0f;
 };
 
 #endif /* !GAMEENTITIES_HPP_ */

@@ -11,7 +11,6 @@
 #include "lib/SFML.hpp"
 #include "lib/Utility.hpp"
 
-#include "client/Class/Player/Player.hpp"
 #include "client/Class/GameEntities/GameEntities.hpp"
 
 class Window {
@@ -20,10 +19,8 @@ class Window {
         ~Window();
 
         void openWindow();
-        void draw();
         void checkKeyPressed(sf::Keyboard::Key key);
         void checkKeyReleased(sf::Keyboard::Key key);
-        void updatePlayerPosition();
 
         enum DIRECTION {
             UP,
@@ -34,7 +31,6 @@ class Window {
 
     private:
         std::shared_ptr<sf::RenderWindow> window;
-        std::shared_ptr<Player> player;
         bool isDirectionMaintained[4];
         GameEntities gameEntities;
 };

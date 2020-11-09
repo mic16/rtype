@@ -7,15 +7,13 @@
 
 #include "client/Class/Window/Window.hpp"
 
-Window::Window() : gameEntities()
+Window::Window() : gameEntities(window)
 {
     window = std::make_shared<sf::RenderWindow>(sf::VideoMode(800, 600), "SFML window", sf::Style::Close | sf::Style::Titlebar | sf::Style::Resize);
-    player = std::make_shared<Player>();
     for (int i = 0; i != 4 ; i++)
         isDirectionMaintained[i] = false;
-    openWindow();
-    gameEntities.setWindow(this->window);
     gameEntities.init();
+    openWindow();
 }
 
 Window::~Window()
@@ -40,23 +38,10 @@ void Window::openWindow()
                 checkKeyReleased(event.key.code);
                     
         }
-        updatePlayerPosition();
-        player->getPlayerAnimation()->update(0, deltaTime, isDirectionMaintained[DIRECTION::UP], isDirectionMaintained[DIRECTION::DOWN]);
-        player->getPlayerShape()->setTextureRect(player->getPlayerAnimation()->getUvRect());
-        draw();
+        window->clear();
+        gameEntities.update(isDirectionMaintained, deltaTime, window);
+        window->display();
     }
-}
-
-void Window::updatePlayerPosition()
-{
-    if (isDirectionMaintained[DIRECTION::UP])
-        player.get()->setPosition(0, -0.1);
-    if (isDirectionMaintained[DIRECTION::DOWN])
-        player.get()->setPosition(0, 0.1);
-    if (isDirectionMaintained[DIRECTION::LEFT])
-        player.get()->setPosition(-0.1, 0);
-    if (isDirectionMaintained[DIRECTION::RIGHT])
-        player.get()->setPosition(0.1, 0);
 }
 
 void Window::checkKeyReleased(sf::Keyboard::Key key)
@@ -97,14 +82,4 @@ void Window::checkKeyPressed(sf::Keyboard::Key key)
         default:
             break;
     }
-}
-
-void Window::draw()
-{
-
-    window.get()->clear(sf::Color(150, 150, 150));
-    // window.get()->draw(player->getPlayerShape()[0]);
-
-    gameEntities.update();
-    window.get()->display();
 }
