@@ -12,7 +12,8 @@ namespace req {
     enum Type {
         LogIn,
         CreateRoom,
-        JoinRoom
+        JoinRoom,
+        ChangeUserStatus
     };
 };
 

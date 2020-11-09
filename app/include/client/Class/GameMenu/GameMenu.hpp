@@ -42,6 +42,7 @@ class GameMenu : public IGameMenu {
         void tryLogIn();
         void tryCreateRoom();
         void tryJoinRoom();
+        void tryChangeUserStatus();
 
         const sceneName getScene();
         void setScene(const sceneName sc_name);

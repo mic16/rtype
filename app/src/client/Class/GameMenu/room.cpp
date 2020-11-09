@@ -7,6 +7,18 @@
 
 #include "client/Class/GameMenu/GameMenu.hpp"
 
+void GameMenu::tryChangeUserStatus()
+{
+    buffer.clear();
+
+    buffer.writeUInt(sizeof(int) + sizeof(unsigned int) + roomname.length() + 1);
+    buffer.writeInt(req::Type::ChangeUserStatus);
+    buffer.writeCharBuffer(roomname.c_str());
+
+    std::cout << "TryChangeUserStatus: sending " << buffer.getSize() << " bytes." << std::endl;
+    client->sendData(buffer.flush(), buffer.getSize());
+}
+
 void GameMenu::initFixedRoomDrawables()
 {
     fixedDrawables.at(sceneName::ROOM).push_back(std::make_unique<sf::Sprite>());
