@@ -1,1 +1,1 @@
-app/assets/images/backgrounds/background_space.png
+app/assets/images/backgrounds/background_space.png 4 4

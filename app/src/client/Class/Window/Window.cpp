@@ -14,6 +14,8 @@ Window::Window() : gameEntities()
     for (int i = 0; i != 4 ; i++)
         isDirectionMaintained[i] = false;
     openWindow();
+    gameEntities.setWindow(this->window);
+    gameEntities.init();
 }
 
 Window::~Window()
@@ -99,8 +101,10 @@ void Window::checkKeyPressed(sf::Keyboard::Key key)
 
 void Window::draw()
 {
+
     window.get()->clear(sf::Color(150, 150, 150));
     // window.get()->draw(player->getPlayerShape()[0]);
-    gameEntities.draw(window);
+
+    gameEntities.update();
     window.get()->display();
 }

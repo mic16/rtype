@@ -16,8 +16,8 @@
 #include <string>
 
 struct Position {
-    short x;
-    short y;
+    float x;
+    float y;
 };
 
 struct Velocity {
@@ -36,14 +36,17 @@ class GameEntities {
     public:
         GameEntities();
         ~GameEntities();
+        void init();
         void update();
-        void draw(std::shared_ptr<sf::RenderWindow> window);
-        ECS getEcs() {return ecs;};
+        void setWindow(std::shared_ptr<sf::RenderWindow> window) { this->window = window; };
+        std::shared_ptr<sf::RenderWindow> getWindow() { return window; };
+        ECS getEcs() { return ecs; };
 
     protected:
     private:
         void loadResources(std::string filename);
-
+    
+        std::shared_ptr<sf::RenderWindow> window;
         std::vector<Drawable> resources;
         ECS ecs;
 };

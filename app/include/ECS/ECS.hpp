@@ -623,7 +623,7 @@ private:
             SystemBuilder<Args...> &withTags(std::initializer_list<const std::string> tags) {
                 if (finished)
                     return *this;
-                for (std::string &elem : tags) {
+                for (const std::string &elem : tags) {
                     system->tags.push_back(std::hash<std::string>()(elem));
                 }
                 return *this;
@@ -632,7 +632,7 @@ private:
             SystemBuilder<Args...> &withoutTags(std::initializer_list<const std::string> tags) {
                 if (finished)
                     return *this;
-                for (std::string &elem : tags) {
+                for (const std::string &elem : tags) {
                     system->rejectTags.push_back(std::hash<std::string>()(elem));
                 }
                 return *this;
