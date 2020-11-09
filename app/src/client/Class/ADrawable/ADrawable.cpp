@@ -12,3 +12,26 @@ void ADrawable::setPosition(short x, short y)
     this->x = x;
     this->y = y;
 }
+
+void ADrawable::setPosition(sf::Vector2<short> position)
+{
+    x = position.x;
+    y = position.y;
+}
+
+sf::Vector2<short> ADrawable::getPosition()
+{
+    sf::Vector2<short> position(x, y);
+
+    return position;
+}
+
+void ADrawable::setVisibility(bool visibility)
+{
+    this->visibility = visibility;
+}
+
+bool ADrawable::getVisibility()
+{
+    return visibility;
+}

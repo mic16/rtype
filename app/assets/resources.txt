@@ -1,0 +1,1 @@
+app/assets/sprites/r-typesheet42.png

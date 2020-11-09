@@ -5,14 +5,11 @@
 ** main
 */
 
-#include "client/Class/Client/Client.hpp"
-#include "client/Class/GameWindow/GameWindow.hpp"
+#include "client/Class/Window/Window.hpp"
 
 int main(int argc, char **argv)
 {
-    Client client;
-    GameWindow gameWindow;
+    Window window;
 
-    client.run();
     return 0;
 }

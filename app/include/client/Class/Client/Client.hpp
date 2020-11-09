@@ -19,10 +19,16 @@ class Client {
 
         bool isRunning() const;
 
-        void run();
+        void run(std::string ip);
+        void run(std::string ip, int port);
         void connectTo(const boost::asio::ip::tcp::endpoint &endpoint);
         void handleData();
+        void readData();
+        void writeData(std::string data);
+
     private:
+        std::string ip;
+        int port;
         bool running;
         boost::asio::io_service ioService;
         boost::asio::ip::tcp::socket socket;
