@@ -43,6 +43,7 @@ class GameMenu : public IGameMenu {
         void tryCreateRoom();
         void tryJoinRoom();
         void tryChangeUserStatus();
+        void tryStartGame();
 
         const sceneName getScene();
         void setScene(const sceneName sc_name);
@@ -67,6 +68,9 @@ class GameMenu : public IGameMenu {
 
         void initFixedRoomDrawables();
         void initModRoomDrawables();
+
+        void initFixedGameDrawables();
+        void initModGameDrawables();
 
         sceneName scene;
         std::unique_ptr<TCPClient> client;

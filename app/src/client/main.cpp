@@ -11,10 +11,10 @@
 
 int main(int argc, char **argv)
 {
-    Window window;
+    // Window window;
 
-    return 0;
-    // GameMenu menu;
+    // return 0;
+    GameMenu menu;
 
-    // return menu.run();
+    return menu.run();
 }

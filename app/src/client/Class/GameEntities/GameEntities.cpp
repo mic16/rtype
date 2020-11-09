@@ -18,7 +18,6 @@ GameEntities::GameEntities(std::shared_ptr<sf::RenderWindow> window)
 
 void GameEntities::init()
 {
-
     ecs.newEntityModel<Position, Animation, Drawable>("Player")
         .addTags({ "Friendly", "EntityLiving", "PlayerControlled", "AnimatedPlayer" })
         .finish();
@@ -29,7 +28,7 @@ void GameEntities::init()
 
     ecs.getEntityGenerator("Background")
         .instanciate(1, Position{0, 0}, Velocity{ -1, 0, 0.3}, resources[1]);
-    
+
     ecs.newSystem<Position, Velocity, Drawable>("back_scroll")
         .withTags({ "background" })
         .each([](float delta, EntityIterator<Position, Velocity, Drawable> &entity) {

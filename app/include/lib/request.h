@@ -13,7 +13,8 @@ namespace req {
         LogIn,
         CreateRoom,
         JoinRoom,
-        ChangeUserStatus
+        ChangeUserStatus,
+        StartGame
     };
 };
 

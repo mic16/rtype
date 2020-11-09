@@ -10,7 +10,7 @@
 
 #include "SFML/Graphics.hpp"
 
-enum sceneName { LOGIN, MENU, CREATE, JOIN, ROOM };
+enum sceneName { LOGIN, MENU, CREATE, JOIN, ROOM, GAME };
 
 enum menuButton { B_CREATE, B_JOIN };
 
