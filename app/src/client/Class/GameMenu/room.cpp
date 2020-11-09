@@ -34,6 +34,22 @@ void GameMenu::initFixedRoomDrawables()
     dynamic_cast<sf::Text *>(LAST_FIXED_SPRITE(sceneName::ROOM).get())->setStyle(sf::Text::Bold);
     dynamic_cast<sf::Text *>(LAST_FIXED_SPRITE(sceneName::ROOM).get())->setPosition(sf::Vector2f(520, 105));
 
+    fixedDrawables.at(sceneName::ROOM).push_back(std::make_unique<sf::Text>());
+    dynamic_cast<sf::Text *>(LAST_FIXED_SPRITE(sceneName::ROOM).get())->setFont(mainFont);
+    dynamic_cast<sf::Text *>(LAST_FIXED_SPRITE(sceneName::ROOM).get())->setString("Game will start when every players are ready");
+    dynamic_cast<sf::Text *>(LAST_FIXED_SPRITE(sceneName::ROOM).get())->setCharacterSize(25);
+    dynamic_cast<sf::Text *>(LAST_FIXED_SPRITE(sceneName::ROOM).get())->setFillColor(sf::Color::Green);
+    dynamic_cast<sf::Text *>(LAST_FIXED_SPRITE(sceneName::ROOM).get())->setStyle(sf::Text::Bold);
+    dynamic_cast<sf::Text *>(LAST_FIXED_SPRITE(sceneName::ROOM).get())->setPosition(sf::Vector2f(400, 630));
+
+    fixedDrawables.at(sceneName::ROOM).push_back(std::make_unique<sf::Text>());
+    dynamic_cast<sf::Text *>(LAST_FIXED_SPRITE(sceneName::ROOM).get())->setFont(mainFont);
+    dynamic_cast<sf::Text *>(LAST_FIXED_SPRITE(sceneName::ROOM).get())->setString("Press Enter when you are ready to play");
+    dynamic_cast<sf::Text *>(LAST_FIXED_SPRITE(sceneName::ROOM).get())->setCharacterSize(25);
+    dynamic_cast<sf::Text *>(LAST_FIXED_SPRITE(sceneName::ROOM).get())->setFillColor(sf::Color::White);
+    dynamic_cast<sf::Text *>(LAST_FIXED_SPRITE(sceneName::ROOM).get())->setStyle(sf::Text::Bold);
+    dynamic_cast<sf::Text *>(LAST_FIXED_SPRITE(sceneName::ROOM).get())->setPosition(sf::Vector2f(450, 750));
+
     sf::Texture texture;
     texture.create(600, 400);
     fixedDrawables.at(sceneName::ROOM).push_back(std::make_unique<sf::Sprite>());
