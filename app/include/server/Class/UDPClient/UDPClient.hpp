@@ -2,31 +2,32 @@
 ** EPITECH PROJECT, 2020
 ** B-CPP-501-MPL-5-1-rtype-antoine.maillard
 ** File description:
-** Client
+** UDPClient
 */
 
-#ifndef CLIENT_HPP_
-#define CLIENT_HPP_
+#ifndef UDPCLIENT_HPP_
+#define UDPCLIENT_HPP_
 
 #include <boost/asio.hpp>
 #include <string>
 
-class Client {
+class UDPClient {
     public:
-        Client(boost::asio::io_service &service);
-        ~Client();
+        UDPClient();
+        ~UDPClient();
 
         bool setClient(void);
 
         const std::string &getAddress() const;
         const unsigned int getPort() const;
 
-        boost::asio::ip::tcp::socket m_socket;
-    private:
+        boost::asio::ip::udp::endpoint m_endpoint;
+        unsigned char *getPacket() const;
 
+    private:
         std::string m_address;
+        unsigned char *m_packet = nullptr;
         unsigned int m_port;
-        char *m_username = nullptr;
 };
 
-#endif /* !CLIENT_HPP_ */
+#endif /* !UDPCLIENT_HPP_ */

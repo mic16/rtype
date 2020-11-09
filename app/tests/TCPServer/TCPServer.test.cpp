@@ -2,17 +2,17 @@
 ** EPITECH PROJECT, 2020
 ** B-CPP-501-MPL-5-1-rtype-antoine.maillard
 ** File description:
-** AServer.test
+** TCPServer.test
 */
 
 #include <boost/test/unit_test.hpp>
-#include "server/Class/AServer/AServer.hpp"
+#include "lib/Server/TCPServer/TCPServer.hpp"
 
-BOOST_AUTO_TEST_SUITE(TestsAServer)
+BOOST_AUTO_TEST_SUITE(TestsTCPServer)
 
 BOOST_AUTO_TEST_CASE(configuration)
 {
-  AServer *server = new AServer();
+  TCPServer *server = new TCPServer();
 
   BOOST_TEST(server->getPort() == 0);
 
