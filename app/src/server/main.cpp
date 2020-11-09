@@ -8,8 +8,8 @@
 #include "server/Class/RTypeServer/RTypeServer.hpp"
 
 int main(int ac, char *av[]) {
-    RTypeServer server;
-    // GameServer server;
+    // RTypeServer server;
+    GameServer server;
 
     server.configure(3000);
 

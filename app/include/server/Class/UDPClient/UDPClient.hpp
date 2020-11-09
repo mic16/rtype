@@ -10,6 +10,7 @@
 
 #include <boost/asio.hpp>
 #include <string>
+#include "lib/ByteBuffer/ByteBuffer.hpp"
 
 class UDPClient {
     public:
