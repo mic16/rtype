@@ -21,7 +21,7 @@ void Game::loadExtensions(std::vector<std::unique_ptr<IExtension>> &extensions) 
 }
 
 void Game::compile() {
-
+    ecs.compile();
 }
 
 void Game::update() {

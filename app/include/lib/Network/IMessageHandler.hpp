@@ -9,10 +9,13 @@
 #define IMESSAGEHANDLER_HPP_
 
 #include "lib/ByteBuffer/ByteBuffer.hpp"
+#include "INetworkClient.hpp"
+
+class NetworkHandler;
 
 class IMessageHandler {
     public:
-        virtual void processMessage(ByteBuffer &buffer) = 0;
+        virtual void processMessage(NetworkHandler &handler, INetworkClient &client, ByteBuffer &buffer) = 0;
 
     protected:
     private:

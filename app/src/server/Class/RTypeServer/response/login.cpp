@@ -10,7 +10,7 @@
 void RTypeServer::responseLogin(const unsigned int client_id)
 {
     int err = 0;
-    const char *username = clients[client_id]->getBuffer().readCharBuffer(&err);
+    const char *username = clients[client_id]->getBuffer().readCharBuffer(nullptr, &err);
 
     clients[client_id]->getBuffer().clear();
     clients[client_id]->getBuffer().writeUInt(sizeof(int) + sizeof(bool));

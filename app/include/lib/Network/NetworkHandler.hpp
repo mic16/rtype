@@ -75,7 +75,6 @@ class NetworkHandler {
             std::size_t id = packetsID[hashcode];
 
             prepend.clear();
-            prepend.writeInt(buffer.getSize()+8);
             prepend.writeUInt(id);
             prepend.writeCharBuffer(reinterpret_cast<const char *>(buffer.flush()), buffer.getSize());
             for (auto &client : clients) {
@@ -83,12 +82,35 @@ class NetworkHandler {
             }
         }
 
-        void processMessage(INetworkClient *client, ByteBuffer &message) {
+        void processMessage(INetworkClient &client) {
+            ByteBuffer &buffer = client.getBuffer();
+            int err = 0;
+            size_t packedType = buffer.readUInt(&err);
+            if (err) {
+                buffer.clear();
+                return;
+            }
+
+            size_t buffSize = buffer.readUInt(&err);
+            if (err) {
+                buffer.clear();
+                return;
+            }
+
+            if (packetHandlers.find(packedType) == packetHandlers.end()) {
+                buffer.move(buffSize);
+                return;
+            }
+
+            auto &messageHandler = packetHandlers[packedType];
+
+            messageHandler->processMessage(*this, client, buffer);
 
         }
 
     protected:
     private:
+
         ByteBuffer prepend = {1024};
         ByteBuffer buffer = {1024};
         std::vector<std::unique_ptr<INetworkClient>> clients;
