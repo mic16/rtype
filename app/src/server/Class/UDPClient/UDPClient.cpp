@@ -37,5 +37,14 @@ unsigned char *UDPClient::getPacket() const
 
 void UDPClient::write(const ByteBuffer &buffer)
 {
-    
+    acceptor->async_send_to(
+        boost::asio::buffer(buffer.flush(), buffer.getSize()),
+        m_endpoint,
+        [this](const boost::system::error_code &errc,  std::size_t bytes_transferred) {
+        if (!errc) {
+            std::cout << "Send " << bytes_transferred << " bytes." << std::endl;
+        } else {
+            std::cout << "Failed writing to client" << std::endl;
+        }
+    });
 }
