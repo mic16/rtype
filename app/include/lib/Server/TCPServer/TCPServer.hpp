@@ -22,7 +22,7 @@ class TCPServer : public IServer {
 
         bool run();
     protected:
-        boost::asio::io_service ioService;
+        boost::asio::io_context ioService;
         std::unique_ptr<boost::asio::ip::tcp::acceptor> acceptor;
         unsigned int port;
 };

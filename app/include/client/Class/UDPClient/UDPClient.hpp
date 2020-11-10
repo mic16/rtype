@@ -14,7 +14,7 @@
 
 class UDPClient {
     public:
-        UDPClient(boost::asio::io_service &io_service, const std::string &host, const std::string &port);
+        UDPClient(boost::asio::io_context &io_service, const std::string &host, const std::string &port);
         ~UDPClient();
 
         void work();
@@ -24,7 +24,7 @@ class UDPClient {
         ByteBuffer &getBuffer();
 
     private:
-        boost::asio::io_service &ioService;
+        boost::asio::io_context &ioService;
         boost::asio::ip::udp::socket socket;
         boost::asio::ip::udp::endpoint endpoint;
         char *packet = nullptr;

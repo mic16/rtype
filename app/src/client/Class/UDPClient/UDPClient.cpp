@@ -7,7 +7,7 @@
 
 #include "client/Class/UDPClient/UDPClient.hpp"
 
-UDPClient::UDPClient(boost::asio::io_service &io_service, const std::string &host, const std::string &port):
+UDPClient::UDPClient(boost::asio::io_context &io_service, const std::string &host, const std::string &port):
     ioService(io_service),
     socket(ioService, boost::asio::ip::udp::endpoint(boost::asio::ip::udp::v4(), 0)),
     buff(1024)

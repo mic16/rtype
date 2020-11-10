@@ -25,14 +25,16 @@ void Client::run(std::string ip)
 {
     std::cout << "Client Running." << std::endl;
     this->connectTo(boost::asio::ip::tcp::endpoint(boost::asio::ip::address::from_string(ip), 3000));
-    this->ioService.run();
+    boost::thread t(boost::bind(&boost::asio::io_context::run, &ioService));
+    t.join();
 }
 
 void Client::run(std::string ip, int port)
 {
     std::cout << "Client Running." << std::endl;
     this->connectTo(boost::asio::ip::tcp::endpoint(boost::asio::ip::address::from_string(ip), port));
-    this->ioService.run();
+    boost::thread t(boost::bind(&boost::asio::io_context::run, &ioService));
+    t.join();
 }
 
 void Client::connectTo(const boost::asio::ip::tcp::endpoint &endpoint)

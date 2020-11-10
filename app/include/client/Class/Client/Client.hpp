@@ -9,6 +9,8 @@
 #define CLIENT_HPP_
 
 #include <boost/asio.hpp>
+#include <boost/thread/thread.hpp>
+#include <boost/bind.hpp>
 #include <iostream>
 #include <vector>
 
@@ -30,7 +32,7 @@ class Client {
         std::string ip;
         int port;
         bool running;
-        boost::asio::io_service ioService;
+        boost::asio::io_context ioService;
         boost::asio::ip::tcp::socket socket;
         boost::asio::ip::tcp::endpoint endpoint;
         char msg[17];

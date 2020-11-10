@@ -7,7 +7,7 @@
 
 #include "server/Class/TCPClient/TCPClient.hpp"
 
-TCPClient::TCPClient(boost::asio::io_service &service): m_socket(service), buffer(1024)
+TCPClient::TCPClient(boost::asio::io_context &service): m_socket(service), buffer(1024)
 {
     m_packet = new char[1024];
 }

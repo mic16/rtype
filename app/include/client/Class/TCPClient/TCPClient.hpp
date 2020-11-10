@@ -38,7 +38,7 @@ class TCPClient {
         void handleListPlayersInRoom();
         void handleStartGame();
     private:
-        boost::asio::io_service ioService;
+        boost::asio::io_context ioService;
         boost::asio::ip::tcp::socket socket;
         boost::asio::ip::tcp::endpoint endpoint;
         char *m_packet = nullptr;

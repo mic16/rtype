@@ -17,7 +17,7 @@
 
 class TCPClient {
     public:
-        TCPClient(boost::asio::io_service &service);
+        TCPClient(boost::asio::io_context &service);
         ~TCPClient();
 
         bool setClient(void);

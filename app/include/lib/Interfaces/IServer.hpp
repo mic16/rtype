@@ -9,6 +9,9 @@
 #define ISERVER_HPP_
 
 #include <boost/asio.hpp>
+#include <boost/thread/thread.hpp>
+#include <boost/bind.hpp>
+
 #include <iostream>
 #include <memory>
 #include <string>
