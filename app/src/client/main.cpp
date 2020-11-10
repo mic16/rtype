@@ -10,10 +10,10 @@
 
 int main()
 {
-    boost::asio::io_service ioservice;
-    // GameMenu menu;
-    UDPClient menu(ioservice, "127.0.0.1", "3000");
+    // boost::asio::io_service ioservice;
+    GameMenu menu;
+    // UDPClient menu(ioservice, "127.0.0.1", "3000");
 
-    // return 
+    return 
     menu.run();
 }

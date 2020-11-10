@@ -40,4 +40,19 @@ void RTypeServer::responseChangeUserStatus(const unsigned int client_id)
     rooms.at(roomname)->setStatus(client_id, !rooms.at(roomname)->getStatus(client_id));
     std::cout << "ChangeUserStatus success." << std::endl;
     responseListPlayersInRoom(roomname);
+    if (rooms.at(roomname)->isReady()) {
+        std::cout << "Game will start." << std::endl;
+        responseStartGame(roomname);
+    }
+}
+
+void RTypeServer::responseStartGame(const std::string &roomname)
+{
+    if (!isRoomNameExists(roomname)) return;
+    ByteBuffer buff(16);
+
+    const std::vector<unsigned int> &players_id = rooms.at(roomname)->getPlayers();
+    buff.writeUInt(sizeof(int));
+    buff.writeInt(res::Type::StartGame);
+    sendData(buff, players_id);
 }
