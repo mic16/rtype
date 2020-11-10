@@ -7,7 +7,7 @@
 
 #include "server/Class/UDPClient/UDPClient.hpp"
 
-UDPClient::UDPClient()
+UDPClient::UDPClient(): buffer(1024)
 {
     m_packet = new unsigned char[1024];
 }
@@ -47,4 +47,9 @@ void UDPClient::write(const ByteBuffer &buffer)
             std::cout << "Failed writing to client" << std::endl;
         }
     });
+}
+
+ByteBuffer &UDPClient::getBuffer()
+{
+    return (buffer);
 }
