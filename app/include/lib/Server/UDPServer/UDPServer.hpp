@@ -15,7 +15,7 @@ class UDPServer : public IServer {
         UDPServer();
         ~UDPServer();
 
-        bool configure(const unsigned int port);
+        bool configure(const unsigned int port = 0);
         virtual void work();
 
         unsigned int getPort() const;
