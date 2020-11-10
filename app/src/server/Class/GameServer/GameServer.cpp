@@ -26,7 +26,7 @@ bool GameServer::handleConnection()
     client->m_endpoint,
     [this](const boost::system::error_code &errc,  std::size_t bytes_transferred) {
         if (!errc) {
-            client->setClient();
+            client->setClient(acceptor);
             std::cout << "Client " << client->getAddress() << ':'
                 << client->getPort() << std::endl;
             if (players.find(client->getAddress()) == players.end())

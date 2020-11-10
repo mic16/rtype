@@ -18,7 +18,7 @@ UDPServer::~UDPServer(void)
 
 bool UDPServer::configure(const unsigned int port)
 {
-    acceptor = std::make_unique<boost::asio::ip::udp::socket>(
+    acceptor = std::make_shared<boost::asio::ip::udp::socket>(
         ioService,
         boost::asio::ip::udp::endpoint(boost::asio::ip::udp::v4(), port)
     );

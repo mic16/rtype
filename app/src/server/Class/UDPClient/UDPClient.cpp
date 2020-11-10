@@ -17,8 +17,9 @@ UDPClient::~UDPClient()
     if (m_packet) delete m_packet;
 }
 
-bool UDPClient::setClient()
+bool UDPClient::setClient(const std::shared_ptr<boost::asio::ip::udp::socket> &s_acceptor)
 {
+    acceptor = s_acceptor;
     m_address = m_endpoint.address().to_string();
     m_port = m_endpoint.port();
 
@@ -33,3 +34,8 @@ const unsigned int UDPClient::getPort() const
 
 unsigned char *UDPClient::getPacket() const
 { return (m_packet); }
+
+void UDPClient::write(const ByteBuffer &buffer)
+{
+    
+}

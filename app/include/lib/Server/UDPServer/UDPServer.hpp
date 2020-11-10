@@ -23,7 +23,7 @@ class UDPServer : public IServer {
         bool run();
     protected:
         boost::asio::io_service ioService;
-        std::unique_ptr<boost::asio::ip::udp::socket> acceptor;
+        std::shared_ptr<boost::asio::ip::udp::socket> acceptor;
         unsigned int port;
 };
 
