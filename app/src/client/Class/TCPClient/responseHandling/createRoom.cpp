@@ -28,7 +28,7 @@ void TCPClient::handleListPlayersInRoom()
         bool isReady = false;
         std::string userid = std::to_string(i + 1);
         if (i < nbPlayers) {
-            username = buffer.readCharBuffer(&err);
+            username = buffer.readCharBuffer(nullptr, &err);
             isReady = buffer.readBool(&err);
             std::cout << username << " is in the lobby." << std::endl;
             menu->setDrawableTextStr(menu->getScene(), "users" + userid, username);

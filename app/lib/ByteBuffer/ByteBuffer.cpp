@@ -88,6 +88,15 @@ int ByteBuffer::seek(size_t pos, bool fromEnd) {
     return this->offset;
 }
 
+int ByteBuffer::move(int pos) {
+    if (this->offset + pos > this->size) {
+        this->offset = this->size;
+    } else if (pos < 0 && this->offset < pos) {
+        this->offset = 0;
+    }
+    return this->offset;
+}
+
 void ByteBuffer::shrink() {
     unsigned char *buf = new unsigned char[this->size];
     std::memcpy(buf, this->buf, this->size);
@@ -366,7 +375,7 @@ double ByteBuffer::readDouble(int *err) {
     return value.doublePart;
 }
 
-char *ByteBuffer::readCharBuffer(int *err) {
+char *ByteBuffer::readCharBuffer(size_t *b_size, int *err) {
     int cerr = 0;
     size_t size = readUInt(&cerr);
     if (cerr == 1) {
@@ -387,12 +396,15 @@ char *ByteBuffer::readCharBuffer(int *err) {
     }
     std::memcpy(str, this->buf + offset, size);
     offset += size;
+    if (b_size != nullptr) {
+        *b_size = size;
+    }
     return str;
 }
 
 std::string *ByteBuffer::readString(int *err) {
     int cerr = 0;
-    char *str = this->readCharBuffer(&cerr);
+    char *str = this->readCharBuffer(nullptr, &cerr);
     if (cerr == 1 || str == nullptr) {
         if (err != nullptr)
             *err = 1;

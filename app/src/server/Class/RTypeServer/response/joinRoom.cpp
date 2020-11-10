@@ -10,7 +10,7 @@
 void RTypeServer::responseJoinRoom(const unsigned int client_id)
 {
     int err = 0;
-    const char *roomname = clients[client_id]->getBuffer().readCharBuffer(&err);
+    const char *roomname = clients[client_id]->getBuffer().readCharBuffer(nullptr, &err);
 
     clients[client_id]->getBuffer().clear();
     clients[client_id]->getBuffer().writeUInt(sizeof(int) + sizeof(bool));
@@ -31,7 +31,7 @@ void RTypeServer::responseJoinRoom(const unsigned int client_id)
 void RTypeServer::responseChangeUserStatus(const unsigned int client_id)
 {
     int err = 0;
-    const char *roomname = clients[client_id]->getBuffer().readCharBuffer(&err);
+    const char *roomname = clients[client_id]->getBuffer().readCharBuffer(nullptr, &err);
 
     if (err || !isRoomNameExists(roomname)) {
         std::cout << "Error on ChangeUserStatus." << std::endl;

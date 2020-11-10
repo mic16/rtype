@@ -13,6 +13,7 @@
 class INetworkClient {
     public:
         virtual void write(const ByteBuffer &buffer) = 0;
+        virtual ByteBuffer &getBuffer() = 0;
 
     protected:
     private:

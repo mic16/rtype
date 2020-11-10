@@ -10,6 +10,8 @@
 
 #include "IMessageHandler.hpp"
 #include "IPacket.hpp"
+#include "INetworkClient.hpp"
+#include "NetworkHandler.hpp"
 
 template<typename T>
 class AMessageHandler : IMessageHandler {
@@ -24,7 +26,7 @@ class AMessageHandler : IMessageHandler {
 
         virtual void onMessage(T &) = 0;
 
-        void processMessage(ByteBuffer &buffer) {
+        void processMessage(NetworkHandler &handler, INetworkClient &client, ByteBuffer &buffer) {
             T packet;
             packet.fromBuffer(buffer);
             onMessage(packet);

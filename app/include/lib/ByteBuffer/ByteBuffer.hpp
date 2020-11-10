@@ -35,6 +35,7 @@ class ByteBuffer {
         void shrink();
         void grow(size_t capacity);
         int seek(size_t pos, bool fromEnd = false);
+        int move(int pos);
 
         size_t getCapacity() const;
         size_t getSize() const;
@@ -58,7 +59,7 @@ class ByteBuffer {
         void writeFloat(float value);
         void writeDouble(double value);
 
-        char *readCharBuffer(int *err);
+        char *readCharBuffer(size_t *b_size, int *err);
         std::string *readString(int *err);
         bool readBool(int *err);
         char readChar(int *err);
