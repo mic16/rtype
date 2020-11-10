@@ -36,6 +36,7 @@ class TCPClient {
         void handleCreateRoom();
         void handleJoinRoom();
         void handleListPlayersInRoom();
+        void handleGame();
     private:
         boost::asio::io_service ioService;
         boost::asio::ip::tcp::socket socket;
@@ -43,6 +44,7 @@ class TCPClient {
         char *m_packet = nullptr;
         std::shared_ptr<IGameMenu> menu;
         ByteBuffer buffer;
+        std::shared_ptr<sf::RenderWindow> window;
 };
 
 #endif /* !TCPCLIENT_HPP_ */

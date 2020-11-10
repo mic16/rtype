@@ -26,6 +26,10 @@ void TCPClient::handleResponses()
             std::cout << "Handler listing players response." << std::endl;
             handleListPlayersInRoom();
             break;
+        case res::Type::StartGame:
+            std::cout << "Handle StartGame response." << std::endl;
+            handleGame();
+            break;
         default:
             std::cout << "Unknown / Unhandled response." << std::endl;
     }

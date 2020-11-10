@@ -76,6 +76,9 @@ class GameEntities {
             RIGHT
         };
 
+        bool isGamePlaying() { return (gamePlaying); };
+        void setGamePlaying(bool gamePlaying) { this->gamePlaying = gamePlaying; };
+
     protected:
     private:
         void loadResources(std::string filename);
@@ -85,6 +88,7 @@ class GameEntities {
         bool isDirectionMaintained[4];
         int row = 0;
         float deltaTime = 0.0f;
+        bool gamePlaying = false;
 };
 
 #endif /* !GAMEENTITIES_HPP_ */

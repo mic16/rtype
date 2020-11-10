@@ -13,7 +13,8 @@ namespace res {
         LogIn,
         CreateRoom,
         JoinRoom,
-        listPlayersInRoom
+        listPlayersInRoom,
+        StartGame
     };
 };
 
