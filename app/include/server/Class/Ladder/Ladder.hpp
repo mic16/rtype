@@ -28,6 +28,8 @@ class Ladder {
         const std::vector<unsigned int> &getPlayers();
         void setStatus(unsigned int, bool newStatus);
         bool getStatus(unsigned int) const;
+
+        bool isReady() const;
     private:
         const unsigned int id;
         std::vector<unsigned int> players;

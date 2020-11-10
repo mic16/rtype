@@ -29,6 +29,11 @@ bool GameServer::handleConnection()
             client->setClient();
             std::cout << "Client " << client->getAddress() << ':'
                 << client->getPort() << std::endl;
+            if (players.find(client->getAddress()) == players.end())
+                players.insert(std::pair<std::string, std::unique_ptr<UDPClient>>(
+                    client->getAddress(),
+                    std::make_unique<UDPClient>(*client)
+                ));
             this->handleConnection();
         } else {
             std::cout << "Failed connection client" << std::endl;
