@@ -8,6 +8,7 @@
 #ifndef LADDER_HPP_
 #define LADDER_HPP_
 
+#include <map>
 #include <vector>
 
 class Ladder {
@@ -25,9 +26,12 @@ class Ladder {
         bool disconnect(const unsigned int player_id);
 
         const std::vector<unsigned int> &getPlayers();
+        void setStatus(unsigned int, bool newStatus);
+        bool getStatus(unsigned int) const;
     private:
         const unsigned int id;
         std::vector<unsigned int> players;
+        std::map<unsigned int, bool> status;
         unsigned int maxPlayers;
 };
 

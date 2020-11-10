@@ -42,12 +42,15 @@ class GameMenu : public IGameMenu {
         void tryLogIn();
         void tryCreateRoom();
         void tryJoinRoom();
+        void tryChangeUserStatus();
+        void tryStartGame();
 
         const sceneName getScene();
         void setScene(const sceneName sc_name);
         const std::unique_ptr<sf::Drawable> &getDrawable(sceneName scene, const std::string &key);
         void setDrawableTextStr(sceneName scene, const std::string &key, const std::string &text);
         void setDrawableTextColor(sceneName scene, const std::string &key, const sf::Color &color);
+        void setDrawableSpriteTexture(sceneName scene, const std::string &key, const std::string &texture);
     private:
         void initDrawables();
 
@@ -65,6 +68,9 @@ class GameMenu : public IGameMenu {
 
         void initFixedRoomDrawables();
         void initModRoomDrawables();
+
+        void initFixedGameDrawables();
+        void initModGameDrawables();
 
         sceneName scene;
         std::unique_ptr<TCPClient> client;

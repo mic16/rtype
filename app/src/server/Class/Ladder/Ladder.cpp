@@ -31,8 +31,10 @@ unsigned int Ladder::getId() const
 
 void Ladder::join(const unsigned int player_id)
 {
-    if (getNbPlayers() < getMaxPlayers())
+    if (getNbPlayers() < getMaxPlayers()) {
         players.push_back(player_id);
+        status.insert(std::pair<unsigned int, bool>(player_id, false));
+    }
 }
 
 const std::vector<unsigned int> &Ladder::getPlayers()
@@ -40,11 +42,25 @@ const std::vector<unsigned int> &Ladder::getPlayers()
     return (players);
 }
 
+void Ladder::setStatus(unsigned int player_id, bool newStatus)
+{
+    if (status.find(player_id) != status.end())
+        status.at(player_id) = newStatus;
+}
+
+bool Ladder::getStatus(unsigned int player_id) const
+{
+    if (status.find(player_id) != status.end())
+        return (status.at(player_id));
+    return (false);
+}
+
 bool Ladder::disconnect(const unsigned int player_id)
 {
     for (size_t i = 0; i < players.size(); i++) {
         if (players[i] == player_id) {
             players.erase(players.begin() + i);
+            status.erase(player_id);
             return (true);
         }
     }

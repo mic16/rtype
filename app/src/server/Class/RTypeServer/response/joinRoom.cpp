@@ -2,7 +2,7 @@
 ** EPITECH PROJECT, 2020
 ** B-CPP-501-MPL-5-1-rtype-antoine.maillard
 ** File description:
-** joinRoom
+** ChangeUserStatus
 */
 
 #include "server/Class/RTypeServer/RTypeServer.hpp"
@@ -25,5 +25,19 @@ void RTypeServer::responseJoinRoom(const unsigned int client_id)
     clients[client_id]->getBuffer().writeBool(true);
     rooms.at(roomname)->join(client_id);
     sendData(client_id);
+    responseListPlayersInRoom(roomname);
+}
+
+void RTypeServer::responseChangeUserStatus(const unsigned int client_id)
+{
+    int err = 0;
+    const char *roomname = clients[client_id]->getBuffer().readCharBuffer(&err);
+
+    if (err || !isRoomNameExists(roomname)) {
+        std::cout << "Error on ChangeUserStatus." << std::endl;
+        return;
+    }
+    rooms.at(roomname)->setStatus(client_id, !rooms.at(roomname)->getStatus(client_id));
+    std::cout << "ChangeUserStatus success." << std::endl;
     responseListPlayersInRoom(roomname);
 }

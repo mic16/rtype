@@ -10,7 +10,7 @@
 
 #include "SFML/Graphics.hpp"
 
-enum sceneName { LOGIN, MENU, CREATE, JOIN, ROOM };
+enum sceneName { LOGIN, MENU, CREATE, JOIN, ROOM, GAME };
 
 enum menuButton { B_CREATE, B_JOIN };
 
@@ -38,6 +38,7 @@ class IGameMenu {
         virtual const std::unique_ptr<sf::Drawable> &getDrawable(sceneName scene, const std::string &key) = 0;
         virtual void setDrawableTextStr(sceneName scene, const std::string &key, const std::string &text) = 0;
         virtual void setDrawableTextColor(sceneName scene, const std::string &key, const sf::Color &color) = 0;
+        virtual void setDrawableSpriteTexture(sceneName scene, const std::string &key, const std::string &texture) = 0;
 };
 
 #endif /* !IGAMEMENU_HPP_ */

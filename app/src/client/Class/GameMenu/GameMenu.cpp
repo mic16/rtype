@@ -98,3 +98,9 @@ void GameMenu::setDrawableTextColor(sceneName scene, const std::string &key, con
     const std::lock_guard<std::mutex> lock(drawables_mutex);
     dynamic_cast<sf::Text *>(modDrawables.at(scene)[key].get())->setFillColor(color);
 }
+
+void GameMenu::setDrawableSpriteTexture(sceneName scene, const std::string &key, const std::string &texture)
+{
+    const std::lock_guard<std::mutex> lock(drawables_mutex);
+    dynamic_cast<sf::Sprite *>(modDrawables.at(scene)[key].get())->setTexture(*loadedTextures[texture]);
+}
