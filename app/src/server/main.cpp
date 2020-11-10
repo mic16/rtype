@@ -38,16 +38,11 @@ class MessageHandler : public AMessageHandler<Packet> {
 };
 
 int main(int ac, char *av[]) {
-
-    NetworkHandler handler(1024);
-    handler.registerMessageHandler(1, new MessageHandler());
-    handler.broadcast(Packet());
-    /*
     RTypeServer server;
     // GameServer server;
 
     server.configure(3000);
 
-    server.run();*/
+    server.run();
     return (0);
 }
