@@ -29,6 +29,7 @@ class GameServer : public UDPServer {
         const std::unique_ptr<UDPClient> &getClients() const;
     private:
         std::unique_ptr<UDPClient> client;
+        std::map<std::string, std::unique_ptr<UDPClient>> players;
 };
 
 #endif /* !GAMESERVER_HPP_ */

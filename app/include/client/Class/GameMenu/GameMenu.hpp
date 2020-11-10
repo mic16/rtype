@@ -19,6 +19,7 @@
 #include "client/Class/Exceptions/EFinished.hpp"
 #include "lib/ByteBuffer/ByteBuffer.hpp"
 #include "client/Class/GameEntities/GameEntities.hpp"
+#include "client/Class/UDPClient/UDPClient.hpp"
 
 #define LAST_FIXED_SPRITE(sceneName) fixedDrawables.at(sceneName)[fixedDrawables.at(sceneName).size() - 1]
 

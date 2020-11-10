@@ -28,7 +28,7 @@ void TCPClient::handleResponses()
             break;
         case res::Type::StartGame:
             std::cout << "Handle StartGame response." << std::endl;
-            handleGame();
+            handleStartGame();
             break;
         default:
             std::cout << "Unknown / Unhandled response." << std::endl;

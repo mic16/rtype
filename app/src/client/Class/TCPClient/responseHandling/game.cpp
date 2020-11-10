@@ -7,7 +7,7 @@
 
 #include "client/Class/TCPClient/TCPClient.hpp"
 
-void TCPClient::handleGame()
+void TCPClient::handleStartGame()
 {
     int err = 0;
     bool success = buffer.readBool(&err);
