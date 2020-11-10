@@ -27,7 +27,6 @@ void GameMenu::initFixedLoginDrawables()
     dynamic_cast<sf::Sprite *>(LAST_FIXED_SPRITE(sceneName::LOGIN).get())->setPosition(sf::Vector2f(800, 400));
 
     fixedDrawables.at(sceneName::LOGIN).push_back(std::make_unique<sf::Text>());
-    mainFont.loadFromFile("./app/assets/fonts/pixelart.ttf");
     dynamic_cast<sf::Text *>(LAST_FIXED_SPRITE(sceneName::LOGIN).get())->setFont(mainFont);
     dynamic_cast<sf::Text *>(LAST_FIXED_SPRITE(sceneName::LOGIN).get())->setString("Enter your Username:");
     dynamic_cast<sf::Text *>(LAST_FIXED_SPRITE(sceneName::LOGIN).get())->setCharacterSize(40);
