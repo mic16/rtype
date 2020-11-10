@@ -76,3 +76,12 @@ unsigned int Ladder::getNbPlayers() const
 {
     return (players.size());
 }
+
+bool Ladder::isReady() const
+{
+    for (std::map<unsigned int, bool>::const_iterator it = status.cbegin(); it != status.cend(); ++it) {
+        if (!it->second)
+            return (false);
+    }
+    return (true);
+}

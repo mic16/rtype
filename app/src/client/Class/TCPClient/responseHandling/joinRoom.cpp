@@ -18,3 +18,8 @@ void TCPClient::handleJoinRoom()
     std::cout << "JoinRoom success." << std::endl;
     menu->setScene(sceneName::ROOM);
 }
+
+void TCPClient::handleStartGame()
+{
+    menu->setScene(sceneName::GAME);
+}

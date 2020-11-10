@@ -69,8 +69,8 @@ bool RTypeServer::handleClient(const unsigned int client_id)
             this->handleClient(client_id);
         } else {
             disconnectClient(client_id);
-            for (std::map<std::string, std::unique_ptr<Ladder>>::iterator it = rooms.begin(); it != rooms.end(); ++it) {
-                it->second->disconnect(client_id);
+            for (std::map<std::string, std::unique_ptr<Game>>::iterator it = games.begin(); it != games.end(); ++it) {
+                it->second->getLobby().disconnect(client_id);
             }
         }
     });

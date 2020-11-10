@@ -10,8 +10,7 @@
 
 #include "lib/Server/TCPServer/TCPServer.hpp"
 #include "server/Class/TCPClient/TCPClient.hpp"
-#include "server/Class/GameServer/GameServer.hpp"
-#include "server/Class/Ladder/Ladder.hpp"
+#include "server/Class/GameServer/Game.hpp"
 
 class RTypeServer : public TCPServer {
     public:
@@ -41,9 +40,10 @@ class RTypeServer : public TCPServer {
         void responseJoinRoom(const unsigned int client_id);
         void responseListPlayersInRoom(const std::string &roomname);
         void responseChangeUserStatus(const unsigned int client_id);
+        void responseStartGame(const std::string &roomname);
     private:
         std::map<unsigned int, std::unique_ptr<TCPClient>> clients;
-        std::map<std::string, std::unique_ptr<Ladder>> rooms;
+        std::map<std::string, std::unique_ptr<Game>> games;
 };
 
 #endif /* !RTYPESERVER_HPP_ */

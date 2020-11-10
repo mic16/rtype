@@ -36,6 +36,7 @@ class TCPClient {
         void handleCreateRoom();
         void handleJoinRoom();
         void handleListPlayersInRoom();
+        void handleStartGame();
     private:
         boost::asio::io_service ioService;
         boost::asio::ip::tcp::socket socket;

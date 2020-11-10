@@ -23,7 +23,7 @@ void RTypeServer::responseJoinRoom(const unsigned int client_id)
     }
     std::cout << "JoinRoom success." << std::endl;
     clients[client_id]->getBuffer().writeBool(true);
-    rooms.at(roomname)->join(client_id);
+    games.at(roomname)->getLobby().join(client_id);
     sendData(client_id);
     responseListPlayersInRoom(roomname);
 }
@@ -37,7 +37,22 @@ void RTypeServer::responseChangeUserStatus(const unsigned int client_id)
         std::cout << "Error on ChangeUserStatus." << std::endl;
         return;
     }
-    rooms.at(roomname)->setStatus(client_id, !rooms.at(roomname)->getStatus(client_id));
+    games.at(roomname)->getLobby().setStatus(client_id, !games.at(roomname)->getLobby().getStatus(client_id));
     std::cout << "ChangeUserStatus success." << std::endl;
     responseListPlayersInRoom(roomname);
+    if (games.at(roomname)->getLobby().isReady()) {
+        std::cout << "Game will start." << std::endl;
+        responseStartGame(roomname);
+    }
+}
+
+void RTypeServer::responseStartGame(const std::string &roomname)
+{
+    if (!isRoomNameExists(roomname)) return;
+    ByteBuffer buff(16);
+
+    const std::vector<unsigned int> &players_id = games.at(roomname)->getLobby().getPlayers();
+    buff.writeUInt(sizeof(int));
+    buff.writeInt(res::Type::StartGame);
+    sendData(buff, players_id);
 }

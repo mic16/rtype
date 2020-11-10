@@ -23,15 +23,15 @@ void RTypeServer::responseCreateRoom(const unsigned int client_id)
     }
     std::cout << "CreateRoom success." << std::endl;
     clients[client_id]->getBuffer().writeBool(true);
-    rooms.insert(std::pair<std::string, std::unique_ptr<Ladder>>(roomname, std::make_unique<Ladder>(Ladder::genId())));
-    rooms.at(roomname)->join(client_id);
+    games.insert(std::pair<std::string, std::unique_ptr<Game>>(roomname, std::make_unique<Game>()));
+    games.at(roomname)->getLobby().join(client_id);
     sendData(client_id);
     responseListPlayersInRoom(roomname);
 }
 
 bool RTypeServer::isRoomNameExists(const std::string &roomname)
 {
-    for (std::map<std::string, std::unique_ptr<Ladder>>::iterator it = rooms.begin(); it != rooms.end(); ++it) {
+    for (std::map<std::string, std::unique_ptr<Game>>::iterator it = games.begin(); it != games.end(); ++it) {
         if (it->first == roomname && !roomname.empty())
             return (true);
     }
@@ -43,7 +43,7 @@ void RTypeServer::responseListPlayersInRoom(const std::string &roomname)
     if (!isRoomNameExists(roomname)) return;
     ByteBuffer buff(1024);
 
-    const std::vector<unsigned int> &players_id = rooms.at(roomname)->getPlayers();
+    const std::vector<unsigned int> &players_id = games.at(roomname)->getLobby().getPlayers();
     unsigned int size_total = sizeof(int) + sizeof(unsigned int);
     for (size_t i = 0; i < players_id.size(); i++) {
         std::cout << players_id[i] << std::endl;
@@ -55,7 +55,7 @@ void RTypeServer::responseListPlayersInRoom(const std::string &roomname)
     buff.writeUInt(players_id.size());
     for (size_t i = 0; i < players_id.size(); i++) {
         buff.writeCharBuffer(clients[players_id[i]]->getUsername().c_str());
-        buff.writeBool(rooms.at(roomname)->getStatus(players_id[i]));
+        buff.writeBool(games.at(roomname)->getLobby().getStatus(players_id[i]));
     }
     sendData(buff, players_id);
 }
