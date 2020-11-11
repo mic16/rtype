@@ -30,6 +30,7 @@ class GameMenu : public IGameMenu {
 
         int run();
 
+        void draw();
         void draw(float deltaTime);
         bool isOpen();
 
