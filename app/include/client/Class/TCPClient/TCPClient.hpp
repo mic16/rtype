@@ -45,6 +45,7 @@ class TCPClient {
         char *m_packet = nullptr;
         std::shared_ptr<IGameMenu> menu;
         ByteBuffer buffer;
+        std::shared_ptr<sf::RenderWindow> window;
 };
 
 #endif /* !TCPCLIENT_HPP_ */

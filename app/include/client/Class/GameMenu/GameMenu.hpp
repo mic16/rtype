@@ -18,6 +18,7 @@
 #include "client/Class/ResourceLoader/ResourceLoader.hpp"
 #include "client/Class/Exceptions/EFinished.hpp"
 #include "lib/ByteBuffer/ByteBuffer.hpp"
+#include "client/Class/GameEntities/GameEntities.hpp"
 #include "client/Class/UDPClient/UDPClient.hpp"
 
 #define LAST_FIXED_SPRITE(sceneName) fixedDrawables.at(sceneName)[fixedDrawables.at(sceneName).size() - 1]
@@ -38,6 +39,7 @@ class GameMenu : public IGameMenu {
         void handleEvents();
         void handleTextEntered();
         void handleKeyReleased();
+        void handleKeyPressed();
 
         void handleDisplay();
         void tryLogIn();
@@ -52,6 +54,9 @@ class GameMenu : public IGameMenu {
         void setDrawableTextStr(sceneName scene, const std::string &key, const std::string &text);
         void setDrawableTextColor(sceneName scene, const std::string &key, const sf::Color &color);
         void setDrawableSpriteTexture(sceneName scene, const std::string &key, const std::string &texture);
+
+        GameEntities *getGameEntities() { return (&gameEntities); };
+
     private:
         void initDrawables();
 
@@ -82,16 +87,21 @@ class GameMenu : public IGameMenu {
         ResourceLoader loadedTextures;
         std::map<sceneName, std::vector<std::unique_ptr<sf::Drawable>>> fixedDrawables;
         std::map<sceneName, std::map<std::string, std::unique_ptr<sf::Drawable>>> modDrawables;
-        std::unique_ptr<sf::RenderWindow> window;
+        sf::RenderWindow window;
         sf::Event event;
         sf::Font mainFont;
 
         std::unique_ptr<std::thread> displayThread;
+
         ByteBuffer buffer;
         menuButton actualButton;
 
         std::mutex scene_mutex;
         std::mutex drawables_mutex;
+        std::mutex window_mutex;
+
+        GameEntities gameEntities;
+        bool isDirectionMaintained[4];
 };
 
 static const std::string menuButtons[] = {

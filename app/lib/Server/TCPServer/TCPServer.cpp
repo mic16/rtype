@@ -44,6 +44,7 @@ bool TCPServer::run(void)
     }
     boost::thread t(boost::bind(&boost::asio::io_context::run, &ioService));
     t.join();
+    return (true);
 }
 
 unsigned int TCPServer::getPort() const { return (port); }

@@ -27,7 +27,6 @@ void GameMenu::initFixedJoinDrawables()
     dynamic_cast<sf::Sprite *>(LAST_FIXED_SPRITE(sceneName::JOIN).get())->setPosition(sf::Vector2f(800, 400));
 
     fixedDrawables.at(sceneName::JOIN).push_back(std::make_unique<sf::Text>());
-    mainFont.loadFromFile("./app/assets/fonts/pixelart.ttf");
     dynamic_cast<sf::Text *>(LAST_FIXED_SPRITE(sceneName::JOIN).get())->setFont(mainFont);
     dynamic_cast<sf::Text *>(LAST_FIXED_SPRITE(sceneName::JOIN).get())->setString("Room name to join:");
     dynamic_cast<sf::Text *>(LAST_FIXED_SPRITE(sceneName::JOIN).get())->setCharacterSize(40);

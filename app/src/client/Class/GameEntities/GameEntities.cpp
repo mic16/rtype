@@ -8,9 +8,8 @@
 #include "client/Class/GameEntities/GameEntities.hpp"
 #include <boost/algorithm/string.hpp>
 
-GameEntities::GameEntities(std::shared_ptr<sf::RenderWindow> window)
+GameEntities::GameEntities(sf::RenderWindow &window) : window(window)
 {
-    this->window = window;
     for (int i = 0; i != 4 ; i++)
         isDirectionMaintained[i] = false;
     loadResources("app/assets/resources.txt");
@@ -108,7 +107,7 @@ void GameEntities::init()
                 entity.next();
 
                 Drawable *drawable = entity.getComponent<Drawable>(0);
-                this->window->draw(*drawable->sprite);
+                this->window.draw(*drawable->sprite);
             }
         })
         .finish();
@@ -121,7 +120,7 @@ void GameEntities::init()
                 entity.next();
 
                 Drawable *drawable = entity.getComponent<Drawable>(0);
-                this->window->draw(*drawable->sprite);
+                this->window.draw(*drawable->sprite);
             }
         })
         .finish();
@@ -167,11 +166,11 @@ void GameEntities::loadResources(std::string filename)
     }
 }
 
-void GameEntities::update(bool *isDirectionMaintained, float deltaTime, std::shared_ptr<sf::RenderWindow> window)
+void GameEntities::update(bool *isDirectionMaintained, float deltaTime)
 {
+    std::cout << this->deltaTime << std::endl;
     for (int i = 0; i != 4; i++)
         this->isDirectionMaintained[i] = isDirectionMaintained[i];
     this->deltaTime = deltaTime;
-    this->window = window;
     ecs.update(deltaTime);
 }

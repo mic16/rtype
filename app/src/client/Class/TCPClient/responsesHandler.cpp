@@ -27,7 +27,7 @@ void TCPClient::handleResponses()
             handleListPlayersInRoom();
             break;
         case res::Type::StartGame:
-            std::cout << "Handler StartGame response." << std::endl;
+            std::cout << "Handle StartGame response." << std::endl;
             handleStartGame();
             break;
         case res::Type::SendInfoServer:

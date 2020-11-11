@@ -9,6 +9,7 @@
 #define IGAMEMENU_HPP_
 
 #include "SFML/Graphics.hpp"
+#include "client/Class/GameEntities/GameEntities.hpp"
 
 enum sceneName { LOGIN, MENU, CREATE, JOIN, ROOM, GAME };
 
@@ -39,6 +40,8 @@ class IGameMenu {
         virtual void setDrawableTextStr(sceneName scene, const std::string &key, const std::string &text) = 0;
         virtual void setDrawableTextColor(sceneName scene, const std::string &key, const sf::Color &color) = 0;
         virtual void setDrawableSpriteTexture(sceneName scene, const std::string &key, const std::string &texture) = 0;
+
+        virtual GameEntities *getGameEntities() = 0;
 };
 
 #endif /* !IGAMEMENU_HPP_ */
