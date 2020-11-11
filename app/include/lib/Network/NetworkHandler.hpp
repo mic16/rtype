@@ -69,7 +69,7 @@ class NetworkHandler {
             }
 
             if (packetsID.find(hashcode) == packetsID.end()) {
-                throw new std::exception();
+                return;
             }
 
             std::size_t id = packetsID[hashcode];

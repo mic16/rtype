@@ -9,7 +9,6 @@
 #define UDPCLIENT_HPP_
 
 #include "client/Class/UDPClient/RemoteClient.hpp"
-#include "shared/MessageHandler/TestMessageClientHandler.hpp"
 #include "lib/Network/NetworkHandler.hpp"
 
 class UDPClient {
