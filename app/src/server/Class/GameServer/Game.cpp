@@ -34,6 +34,20 @@ void Game::update() {
     ecs.update(delta);
 }
 
+const server_info_t Game::setGameServer()
+{
+    server_info_t info;
+
+    gameServer.configure();
+    info.address = "127.0.0.1";
+    info.port = gameServer.getPort();
+    return (info);
+}
+
+void Game::startGame()
+{
+    gameServer.run();
+}
 
 Ladder &Game::getLobby()
 {

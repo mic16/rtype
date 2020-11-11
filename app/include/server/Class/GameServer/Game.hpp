@@ -25,6 +25,8 @@ class Game {
         void compile();
         void update();
 
+        const server_info_t setGameServer();
+        void startGame();
         Ladder &getLobby();
 
     private:

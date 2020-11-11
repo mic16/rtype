@@ -13,6 +13,11 @@
 
 #include <memory>
 
+typedef struct server_info_s {
+    std::string address;
+    unsigned int port;
+} server_info_t;
+
 class GameServer : public UDPServer {
     public:
         GameServer();

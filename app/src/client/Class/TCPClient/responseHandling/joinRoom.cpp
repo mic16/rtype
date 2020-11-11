@@ -23,3 +23,15 @@ void TCPClient::handleStartGame()
 {
     menu->setScene(sceneName::GAME);
 }
+
+void TCPClient::handleInfoServer()
+{
+    int err = 0;
+    char *address = buffer.readCharBuffer(nullptr, &err);
+    unsigned int port = buffer.readUInt(&err);
+
+    if (err) {
+        std::cout << "Cannot get Info Server" << std::endl;
+    }
+    std::cout << "Server info: " << address << ':' << port << std::endl;
+}
