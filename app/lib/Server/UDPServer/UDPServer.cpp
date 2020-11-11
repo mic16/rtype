@@ -24,7 +24,7 @@ bool UDPServer::configure(const unsigned int port)
     );
 
     if (!acceptor->is_open()) { return (false); }
-    this->port = port;
+    this->port = acceptor->local_endpoint().port();
     return (true);
 }
 

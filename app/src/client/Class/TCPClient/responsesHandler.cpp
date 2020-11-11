@@ -30,6 +30,10 @@ void TCPClient::handleResponses()
             std::cout << "Handler StartGame response." << std::endl;
             handleStartGame();
             break;
+        case res::Type::SendInfoServer:
+            std::cout << "Handler SendInfoServer response." << std::endl;
+            handleInfoServer();
+            break;
         default:
             std::cout << "Unknown / Unhandled response." << std::endl;
     }

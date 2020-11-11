@@ -12,7 +12,6 @@
 
 #include "server/Class/GameServer/GameServer.hpp"
 #include "server/Class/Ladder/Ladder.hpp"
-#include "lib/Network/NetworkHandler.hpp"
 #include "ECS/ECS.hpp"
 #include "API/IExtension.hpp"
 
@@ -25,6 +24,8 @@ class Game {
         void compile();
         void update();
 
+        const server_info_t setGameServer();
+        void startGame();
         Ladder &getLobby();
 
     private:

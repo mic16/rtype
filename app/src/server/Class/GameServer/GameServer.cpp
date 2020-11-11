@@ -7,7 +7,8 @@
 
 #include "server/Class/GameServer/GameServer.hpp"
 
-GameServer::GameServer(): UDPServer(), client(std::make_unique<UDPClient>())
+GameServer::GameServer(NetworkHandler &netwHandler): UDPServer(),
+    networkHandler(netwHandler)
 {
 }
 
@@ -22,18 +23,23 @@ void GameServer::work()
 
 bool GameServer::handleConnection()
 {
-    acceptor->async_receive_from(boost::asio::buffer(client->getPacket(), 1024),
-    client->m_endpoint,
+    acceptor->async_receive_from(boost::asio::buffer(client.getPacket(), 1024),
+    client.m_endpoint,
     [this](const boost::system::error_code &errc,  std::size_t bytes_transferred) {
         if (!errc) {
-            client->setClient(acceptor);
-            std::cout << "Client " << client->getAddress() << ':'
-                << client->getPort() << std::endl;
-            if (players.find(client->getAddress()) == players.end())
-                players.insert(std::pair<std::string, std::unique_ptr<UDPClient>>(
-                    client->getAddress(),
-                    std::make_unique<UDPClient>(*client)
+            client.setClient(acceptor);
+            std::cout << "Client " << client.getAddress() << ':'
+                << client.getPort() << std::endl;
+            if (players.find(client.getAddress()) == players.end()) {
+                players.insert(std::pair<std::string, UDPClient *>(
+                    client.getAddress(),
+                    new UDPClient(client)
                 ));
+                networkHandler.addClient(players.at(client.getAddress()));
+            } else { // message handling
+                players.at(client.getAddress())->getBuffer().append(client.getPacket(), bytes_transferred);
+                networkHandler.processMessage(*players.at(client.getAddress()));
+            }
             this->handleConnection();
         } else {
             std::cout << "Failed connection client" << std::endl;
@@ -42,7 +48,7 @@ bool GameServer::handleConnection()
     return (true);
 }
 
-const std::unique_ptr<UDPClient> &GameServer::getClients() const
+const UDPClient &GameServer::getClients() const
 {
     return (client);
 }

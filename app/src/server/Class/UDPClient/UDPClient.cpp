@@ -9,7 +9,7 @@
 
 UDPClient::UDPClient(): buffer(1024)
 {
-    m_packet = new unsigned char[1024];
+    m_packet = new char[1024];
 }
 
 UDPClient::~UDPClient()
@@ -32,7 +32,7 @@ const std::string &UDPClient::getAddress() const
 const unsigned int UDPClient::getPort() const
 { return (m_port); }
 
-unsigned char *UDPClient::getPacket() const
+char *UDPClient::getPacket() const
 { return (m_packet); }
 
 void UDPClient::write(const ByteBuffer &buffer)

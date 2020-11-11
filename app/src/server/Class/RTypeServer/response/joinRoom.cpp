@@ -42,6 +42,16 @@ void RTypeServer::responseChangeUserStatus(const unsigned int client_id)
     responseListPlayersInRoom(roomname);
     if (games.at(roomname)->getLobby().isReady()) {
         std::cout << "Game will start." << std::endl;
+        const server_info_t info = games.at(roomname)->setGameServer();
+        ByteBuffer buff(128);
+
+        const std::vector<unsigned int> &players_id = games.at(roomname)->getLobby().getPlayers();
+        buff.writeUInt(sizeof(int) + sizeof(unsigned int) + info.address.size() + 1 + sizeof(unsigned int));
+        buff.writeInt(res::Type::SendInfoServer);
+        buff.writeCharBuffer(info.address.c_str());
+        buff.writeUInt(info.port);
+        sendData(buff, players_id);
+        games.at(roomname)->startGame();
         responseStartGame(roomname);
     }
 }

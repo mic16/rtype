@@ -14,7 +14,8 @@ namespace res {
         CreateRoom,
         JoinRoom,
         listPlayersInRoom,
-        StartGame
+        StartGame,
+        SendInfoServer
     };
 };
 

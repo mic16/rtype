@@ -25,13 +25,13 @@ class UDPClient : public INetworkClient {
         const unsigned int getPort() const;
 
         boost::asio::ip::udp::endpoint m_endpoint;
-        unsigned char *getPacket() const;
+        char *getPacket() const;
         void write(const ByteBuffer &buffer);
         ByteBuffer &getBuffer();
 
     private:
         std::string m_address;
-        unsigned char *m_packet = nullptr;
+        char *m_packet = nullptr;
         unsigned int m_port;
         std::shared_ptr<boost::asio::ip::udp::socket> acceptor;
         ByteBuffer buffer;
