@@ -25,9 +25,6 @@ void GameEntities::init()
         .addTags({"background", "drawable"})
         .finish();
 
-    ecs.getEntityGenerator("Background")
-        .instanciate(1, Position{0, 0}, Velocity{ -1, 0, 0.3}, resources[1]);
-
     ecs.newSystem<Position, Velocity, Drawable>("back_scroll")
         .withTags({ "background" })
         .each([](float delta, EntityIterator<Position, Velocity, Drawable> &entity) {
@@ -144,30 +141,37 @@ void GameEntities::createPlayer(int nbOfPlayers, sf::Vector2f position, sf::Vect
         reverse}, Drawable{true, texture, sprite});
 }
 
+void GameEntities::createBackground(sf::Texture texture, sf::Sprite sprite)
+{
+    sprite.setScale(4, 4);
+    ecs.getEntityGenerator("Background")
+        .instanciate(1, Position{0, 0}, Velocity{ -1, 0, 50}, Drawable{true, texture, sprite});
+}
+
 void GameEntities::loadResources(std::string filename)
 {
-    Drawable res;
-    std::string line;
-    std::ifstream file(filename);
-    sf::Texture texture;
-    sf::Sprite sprite;
-    std::vector<std::string> words;
+    // Drawable res;
+    // std::string line;
+    // std::ifstream file(filename);
+    // sf::Texture texture;
+    // sf::Sprite sprite;
+    // std::vector<std::string> words;
 
-    if (!file)
-        return ;
-    while (getline(file, line)) {
-        boost::split(words, line, boost::is_any_of(" "));
-        texture.loadFromFile(words[0]);
-        sprite.setTexture(texture);
+    // if (!file)
+    //     return ;
+    // while (getline(file, line)) {
+    //     boost::split(words, line, boost::is_any_of(" "));
+    //     texture.loadFromFile(words[0]);
+    //     sprite.setTexture(texture);
 
-        // if (words.size() >= 3)
-            sprite.setScale(std::stoi(words[1]), std::stoi(words[2]));
+    //     // if (words.size() >= 3)
+    //         sprite.setScale(std::stoi(words[1]), std::stoi(words[2]));
 
-        res.texture = texture;
-        res.sprite = sf::Sprite(res.texture);
-        resources.push_back(res);
-        words.clear();
-    }
+    //     res.texture = texture;
+    //     res.sprite = sf::Sprite(res.texture);
+    //     resources.push_back(res);
+    //     words.clear();
+    // }
 }
 
 void GameEntities::update(bool *isDirectionMaintained, float deltaTime)
