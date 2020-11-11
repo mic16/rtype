@@ -140,6 +140,13 @@ void GameEntities::createPlayer(int nbOfPlayers, sf::Vector2f position, sf::Vect
         reverse}, Drawable{true, texture, sprite});
 }
 
+void GameEntities::createBackground(sf::Texture texture, sf::Sprite sprite)
+{
+    sprite.setScale(4, 4);
+    ecs.getEntityGenerator("Background")
+        .instanciate(1, Position{0, 0}, Velocity{ -1, 0, 50}, Drawable{true, texture, sprite});
+}
+
 void GameEntities::update(bool *isDirectionMaintained, float deltaTime)
 {
     for (int i = 0; i != 4; i++)

@@ -30,4 +30,9 @@ void GameMenu::initModGameDrawables()
     dynamic_cast<sf::Sprite *>(modDrawables.at(sceneName::GAME)["player"].get())->setTexture(*loadedTextures["players"]);
     dynamic_cast<sf::Sprite *>(modDrawables.at(sceneName::GAME)["player"].get())->setOrigin(sf::Vector2f(16, 16));
     dynamic_cast<sf::Sprite *>(modDrawables.at(sceneName::GAME)["player"].get())->setPosition(sf::Vector2f(200, 200));
+    
+
+    modDrawables.at(sceneName::GAME).insert(std::pair<std::string, std::unique_ptr<sf::Drawable>>("space", std::make_unique<sf::Sprite>()));
+    dynamic_cast<sf::Sprite *>(modDrawables.at(sceneName::GAME)["space"].get())->setTexture(*loadedTextures["space"]);
+    dynamic_cast<sf::Sprite *>(modDrawables.at(sceneName::GAME)["space"].get())->setPosition(sf::Vector2f(0, 0));
 }

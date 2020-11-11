@@ -80,6 +80,7 @@ void GameMenu::handleDisplay()
 
     gameEntities.createPlayer(1, sf::Vector2f(200.0f, 200.0f), sf::Vector2u(5, 5), sf::Vector2u(2, 0), 0.05f,
         loadedTextures["players"].get()->getSize(), false, *loadedTextures["players"].get(), sf::Sprite(*loadedTextures["players"].get()));
+    gameEntities.createBackground(*loadedTextures["space"].get(), sf::Sprite(*loadedTextures["space"].get()));
     while (isOpen()) {
         deltaTime = clock.restart().asSeconds();
         handleEvents();

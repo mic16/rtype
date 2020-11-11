@@ -25,6 +25,8 @@ class Background {
         sf::Sprite sprite;
         sf::View view;
         short speed;
+        int x;
+        int y;
 };
 
 #endif /* !BACKGROUND_HPP_ */
