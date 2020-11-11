@@ -19,7 +19,7 @@ class IGameMenu {
     public:
         virtual int run() = 0;
 
-        virtual void draw() = 0;
+        virtual void draw(float deltaTime) = 0;
         virtual bool isOpen() = 0;
 
         virtual bool isNameValid(const std::string &name) = 0;

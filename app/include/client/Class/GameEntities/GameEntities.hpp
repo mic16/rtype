@@ -28,8 +28,8 @@ struct Velocity {
 
 struct Drawable {
     bool visible;
-    std::shared_ptr<sf::Texture> texture;
-    std::shared_ptr<sf::Sprite> sprite;
+    sf::Texture texture;
+    sf::Sprite sprite;
 };
 
 struct Status {
@@ -52,7 +52,7 @@ struct Hitbox {
 
 struct Animation {
     sf::Vector2u imageCount;
-    sf::Vector2i currentImage;
+    sf::Vector2u currentImage;
     float totalTime = 0;
     float switchTime;
     sf::IntRect uvRect;
@@ -66,8 +66,10 @@ class GameEntities {
         void init();
         sf::RenderWindow &getWindow() { return window; };
         ECS getEcs() { return ecs; };
-
         void update(bool *isDirectionMaintained, float deltaTime);
+
+        void createPlayer(int nbOfPlayers, sf::Vector2f position, sf::Vector2u totalFrames, sf::Vector2u startingFrame, 
+            float timeToSwitchFrames, sf::Vector2u textureSize, bool reverse, sf::Texture texture, sf::Sprite sprite);
 
         enum DIRECTION {
             UP,

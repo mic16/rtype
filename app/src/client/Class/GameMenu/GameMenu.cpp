@@ -45,12 +45,14 @@ int GameMenu::run()
     return (0);
 }
 
-void GameMenu::draw()
+void GameMenu::draw(float deltaTime)
 {
     const std::vector<std::unique_ptr<sf::Drawable>> &sprites = fixedDrawables.at(getScene());
     std::map<std::string, std::unique_ptr<sf::Drawable>> &spritesMod = modDrawables.at(getScene());
 
     window.clear(sf::Color::White);
+    if (gameEntities.isGamePlaying())
+        gameEntities.update(isDirectionMaintained, deltaTime);
     for (size_t i = 0; i < sprites.size(); i++)
         window.draw(*sprites[i]);
     for (std::map<std::string, std::unique_ptr<sf::Drawable>>::iterator it = spritesMod.begin(); it != spritesMod.end(); ++it) {
@@ -70,12 +72,12 @@ void GameMenu::handleDisplay()
     float deltaTime = 0.0f;
     sf::Clock clock;
 
+    gameEntities.createPlayer(1, sf::Vector2f(200.0f, 200.0f), sf::Vector2u(5, 5), sf::Vector2u(2, 0), 0.05f,
+        loadedTextures["players"].get()->getSize(), false, *loadedTextures["players"].get(), sf::Sprite(*loadedTextures["players"].get()));
     while (isOpen()) {
         deltaTime = clock.restart().asSeconds();
         handleEvents();
-        draw();
-        if (gameEntities.isGamePlaying())
-            gameEntities.update(isDirectionMaintained, deltaTime);
+        draw(deltaTime);
     }
 }
 

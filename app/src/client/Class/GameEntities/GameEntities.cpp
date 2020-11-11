@@ -40,7 +40,7 @@ void GameEntities::init()
                 position->y += velocity->vy * velocity->speed * delta;
                 if (position->x <= -1226)
                     position->x = 0;
-                drawable->sprite->setPosition(position->x, position->y);
+                drawable->sprite.setPosition(position->x, position->y);
                 entity.next();
             }
         }).finish();
@@ -65,7 +65,7 @@ void GameEntities::init()
                         position->x += 100 * delta;
                     }
                     
-                    drawable->sprite->setPosition(position->x, position->y);
+                    drawable->sprite.setPosition(position->x, position->y);
                 }
             })
         .finish();
@@ -95,7 +95,7 @@ void GameEntities::init()
                     }
                     animation->uvRect.left = animation->currentImage.x * animation->uvRect.width;
                     animation->uvRect.top = animation->currentImage.y * animation->uvRect.height;
-                    drawable->sprite->setTextureRect(animation->uvRect);
+                    drawable->sprite.setTextureRect(animation->uvRect);
                 }
             })
         .finish();
@@ -107,7 +107,7 @@ void GameEntities::init()
                 entity.next();
 
                 Drawable *drawable = entity.getComponent<Drawable>(0);
-                this->window.draw(*drawable->sprite);
+                this->window.draw(drawable->sprite);
             }
         })
         .finish();
@@ -120,24 +120,28 @@ void GameEntities::init()
                 entity.next();
 
                 Drawable *drawable = entity.getComponent<Drawable>(0);
-                this->window.draw(*drawable->sprite);
+                this->window.draw(drawable->sprite);
             }
         })
         .finish();
 
     ecs.compile();
-
-    auto playerGenerator = ecs.getEntityGenerator("Player");
-    playerGenerator.reserve(1);
-    playerGenerator
-        .instanciate(1, Position{ 200, 200 },
-        Animation{sf::Vector2u(5, 5), sf::Vector2i(2, 0), 0, 0.05f,
-        sf::IntRect(0, 0, resources[0].sprite->getTexture()->getSize().x / 5.0f, resources[0].sprite->getTexture()->getSize().y / 5.0f),
-        false}, resources[0]);
 }
 
 GameEntities::~GameEntities()
 {
+}
+
+void GameEntities::createPlayer(int nbOfPlayers, sf::Vector2f position, sf::Vector2u totalFrames, sf::Vector2u startingFrame,
+    float timeToSwitchFrames, sf::Vector2u textureSize, bool reverse, sf::Texture texture, sf::Sprite sprite)
+{
+    auto playerGenerator = ecs.getEntityGenerator("Player");
+    playerGenerator.reserve(nbOfPlayers);
+    playerGenerator
+        .instanciate(nbOfPlayers, Position{ position.x, position.y },
+        Animation{totalFrames, startingFrame, 0, timeToSwitchFrames,
+        sf::IntRect(0, 0, textureSize.x / totalFrames.x, textureSize.y / totalFrames.y),
+        reverse}, Drawable{true, texture, sprite});
 }
 
 void GameEntities::loadResources(std::string filename)
@@ -159,8 +163,8 @@ void GameEntities::loadResources(std::string filename)
         // if (words.size() >= 3)
             sprite.setScale(std::stoi(words[1]), std::stoi(words[2]));
 
-        res.texture = std::make_shared<sf::Texture>(texture);
-        res.sprite = std::make_shared<sf::Sprite>(*res.texture);
+        res.texture = texture;
+        res.sprite = sf::Sprite(res.texture);
         resources.push_back(res);
         words.clear();
     }
@@ -168,7 +172,6 @@ void GameEntities::loadResources(std::string filename)
 
 void GameEntities::update(bool *isDirectionMaintained, float deltaTime)
 {
-    std::cout << this->deltaTime << std::endl;
     for (int i = 0; i != 4; i++)
         this->isDirectionMaintained[i] = isDirectionMaintained[i];
     this->deltaTime = deltaTime;

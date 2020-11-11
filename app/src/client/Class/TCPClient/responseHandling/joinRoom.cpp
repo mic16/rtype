@@ -45,6 +45,7 @@ void TCPClient::handleInfoServer()
     std::cout << "Server info: " << address << ':' << port << std::endl;
     UDPClient gameClient(ioService, address, std::to_string(port));
 
+    menu->getGameEntities()->setGamePlaying(true);
     menu->setScene(sceneName::GAME);
 
     gameClient.connect();
