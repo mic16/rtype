@@ -36,7 +36,6 @@ class TCPClient {
         void handleCreateRoom();
         void handleJoinRoom();
         void handleListPlayersInRoom();
-        void handleStartGame();
         void handleInfoServer();
     private:
         boost::asio::io_context ioService;

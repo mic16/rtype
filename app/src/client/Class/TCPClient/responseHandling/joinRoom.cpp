@@ -20,19 +20,6 @@ void TCPClient::handleJoinRoom()
     menu->setScene(sceneName::ROOM);
 }
 
-void TCPClient::handleStartGame()
-{
-    int err = 0;
-    bool success = buffer.readBool(&err);
-    if (err || !success) {
-        std::cout << "Game error!" << std::endl;
-        return;
-    }
-    std::cout << "Game success." << std::endl;
-    menu->getGameEntities()->setGamePlaying(true);
-    menu->setScene(sceneName::GAME);
-}
-
 void TCPClient::handleInfoServer()
 {
     int err = 0;
