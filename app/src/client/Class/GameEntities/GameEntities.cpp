@@ -34,8 +34,8 @@ void GameEntities::init()
 
                 position->x += velocity->vx * velocity->speed * delta;
                 position->y += velocity->vy * velocity->speed * delta;
-                if (position->x <= -1226)
-                    position->x = 0;
+                if (position->x <= -4904)
+                    position->x = position->x + 4904;
                 drawable->sprite.setPosition(position->x, position->y);
                 entity.next();
             }
