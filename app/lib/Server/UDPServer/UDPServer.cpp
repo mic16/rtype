@@ -43,6 +43,7 @@ bool UDPServer::run(void)
     }
     boost::thread t(boost::bind(&boost::asio::io_context::run, &ioService));
     t.join();
+    return (true);
 }
 
 unsigned int UDPServer::getPort() const { return (port); }

@@ -10,18 +10,22 @@
 GameMenu::GameMenu(): scene(LOGIN),
 username("..."),
 loadedTextures("./app/assets/Menu/"),
-window(std::make_unique<sf::RenderWindow>(
+window(
     sf::VideoMode(1600, 800),
     "R-Type Menu",
-    sf::Style::Close | sf::Style::Titlebar)
+    sf::Style::Close | sf::Style::Titlebar
 ),
-displayThread(std::make_unique<std::thread>(&GameMenu::handleDisplay, this)),
 buffer(1024),
-actualButton(menuButton::B_CREATE)
+actualButton(menuButton::B_CREATE),
+gameEntities(window)
 {
     client = std::make_unique<TCPClient>(this);
     initDrawables();
-    window->setFramerateLimit(60);
+    gameEntities.init();
+    for (int i = 0; i != 4 ; i++)
+        isDirectionMaintained[i] = false;
+    window.setFramerateLimit(60);
+    displayThread = std::make_unique<std::thread>(&GameMenu::handleDisplay, this);
 }
 
 GameMenu::~GameMenu()
@@ -46,26 +50,32 @@ void GameMenu::draw()
     const std::vector<std::unique_ptr<sf::Drawable>> &sprites = fixedDrawables.at(getScene());
     std::map<std::string, std::unique_ptr<sf::Drawable>> &spritesMod = modDrawables.at(getScene());
 
-    window->clear(sf::Color::White);
+    window.clear(sf::Color::White);
     for (size_t i = 0; i < sprites.size(); i++)
-        window->draw(*sprites[i]);
+        window.draw(*sprites[i]);
     for (std::map<std::string, std::unique_ptr<sf::Drawable>>::iterator it = spritesMod.begin(); it != spritesMod.end(); ++it) {
         if (modDrawables.at(scene).find(it->first) != modDrawables.at(scene).end())
-            window->draw(*(getDrawable(getScene(), it->first)));
+            window.draw(*(getDrawable(getScene(), it->first)));
     }
-    window->display();
+    window.display();
 }
 
 bool GameMenu::isOpen()
 {
-    return (window->isOpen());
+    return (window.isOpen());
 }
 
 void GameMenu::handleDisplay()
 {
+    float deltaTime = 0.0f;
+    sf::Clock clock;
+
     while (isOpen()) {
+        deltaTime = clock.restart().asSeconds();
         handleEvents();
         draw();
+        if (gameEntities.isGamePlaying())
+            gameEntities.update(isDirectionMaintained, deltaTime);
     }
 }
 

@@ -61,13 +61,13 @@ struct Animation {
 
 class GameEntities {
     public:
-        GameEntities(std::shared_ptr<sf::RenderWindow> window);
+        GameEntities(sf::RenderWindow &window);
         ~GameEntities();
         void init();
-        std::shared_ptr<sf::RenderWindow> getWindow() { return window; };
+        sf::RenderWindow &getWindow() { return window; };
         ECS getEcs() { return ecs; };
 
-        void update(bool *isDirectionMaintained, float deltaTime, std::shared_ptr<sf::RenderWindow> window);
+        void update(bool *isDirectionMaintained, float deltaTime);
 
         enum DIRECTION {
             UP,
@@ -76,15 +76,19 @@ class GameEntities {
             RIGHT
         };
 
+        bool isGamePlaying() { return (gamePlaying); };
+        void setGamePlaying(bool gamePlaying) { this->gamePlaying = gamePlaying; };
+
     protected:
     private:
         void loadResources(std::string filename);
-        std::shared_ptr<sf::RenderWindow> window;
+        sf::RenderWindow &window;
         std::vector<Drawable> resources;
         ECS ecs;
         bool isDirectionMaintained[4];
         int row = 0;
         float deltaTime = 0.0f;
+        bool gamePlaying = false;
 };
 
 #endif /* !GAMEENTITIES_HPP_ */
