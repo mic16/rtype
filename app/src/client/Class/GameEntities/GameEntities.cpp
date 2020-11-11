@@ -12,7 +12,6 @@ GameEntities::GameEntities(sf::RenderWindow &window) : window(window)
 {
     for (int i = 0; i != 4 ; i++)
         isDirectionMaintained[i] = false;
-    loadResources("app/assets/resources.txt");
 }
 
 void GameEntities::init()
@@ -24,9 +23,6 @@ void GameEntities::init()
     ecs.newEntityModel<Position, Velocity, Drawable>("Background")
         .addTags({"background", "drawable"})
         .finish();
-
-    ecs.getEntityGenerator("Background")
-        .instanciate(1, Position{0, 0}, Velocity{ -1, 0, 0.3}, resources[1]);
 
     ecs.newSystem<Position, Velocity, Drawable>("back_scroll")
         .withTags({ "background" })
@@ -142,32 +138,6 @@ void GameEntities::createPlayer(int nbOfPlayers, sf::Vector2f position, sf::Vect
         Animation{totalFrames, startingFrame, 0, timeToSwitchFrames,
         sf::IntRect(0, 0, textureSize.x / totalFrames.x, textureSize.y / totalFrames.y),
         reverse}, Drawable{true, texture, sprite});
-}
-
-void GameEntities::loadResources(std::string filename)
-{
-    Drawable res;
-    std::string line;
-    std::ifstream file(filename);
-    sf::Texture texture;
-    sf::Sprite sprite;
-    std::vector<std::string> words;
-
-    if (!file)
-        return ;
-    while (getline(file, line)) {
-        boost::split(words, line, boost::is_any_of(" "));
-        texture.loadFromFile(words[0]);
-        sprite.setTexture(texture);
-
-        // if (words.size() >= 3)
-            sprite.setScale(std::stoi(words[1]), std::stoi(words[2]));
-
-        res.texture = texture;
-        res.sprite = sf::Sprite(res.texture);
-        resources.push_back(res);
-        words.clear();
-    }
 }
 
 void GameEntities::update(bool *isDirectionMaintained, float deltaTime)
