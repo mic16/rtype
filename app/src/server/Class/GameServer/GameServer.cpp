@@ -37,6 +37,8 @@ bool GameServer::handleConnection()
                 ));
                 networkHandler.addClient(players.at(client.getAddress()));
             } else { // message handling
+                players.at(client.getAddress())->getBuffer().append(client.getPacket(), bytes_transferred);
+                networkHandler.processMessage(*players.at(client.getAddress()));
             }
             this->handleConnection();
         } else {
