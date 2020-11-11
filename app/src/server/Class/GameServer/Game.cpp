@@ -8,7 +8,8 @@
 #include "server/Class/GameServer/Game.hpp"
 
 Game::Game():
-    lobby(Ladder::genId())
+    lobby(Ladder::genId()),
+    gameServer(networkHandler)
 {
 }
 

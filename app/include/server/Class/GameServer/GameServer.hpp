@@ -10,6 +10,7 @@
 
 #include "lib/Server/UDPServer/UDPServer.hpp"
 #include "server/Class/UDPClient/UDPClient.hpp"
+#include "lib/Network/NetworkHandler.hpp"
 
 #include <memory>
 
@@ -20,7 +21,7 @@ typedef struct server_info_s {
 
 class GameServer : public UDPServer {
     public:
-        GameServer();
+        GameServer(NetworkHandler &netwHandler);
         ~GameServer();
 
         void work() override;
@@ -31,10 +32,11 @@ class GameServer : public UDPServer {
 
         bool disconnectClient(const unsigned int client_id);
 
-        const std::unique_ptr<UDPClient> &getClients() const;
+        const UDPClient &getClients() const;
     private:
-        std::unique_ptr<UDPClient> client;
-        std::map<std::string, std::unique_ptr<UDPClient>> players;
+        UDPClient client;
+        std::map<std::string, UDPClient *> players;
+        NetworkHandler &networkHandler;
 };
 
 #endif /* !GAMESERVER_HPP_ */
