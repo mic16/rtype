@@ -7,7 +7,7 @@
 
 #include "client/Class/GameMenu/GameMenu.hpp"
 
-GameMenu::GameMenu(): scene(GAME),
+GameMenu::GameMenu(): scene(LOGIN),
 username("..."),
 loadedTextures("./app/assets/Menu/"),
 window(std::make_shared<sf::RenderWindow>(
@@ -19,12 +19,12 @@ displayThread(std::make_unique<std::thread>(&GameMenu::handleDisplay, this)),
 buffer(1024),
 actualButton(menuButton::B_CREATE)
 {
+    client = std::make_unique<TCPClient>(this);
+    initDrawables();
     gameEntities = std::make_shared<GameEntities>(window);
     gameEntities->init();
     for (int i = 0; i != 4 ; i++)
         isDirectionMaintained[i] = false;
-    client = std::make_unique<TCPClient>(this);
-    initDrawables();
     window->setFramerateLimit(60);
 }
 
@@ -74,6 +74,7 @@ void GameMenu::handleDisplay()
         deltaTime = clock.restart().asSeconds();
         handleEvents();
         draw();
+        std::cout << "in function handleDisplay\n";
         gameEntities.get()->update(isDirectionMaintained, deltaTime, window);
     }
 }
