@@ -8,9 +8,8 @@
 #ifndef UDPCLIENT_HPP_
 #define UDPCLIENT_HPP_
 
-#include <iostream>
-#include <boost/asio.hpp>
-#include "lib/ByteBuffer/ByteBuffer.hpp"
+#include "client/Class/UDPClient/RemoteClient.hpp"
+#include "lib/Network/NetworkHandler.hpp"
 
 class UDPClient {
     public:
@@ -19,16 +18,12 @@ class UDPClient {
 
         void work();
         void run();
-        void send();
 
-        ByteBuffer &getBuffer();
+        void connect();
 
     private:
-        boost::asio::io_context &ioService;
-        boost::asio::ip::udp::socket socket;
-        boost::asio::ip::udp::endpoint endpoint;
-        char *packet = nullptr;
-        ByteBuffer buff;
+        RemoteClient *client;
+        NetworkHandler networkHandler;
 };
 
 #endif /* !UDPCLIENT_HPP_ */

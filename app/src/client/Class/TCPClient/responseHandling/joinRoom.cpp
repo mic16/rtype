@@ -39,7 +39,6 @@ void TCPClient::handleInfoServer()
 
     menu->setScene(sceneName::GAME);
 
-    gameClient.getBuffer().writeInt(666);
-    gameClient.send();
+    gameClient.connect();
     gameClient.run();
 }
