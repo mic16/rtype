@@ -28,7 +28,7 @@ void GameEntities::init()
         .finish();
 
     ecs.getEntityGenerator("Background")
-        .instanciate(1, Position{0, 0}, Velocity{ -1, 0, 0.3}, resources[1]);
+        .instanciate(1, Position{0, 0}, Velocity{ -1, 0, 0.1}, resources[1]);
     
     ecs.newSystem<Position, Velocity, Drawable>("back_scroll")
         .withTags({ "background" })
@@ -38,10 +38,10 @@ void GameEntities::init()
                 Velocity* velocity = entity.getComponent<Velocity>(1);
                 Drawable* drawable = entity.getComponent<Drawable>(2);
 
-                position->x += velocity->vx * velocity->speed * delta;
-                position->y += velocity->vy * velocity->speed * delta;
-                if (position->x <= -1226)
-                    position->x = 0;
+                position->x += velocity->vx * velocity->speed;// * delta;
+                position->y += velocity->vy * velocity->speed;// * delta;
+                if (position->x <= -4904)
+                    position->x = position->x + 4904;
                 drawable->sprite->setPosition(position->x, position->y);
                 entity.next();
             }
@@ -156,13 +156,13 @@ void GameEntities::loadResources(std::string filename)
     while (getline(file, line)) {
         boost::split(words, line, boost::is_any_of(" "));
         texture.loadFromFile(words[0]);
-        sprite.setTexture(texture);
-
-        // if (words.size() >= 3)
-            sprite.setScale(std::stoi(words[1]), std::stoi(words[2]));
 
         res.texture = std::make_shared<sf::Texture>(texture);
-        res.sprite = std::make_shared<sf::Sprite>(*res.texture);
+        res.sprite = std::make_shared<sf::Sprite>(sprite);
+        
+        res.sprite->setTexture(*res.texture);
+        if (words.size() >= 3)
+            res.sprite->setScale(std::stoi(words[1]), std::stoi(words[2]));
         resources.push_back(res);
         words.clear();
     }
