@@ -11,6 +11,7 @@ Game::Game():
     lobby(Ladder::genId()),
     gameServer(networkHandler)
 {
+    networkHandler.registerMessageHandler(0, new TestMessageHandler());
 }
 
 Game::~Game()

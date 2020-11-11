@@ -11,6 +11,7 @@ UDPClient::UDPClient(boost::asio::io_context &io_service, const std::string &hos
     networkHandler(1024),
     client(new RemoteClient(io_service, host, port))
 {
+    networkHandler.registerMessageHandler(0, new TestMessageClientHandler());
 }
 
 UDPClient::~UDPClient()
@@ -43,4 +44,5 @@ void UDPClient::connect()
     client->write(client->getBuffer());
     client->getBuffer().clear();
     networkHandler.addClient(client);
+    networkHandler.broadcast(TestPacket("Client is sending"));
 }

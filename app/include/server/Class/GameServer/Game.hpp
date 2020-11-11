@@ -12,6 +12,7 @@
 
 #include "server/Class/GameServer/GameServer.hpp"
 #include "server/Class/Ladder/Ladder.hpp"
+#include "shared/MessageHandler/TestMessageHandler.hpp"
 #include "ECS/ECS.hpp"
 #include "API/IExtension.hpp"
 
