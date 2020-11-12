@@ -6,12 +6,23 @@
 */
 
 #include "server/Class/GameServer/Game.hpp"
+#include "server/Class/MessageHandlers/ServerSpawnMessageHandler.hpp"
+#include "server/Class/MessageHandlers/ServerDeathMessageHandler.hpp"
+#include "server/Class/MessageHandlers/ServerDamageMessageHandler.hpp"
+#include "server/Class/MessageHandlers/ServerFireMessageHandler.hpp"
+#include "server/Class/MessageHandlers/ServerMoveMessageHandler.hpp"
+#include "server/Class/MessageHandlers/ServerPositionMessageHandler.hpp"
 
 Game::Game():
     lobby(Ladder::genId()),
     gameServer(networkHandler)
 {
-
+    networkHandler.registerMessageHandler(0, new ServerSpawnMessageHandler());
+    networkHandler.registerMessageHandler(1, new ServerDeathMessageHandler());
+    networkHandler.registerMessageHandler(2, new ServerDamageMessageHandler());
+    networkHandler.registerMessageHandler(3, new ServerFireMessageHandler());
+    networkHandler.registerMessageHandler(4, new ServerMoveMessageHandler());
+    networkHandler.registerMessageHandler(5, new ServerPositionMessageHandler());
 }
 
 Game::~Game()
@@ -160,7 +171,6 @@ void Game::startGame()
     lastTime = std::chrono::high_resolution_clock::now();
     init();
     compile();
-    std::cout << "Let's go" << std::endl;
     while (true) {
         update();
     }

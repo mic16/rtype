@@ -28,7 +28,7 @@ class FirePacket : public ABasePacket {
             buffer.writeBool(holding);
         }
 
-        double isHolding() const {
+        bool isHolding() const {
             return holding;
         }
 

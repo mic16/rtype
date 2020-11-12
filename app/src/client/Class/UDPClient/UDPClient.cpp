@@ -7,10 +7,23 @@
 
 #include "client/Class/UDPClient/UDPClient.hpp"
 
+#include "client/Class/MessageHandlers/ClientSpawnMessageHandler.hpp"
+#include "client/Class/MessageHandlers/ClientDeathMessageHandler.hpp"
+#include "client/Class/MessageHandlers/ClientDamageMessageHandler.hpp"
+#include "client/Class/MessageHandlers/ClientFireMessageHandler.hpp"
+#include "client/Class/MessageHandlers/ClientMoveMessageHandler.hpp"
+#include "client/Class/MessageHandlers/ClientPositionMessageHandler.hpp"
+
 UDPClient::UDPClient(boost::asio::io_context &io_service, const std::string &host, const std::string &port):
     networkHandler(1024),
     client(new RemoteClient(io_service, host, port))
 {
+    networkHandler.registerMessageHandler(0, new ClientSpawnMessageHandler());
+    networkHandler.registerMessageHandler(1, new ClientDeathMessageHandler());
+    networkHandler.registerMessageHandler(2, new ClientDamageMessageHandler());
+    networkHandler.registerMessageHandler(3, new ClientFireMessageHandler());
+    networkHandler.registerMessageHandler(4, new ClientMoveMessageHandler());
+    networkHandler.registerMessageHandler(5, new ClientPositionMessageHandler());
 }
 
 UDPClient::~UDPClient()
