@@ -103,16 +103,16 @@ void Game::init() {
                         entityPosition->y < projectilePosition->y + projectileHitbox->h &&
                         entityPosition->y + entityHitbox->h > projectilePosition->y)
                     {
-                            entityStats->hp -= projectileInfo->damage;
-                            this->getNetworkHandler().broadcast(DamagePacket(entityID->id, projectileInfo->damage, entityStats->hp, entityStats->maxHP));
-                            this->getNetworkHandler().broadcast(DeathPacket(projectileID->id)); // Kill projectile
-                            projectileIterator.remove();
+                        entityStats->hp -= projectileInfo->damage;
+                        this->getNetworkHandler().broadcast(DamagePacket(entityID->id, projectileInfo->damage, entityStats->hp, entityStats->maxHP));
+                        this->getNetworkHandler().broadcast(DeathPacket(projectileID->id)); // Kill projectile
+                        projectileIterator.remove();
 
-                            if (entityStats->hp <= 0) {
-                                this->getNetworkHandler().broadcast(DeathPacket(entityID->id)); // Kill Entity
-                                entity.remove();
-                                break;
-                            }
+                        if (entityStats->hp <= 0) {
+                            this->getNetworkHandler().broadcast(DeathPacket(entityID->id)); // Kill Entity
+                            entity.remove();
+                            break;
+                        }
                     }
                 }
 
