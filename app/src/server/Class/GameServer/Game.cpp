@@ -156,7 +156,7 @@ const server_info_t Game::setGameServer()
 
 void Game::startGame()
 {
-    // gameServer.run();
+    gameServer.run();
     lastTime = std::chrono::high_resolution_clock::now();
     init();
     compile();
@@ -164,6 +164,7 @@ void Game::startGame()
     while (true) {
         update();
     }
+    gameServer.join();
 }
 
 Ladder &Game::getLobby()
