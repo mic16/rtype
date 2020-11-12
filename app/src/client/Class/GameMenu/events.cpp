@@ -129,6 +129,11 @@ void GameMenu::handleKeyReleased()
                 actualButton = actualButton == menuButton::B_CREATE ? menuButton::B_JOIN : menuButton::B_CREATE;
                 dynamic_cast<sf::Text *>(modDrawables.at(sceneName::MENU)[menuButtons[actualButton]].get())->setFillColor(sf::Color::Yellow);
             }
+        } else if (event.key.code == sf::Keyboard::Escape) {
+            if (getScene() == sceneName::ROOM) {
+            
+            }
+            setScene(sceneName::MENU);
         }
     }
 }
