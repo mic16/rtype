@@ -13,6 +13,7 @@
 #include <vector>
 #include <memory>
 
+#include "client/Class/UDPClient/UDPClient.hpp"
 #include "client/Class/Exceptions/EConnection.hpp"
 #include "client/Interfaces/IGameMenu.hpp"
 #include "lib/ByteBuffer/ByteBuffer.hpp"
@@ -37,6 +38,8 @@ class TCPClient {
         void handleJoinRoom();
         void handleListPlayersInRoom();
         void handleInfoServer();
+
+        std::unique_ptr<UDPClient> &getGameClient();
     private:
         boost::asio::io_context ioService;
         boost::asio::ip::tcp::socket socket;
@@ -45,6 +48,7 @@ class TCPClient {
         std::shared_ptr<IGameMenu> menu;
         ByteBuffer buffer;
         std::shared_ptr<sf::RenderWindow> window;
+        std::unique_ptr<UDPClient> gameClient;
 };
 
 #endif /* !TCPCLIENT_HPP_ */

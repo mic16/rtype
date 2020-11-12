@@ -70,3 +70,8 @@ void TCPClient::sendData(const unsigned char *buff, const size_t buffLen)
         }
     });
 }
+
+std::unique_ptr<UDPClient> &TCPClient::getGameClient()
+{
+    return (gameClient);
+}

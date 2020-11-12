@@ -44,3 +44,8 @@ void UDPClient::connect()
     client->getBuffer().clear();
     networkHandler.addClient(client);
 }
+
+NetworkHandler &UDPClient::getNetworkHandler()
+{
+    return (networkHandler);
+}
