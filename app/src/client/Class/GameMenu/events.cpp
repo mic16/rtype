@@ -26,21 +26,23 @@ void GameMenu::handleEvents()
 
 void GameMenu::handleKeyPressed()
 {
-    switch (event.key.code) {
-        case (sf::Keyboard::Z):
-            isDirectionMaintained[gameEntities.DIRECTION::UP] = true;
-            break;
-        case (sf::Keyboard::Q):
-            isDirectionMaintained[gameEntities.DIRECTION::LEFT] = true;
-            break;
-        case (sf::Keyboard::S):
-            isDirectionMaintained[gameEntities.DIRECTION::DOWN] = true;
-            break;
-        case (sf::Keyboard::D):
-            isDirectionMaintained[gameEntities.DIRECTION::RIGHT] = true;
-            break;
-        default:
-            break;
+    if (gameEntities.isGamePlaying()) {
+        switch (event.key.code) {
+            case (sf::Keyboard::Z):
+                isDirectionMaintained[gameEntities.DIRECTION::UP] = true;
+                break;
+            case (sf::Keyboard::Q):
+                isDirectionMaintained[gameEntities.DIRECTION::LEFT] = true;
+                break;
+            case (sf::Keyboard::S):
+                isDirectionMaintained[gameEntities.DIRECTION::DOWN] = true;
+                break;
+            case (sf::Keyboard::D):
+                isDirectionMaintained[gameEntities.DIRECTION::RIGHT] = true;
+                break;
+            default:
+                break;
+        }
     }
 }
 

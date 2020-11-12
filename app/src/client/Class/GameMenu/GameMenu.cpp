@@ -60,6 +60,14 @@ void GameMenu::draw()
     window.display();
 }
 
+void GameMenu::draw(float deltaTime)
+{
+    window.clear(sf::Color::White);
+    if (gameEntities.isGamePlaying())
+        gameEntities.update(isDirectionMaintained, deltaTime);
+    window.display();
+}
+
 bool GameMenu::isOpen()
 {
     return (window.isOpen());
@@ -70,12 +78,16 @@ void GameMenu::handleDisplay()
     float deltaTime = 0.0f;
     sf::Clock clock;
 
+    gameEntities.createPlayer(1, sf::Vector2f(200.0f, 200.0f), sf::Vector2u(5, 5), sf::Vector2u(2, 0), 0.05f,
+        loadedTextures["players"].get()->getSize(), false, *loadedTextures["players"].get(), sf::Sprite(*loadedTextures["players"].get()));
+    gameEntities.createBackground(*loadedTextures["space"].get(), sf::Sprite(*loadedTextures["space"].get()));
     while (isOpen()) {
         deltaTime = clock.restart().asSeconds();
         handleEvents();
-        draw();
-        if (gameEntities.isGamePlaying())
-            gameEntities.update(isDirectionMaintained, deltaTime);
+        if (getScene() == sceneName::GAME)
+            draw(deltaTime);
+        else
+            draw();
     }
 }
 

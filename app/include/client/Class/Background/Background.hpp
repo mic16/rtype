@@ -9,9 +9,8 @@
 #define BACKGROUND_HPP_
 
 #include <SFML/Graphics.hpp>
-#include "client/Class/ADrawable/ADrawable.hpp"
 
-class Background: public ADrawable {
+class Background {
     public:
         Background(sf::RenderWindow &window);
         Background();
@@ -26,6 +25,8 @@ class Background: public ADrawable {
         sf::Sprite sprite;
         sf::View view;
         short speed;
+        int x;
+        int y;
 };
 
 #endif /* !BACKGROUND_HPP_ */
