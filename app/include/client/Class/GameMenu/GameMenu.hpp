@@ -21,6 +21,8 @@
 #include "client/Class/GameEntities/GameEntities.hpp"
 #include "client/Class/UDPClient/UDPClient.hpp"
 
+#include "shared/Packet/MovePacket.hpp"
+
 #define LAST_FIXED_SPRITE(sceneName) fixedDrawables.at(sceneName)[fixedDrawables.at(sceneName).size() - 1]
 
 class GameMenu : public IGameMenu {
@@ -104,6 +106,8 @@ class GameMenu : public IGameMenu {
 
         GameEntities gameEntities;
         bool isDirectionMaintained[4];
+
+        size_t playerId;
 };
 
 static const std::string menuButtons[] = {

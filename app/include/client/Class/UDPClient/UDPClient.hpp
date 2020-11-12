@@ -21,6 +21,8 @@ class UDPClient {
 
         void connect();
 
+        NetworkHandler &getNetworkHandler();
+
     private:
         RemoteClient *client;
         NetworkHandler networkHandler;

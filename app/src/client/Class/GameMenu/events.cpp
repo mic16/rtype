@@ -27,22 +27,16 @@ void GameMenu::handleEvents()
 void GameMenu::handleKeyPressed()
 {
     if (gameEntities.isGamePlaying()) {
-        switch (event.key.code) {
-            case (sf::Keyboard::Z):
-                isDirectionMaintained[gameEntities.DIRECTION::UP] = true;
-                break;
-            case (sf::Keyboard::Q):
-                isDirectionMaintained[gameEntities.DIRECTION::LEFT] = true;
-                break;
-            case (sf::Keyboard::S):
-                isDirectionMaintained[gameEntities.DIRECTION::DOWN] = true;
-                break;
-            case (sf::Keyboard::D):
-                isDirectionMaintained[gameEntities.DIRECTION::RIGHT] = true;
-                break;
-            default:
-                break;
-        }
+        sf::Vector2i dir(0, 0);
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Z))
+            dir.y += -1;
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Q))
+            dir.x += -1;
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::S))
+            dir.y += 1;
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
+            dir.x += 1;
+        client.get()->getGameClient()->getNetworkHandler().broadcast(MovePacket(playerId, dir.x, dir.y));
     }
 }
 
@@ -74,22 +68,16 @@ void GameMenu::handleTextEntered()
 void GameMenu::handleKeyReleased()
 {
     if (gameEntities.isGamePlaying()) {
-        switch (event.key.code) {
-            case (sf::Keyboard::Z):
-                isDirectionMaintained[gameEntities.DIRECTION::UP] = false;
-                break;
-            case (sf::Keyboard::Q):
-                isDirectionMaintained[gameEntities.DIRECTION::LEFT] = false;
-                break;
-            case (sf::Keyboard::S):
-                isDirectionMaintained[gameEntities.DIRECTION::DOWN] = false;
-                break;
-            case (sf::Keyboard::D):
-                isDirectionMaintained[gameEntities.DIRECTION::RIGHT] = false;
-                break;
-            default:
-                break;
-        }
+        sf::Vector2i dir(0, 0);
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Z))
+            dir.y -= -1;
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Q))
+            dir.x -= -1;
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::S))
+            dir.y -= 1;
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
+            dir.x -= 1;
+        client.get()->getGameClient()->getNetworkHandler().broadcast(MovePacket(playerId, dir.x, dir.y));
     } else {
         if (event.key.code == sf::Keyboard::Backspace) {
             if (getScene() == sceneName::LOGIN) {

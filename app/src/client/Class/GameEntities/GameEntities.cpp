@@ -16,16 +16,16 @@ GameEntities::GameEntities(sf::RenderWindow &window) : window(window)
 
 void GameEntities::init()
 {
-    ecs.newEntityModel<Position, Animation, Drawable>("Player")
-        .addTags({ "Friendly", "EntityLiving", "PlayerControlled", "AnimatedPlayer" })
-        .finish();
-
     ecs.newEntityModel<Position, Velocity, Drawable>("Background")
-        .addTags({"background", "drawable"})
+        .addTags({"Background", "Drawable"})
         .finish();
 
-    ecs.newSystem<Position, Velocity, Drawable>("back_scroll")
-        .withTags({ "background" })
+    ecs.newEntityModel<Position, Animation, Drawable, EntityId>("Player")
+        .addTags({ "PlayerControlled", "Drawable" })
+        .finish();
+
+    ecs.newSystem<Position, Velocity, Drawable>("BackgroundScroll")
+        .withTags({ "Background" })
         .each([](float delta, EntityIterator<Position, Velocity, Drawable> &entity) {
             while (entity.hasNext()) {
                 Position* position = entity.getComponent<Position>(0);
@@ -41,15 +41,14 @@ void GameEntities::init()
             }
         }).finish();
 
-    ecs.newSystem<Position, Animation, Drawable>("Movement")
+    ecs.newSystem<Position, Drawable>("Movement")
         .withTags({ "PlayerControlled" })
-        .each([this](float delta, EntityIterator<Position, Animation, Drawable> &entity) {
+        .each([this](float delta, EntityIterator<Position, Drawable> &entity) {
                 while (entity.hasNext()) {
                     entity.next();
 
                     Position* position = entity.getComponent<Position>(0);
-                    Animation* animation = entity.getComponent<Animation>(1);
-                    Drawable* drawable = entity.getComponent<Drawable>(2);
+                    Drawable* drawable = entity.getComponent<Drawable>(1);
 
                     if (isDirectionMaintained[DIRECTION::UP])
                         position->y -= 100 * delta;
@@ -67,7 +66,7 @@ void GameEntities::init()
         .finish();
 
         ecs.newSystem<Animation, Drawable>("AnimatePlayer")
-        .withTags({ "AnimatedPlayer" })
+        .withTags({ "PlayerControlled" })
         .each([this](float delta, EntityIterator<Animation, Drawable> &entity){
                 while (entity.hasNext()) {
                     entity.next();
@@ -97,21 +96,8 @@ void GameEntities::init()
             })
         .finish();
 
-        ecs.newSystem<Drawable>("Draw_background")
-        .withTags({ "background" })
-        .each([this](float delta, EntityIterator<Drawable> &entity) {
-            while (entity.hasNext()) {
-                entity.next();
-
-                Drawable *drawable = entity.getComponent<Drawable>(0);
-                this->window.draw(drawable->sprite);
-            }
-        })
-        .finish();
-
         ecs.newSystem<Drawable>("Draw")
-        .withTags({ "Friendly" })
-        .withoutTags({"background"})
+        .withTags({ "Drawable" })
         .each([this](float delta, EntityIterator<Drawable> &entity) {
             while (entity.hasNext()) {
                 entity.next();
@@ -130,15 +116,15 @@ GameEntities::~GameEntities()
 }
 
 void GameEntities::createPlayer(int nbOfPlayers, sf::Vector2f position, sf::Vector2u totalFrames, sf::Vector2u startingFrame,
-    float timeToSwitchFrames, sf::Vector2u textureSize, bool reverse, sf::Texture texture, sf::Sprite sprite)
+    float timeToSwitchFrames, sf::Vector2u textureSize, bool reverse, sf::Texture texture, sf::Sprite sprite, size_t id)
 {
     auto playerGenerator = ecs.getEntityGenerator("Player");
     playerGenerator.reserve(nbOfPlayers);
     playerGenerator
         .instanciate(nbOfPlayers, Position{ position.x, position.y },
-        Animation{totalFrames, startingFrame, startingFrame, 0, timeToSwitchFrames,
+        Animation{ totalFrames, startingFrame, startingFrame, 0, timeToSwitchFrames,
         sf::IntRect(0, 0, textureSize.x / totalFrames.x, textureSize.y / totalFrames.y),
-        reverse}, Drawable{true, texture, sprite});
+        reverse }, Drawable{ true, texture, sprite }, EntityId{ id });
 }
 
 void GameEntities::createBackground(sf::Texture texture, sf::Sprite sprite)

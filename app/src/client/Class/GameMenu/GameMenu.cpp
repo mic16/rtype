@@ -22,9 +22,11 @@ gameEntities(window)
     client = std::make_unique<TCPClient>(this);
     initDrawables();
     gameEntities.init();
+    playerId = 0;
     for (int i = 0; i != 4 ; i++)
         isDirectionMaintained[i] = false;
     window.setFramerateLimit(60);
+    window.setKeyRepeatEnabled(false);
     displayThread = std::make_unique<std::thread>(&GameMenu::handleDisplay, this);
 }
 
@@ -79,7 +81,8 @@ void GameMenu::handleDisplay()
     sf::Clock clock;
 
     gameEntities.createPlayer(1, sf::Vector2f(200.0f, 200.0f), sf::Vector2u(5, 5), sf::Vector2u(2, 0), 0.05f,
-        loadedTextures["players"].get()->getSize(), false, *loadedTextures["players"].get(), sf::Sprite(*loadedTextures["players"].get()));
+        loadedTextures["players"].get()->getSize(), false, *loadedTextures["players"].get(), sf::Sprite(*loadedTextures["players"].get()), playerId);
+    playerId++;
     gameEntities.createBackground(*loadedTextures["space"].get(), sf::Sprite(*loadedTextures["space"].get()));
     while (isOpen()) {
         deltaTime = clock.restart().asSeconds();
