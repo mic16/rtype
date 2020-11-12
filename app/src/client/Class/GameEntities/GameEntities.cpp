@@ -79,14 +79,15 @@ void GameEntities::init()
                     animation->totalTime += deltaTime;
                     if (animation->totalTime >= animation->switchTime) {
                         animation->totalTime -= animation->switchTime;
-                        if (isDirectionMaintained[DIRECTION::UP])
+                        if (isDirectionMaintained[DIRECTION::UP] && animation->currentImage.x < animation->imageCount.x - 1)
                             animation->currentImage.x++;
-                        else if (isDirectionMaintained[DIRECTION::DOWN])
+                        else if (isDirectionMaintained[DIRECTION::DOWN] && animation->currentImage.x > 0)
                             animation->currentImage.x--;
-                        if (animation->currentImage.x >= animation->imageCount.x) {
-                            animation->currentImage.x--;
-                        } else if (animation->currentImage.x <= 0) {
-                            animation->currentImage.x++;
+                        else if (!isDirectionMaintained[DIRECTION::UP] && !isDirectionMaintained[DIRECTION::DOWN]) {
+                            if (animation->currentImage.x > animation->startingImage.x)
+                                animation->currentImage.x--;
+                            else if (animation->currentImage.x < animation->startingImage.x)
+                                animation->currentImage.x++;
                         }
                     }
                     animation->uvRect.left = animation->currentImage.x * animation->uvRect.width;
@@ -135,7 +136,7 @@ void GameEntities::createPlayer(int nbOfPlayers, sf::Vector2f position, sf::Vect
     playerGenerator.reserve(nbOfPlayers);
     playerGenerator
         .instanciate(nbOfPlayers, Position{ position.x, position.y },
-        Animation{totalFrames, startingFrame, 0, timeToSwitchFrames,
+        Animation{totalFrames, startingFrame, startingFrame, 0, timeToSwitchFrames,
         sf::IntRect(0, 0, textureSize.x / totalFrames.x, textureSize.y / totalFrames.y),
         reverse}, Drawable{true, texture, sprite});
 }

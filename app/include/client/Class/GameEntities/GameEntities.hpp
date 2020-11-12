@@ -53,6 +53,7 @@ struct Hitbox {
 struct Animation {
     sf::Vector2u imageCount;
     sf::Vector2u currentImage;
+    sf::Vector2u startingImage;
     float totalTime = 0;
     float switchTime;
     sf::IntRect uvRect;
