@@ -19,6 +19,18 @@ void GameMenu::tryChangeUserStatus()
     client->sendData(buffer.flush(), buffer.getSize());
 }
 
+void GameMenu::disconnectRoom()
+{
+    buffer.clear();
+
+    buffer.writeUInt(sizeof(int) + sizeof(unsigned int) + roomname.length() + 1);
+    buffer.writeInt(req::Type::DisconnectRoom);
+    buffer.writeCharBuffer(roomname.c_str());
+
+    std::cout << "TryDisconnectRoom: sending " << buffer.getSize() << " bytes." << std::endl;
+    client->sendData(buffer.flush(), buffer.getSize());
+}
+
 void GameMenu::initFixedRoomDrawables()
 {
     fixedDrawables.at(sceneName::ROOM).push_back(std::make_unique<sf::Sprite>());

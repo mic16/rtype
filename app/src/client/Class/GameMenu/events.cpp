@@ -131,7 +131,7 @@ void GameMenu::handleKeyReleased()
             }
         } else if (event.key.code == sf::Keyboard::Escape) {
             if (getScene() == sceneName::ROOM) {
-            
+                disconnectRoom();
             }
             setScene(sceneName::MENU);
         }
