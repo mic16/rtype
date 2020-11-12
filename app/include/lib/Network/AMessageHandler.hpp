@@ -24,12 +24,12 @@ class AMessageHandler : IMessageHandler {
 
         }
 
-        virtual void onMessage(T &) = 0;
+        virtual void onMessage(NetworkHandler &handler, INetworkClient &client, T &) = 0;
 
         void processMessage(NetworkHandler &handler, INetworkClient &client, ByteBuffer &buffer) {
             T packet;
             packet.fromBuffer(buffer);
-            onMessage(packet);
+            onMessage(handler, client, packet);
         }
 
     protected:

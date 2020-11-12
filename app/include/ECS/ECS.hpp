@@ -644,8 +644,10 @@ private:
                 system->func = [func](EntitySystem *system, float delta) {
                     for (size_t model : system->models) {
                         UnorderedEntityArray *entities = system->m_ecs.getEntityMap(model);
-                        EntityIterator<Args...> it(entities, model);
-                        func(delta, it);
+                        if (entities != nullptr) {
+                            EntityIterator<Args...> it(entities, model);
+                            func(delta, it);
+                        }
                     }
                 };
                 return *this;
@@ -747,7 +749,7 @@ public:
         if (map_entities.find(hash) != map_entities.end()) {
             return map_entities[hash];
         }
-        return 0;
+        return nullptr;
     }
 
     void update(float delta) {
