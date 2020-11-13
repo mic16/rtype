@@ -8,6 +8,8 @@
 #ifndef SYNCHRONIZER_HPP_
 #define SYNCHRONIZER_HPP_
 
+#include <memory>
+
 #include "lib/DoubleHashmap/DoubleHashmap.hpp"
 #include "lib/DoubleQueue/DoubleQueue.hpp"
 #include "lib/Network/IPacket.hpp"
@@ -17,17 +19,17 @@ class Synchronizer {
         Synchronizer() {}
         ~Synchronizer() {}
 
-        DoubleHashmap<size_t, IPacket> &getDoubleMap() {
+        DoubleHashmap<size_t, std::unique_ptr<IPacket>> &getDoubleMap() {
             return doubleMap;
         }
 
-        DoubleQueue<IPacket> &getDoubleQueue() {
+        DoubleQueue<std::unique_ptr<IPacket>> &getDoubleQueue() {
             return doubleQueue;
         }
 
     protected:
-        DoubleHashmap<size_t, IPacket> doubleMap;
-        DoubleQueue<IPacket> doubleQueue;
+        DoubleHashmap<size_t, std::unique_ptr<IPacket>> doubleMap;
+        DoubleQueue<std::unique_ptr<IPacket>> doubleQueue;
     private:
 };
 

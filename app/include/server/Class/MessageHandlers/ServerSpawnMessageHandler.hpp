@@ -12,6 +12,8 @@
 #include "lib/Network/AMessageHandler.hpp"
 #include "shared/Packet/SpawnPacket.hpp"
 
+#include "shared/Synchronizer/Synchronizer.hpp"
+
 class ServerSpawnMessageHandler : public AMessageHandler<SpawnPacket> {
     public:
         ServerSpawnMessageHandler(Synchronizer &synchronizer) : synchronizer(synchronizer) {}

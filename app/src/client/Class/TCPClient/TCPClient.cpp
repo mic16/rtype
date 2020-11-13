@@ -49,7 +49,7 @@ void TCPClient::handleData()
             int err = 0;
             while (isMoreData) {
                 unsigned int expectedDataLen = buffer.readUInt(&err);
-                if (!err && expectedDataLen >= bytes_transferred - 4) {
+                if (!err && expectedDataLen <= bytes_transferred - 4) {
                     std::cout << "Data size is correct sized." << std::endl;
                     this->handleResponses();
                     bytes_transferred -= 4 - expectedDataLen;
@@ -76,4 +76,9 @@ void TCPClient::sendData(const unsigned char *buff, const size_t buffLen)
             std::cout << "Data isn't sent" << std::endl;
         }
     });
+}
+
+std::unique_ptr<UDPClient> &TCPClient::getGameClient()
+{
+    return (gameClient);
 }

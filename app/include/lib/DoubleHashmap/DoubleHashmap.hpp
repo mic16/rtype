@@ -25,7 +25,7 @@ class DoubleHashmap {
             if (isReadingFinished()) {
                 readMap->clear();
                 writeMap.swap(readMap);
-                readEnd.load(false, std::memory_order::memory_order_relaxed);
+                readEnd.store(false, std::memory_order::memory_order_relaxed);
             }
         }
 

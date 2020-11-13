@@ -23,6 +23,7 @@
 
 #include "lib/Network/NetworkHandler.hpp"
 #include "shared/Synchronizer/Synchronizer.hpp"
+#include "shared/Packet/MovePacket.hpp"
 
 #define LAST_FIXED_SPRITE(sceneName) fixedDrawables.at(sceneName)[fixedDrawables.at(sceneName).size() - 1]
 
@@ -51,6 +52,7 @@ class GameMenu : public IGameMenu {
         void tryJoinRoom();
         void tryChangeUserStatus();
         void tryStartGame();
+        void disconnectRoom();
 
         const sceneName getScene();
         void setScene(const sceneName sc_name);
@@ -113,6 +115,8 @@ class GameMenu : public IGameMenu {
 
         GameEntities gameEntities;
         bool isDirectionMaintained[4];
+
+        size_t playerId;
 };
 
 static const std::string menuButtons[] = {

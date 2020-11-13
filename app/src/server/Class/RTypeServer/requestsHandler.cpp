@@ -26,6 +26,10 @@ void RTypeServer::handleRequests(const unsigned int client_id)
             std::cout << "ChangeUserStatus request." << std::endl;
             responseChangeUserStatus(client_id);
             break;
+        case req::Type::DisconnectRoom:
+            std::cout << "DisconnectRoom request." << std::endl;
+            responseDisconnectRoom(client_id);
+            break;
         default:
             std::cout << "Unknown request type." << std::endl;
     }

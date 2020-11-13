@@ -7,6 +7,14 @@
 
 #include "client/Class/GameMenu/GameMenu.hpp"
 
+#include "client/Class/MessageHandlers/ClientSpawnMessageHandler.hpp"
+#include "client/Class/MessageHandlers/ClientDeathMessageHandler.hpp"
+#include "client/Class/MessageHandlers/ClientDamageMessageHandler.hpp"
+#include "client/Class/MessageHandlers/ClientFireMessageHandler.hpp"
+#include "client/Class/MessageHandlers/ClientMoveMessageHandler.hpp"
+#include "client/Class/MessageHandlers/ClientPositionMessageHandler.hpp"
+
+
 GameMenu::GameMenu(): scene(LOGIN),
 username("..."),
 loadedTextures("./app/assets/Menu/"),
@@ -22,10 +30,19 @@ gameEntities(window)
     client = std::make_unique<TCPClient>(this);
     initDrawables();
     gameEntities.init();
+    playerId = 0;
     for (int i = 0; i != 4 ; i++)
         isDirectionMaintained[i] = false;
     window.setFramerateLimit(60);
+    window.setKeyRepeatEnabled(false);
     displayThread = std::make_unique<std::thread>(&GameMenu::handleDisplay, this);
+
+    networkHandler.registerMessageHandler(new ClientSpawnMessageHandler(synchronizer));
+    networkHandler.registerMessageHandler(new ClientDeathMessageHandler(synchronizer));
+    networkHandler.registerMessageHandler(new ClientDamageMessageHandler(synchronizer));
+    networkHandler.registerMessageHandler(new ClientFireMessageHandler(synchronizer));
+    networkHandler.registerMessageHandler(new ClientMoveMessageHandler(synchronizer));
+    networkHandler.registerMessageHandler(new ClientPositionMessageHandler(synchronizer));
 }
 
 GameMenu::~GameMenu()
@@ -79,7 +96,8 @@ void GameMenu::handleDisplay()
     sf::Clock clock;
 
     gameEntities.createPlayer(1, sf::Vector2f(200.0f, 200.0f), sf::Vector2u(5, 5), sf::Vector2u(2, 0), 0.05f,
-        loadedTextures["players"].get()->getSize(), false, *loadedTextures["players"].get(), sf::Sprite(*loadedTextures["players"].get()));
+        loadedTextures["players"].get()->getSize(), false, *loadedTextures["players"].get(), sf::Sprite(*loadedTextures["players"].get()), playerId);
+    playerId++;
     gameEntities.createBackground(*loadedTextures["space"].get(), sf::Sprite(*loadedTextures["space"].get()));
     while (isOpen()) {
         deltaTime = clock.restart().asSeconds();

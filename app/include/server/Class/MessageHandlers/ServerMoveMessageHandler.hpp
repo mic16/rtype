@@ -11,6 +11,8 @@
 #include "lib/Network/AMessageHandler.hpp"
 #include "shared/Packet/MovePacket.hpp"
 
+#include "shared/Synchronizer/Synchronizer.hpp"
+
 class ServerMoveMessageHandler : public AMessageHandler<MovePacket> {
     public:
         ServerMoveMessageHandler(Synchronizer &synchronizer) : synchronizer(synchronizer) {}

@@ -11,9 +11,11 @@
 #include "lib/Network/AMessageHandler.hpp"
 #include "shared/Packet/FirePacket.hpp"
 
+#include "shared/Synchronizer/Synchronizer.hpp"
+
 class ClientFireMessageHandler : public AMessageHandler<FirePacket> {
     public:
-        ClientFireMessageHandler() {}
+        ClientFireMessageHandler(Synchronizer &synchronizer) : synchronizer(synchronizer) {}
         ~ClientFireMessageHandler() {}
 
         void onMessage(NetworkHandler &handler, INetworkClient &client, FirePacket &packet) {
@@ -22,6 +24,7 @@ class ClientFireMessageHandler : public AMessageHandler<FirePacket> {
 
     protected:
     private:
+        Synchronizer &synchronizer;
 };
 
 #endif /* !CLIENTFIREMESSAGEHANDLER_HPP */

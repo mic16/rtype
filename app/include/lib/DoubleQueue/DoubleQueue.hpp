@@ -24,7 +24,7 @@ class DoubleQueue {
             if (isReadingFinished()) {
                 readVector->clear();
                 writeVector.swap(readVector);
-                readEnd.load(false, std::memory_order::memory_order_relaxed);
+                readEnd.store(false, std::memory_order::memory_order_relaxed);
             }
         }
 

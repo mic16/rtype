@@ -11,9 +11,11 @@
 #include "lib/Network/AMessageHandler.hpp"
 #include "shared/Packet/DeathPacket.hpp"
 
+#include "shared/Synchronizer/Synchronizer.hpp"
+
 class ClientDeathMessageHandler : public AMessageHandler<DeathPacket> {
     public:
-        ClientDeathMessageHandler() {}
+        ClientDeathMessageHandler(Synchronizer &synchronizer) : synchronizer(synchronizer) {}
         ~ClientDeathMessageHandler() {}
 
         void onMessage(NetworkHandler &handler, INetworkClient &client, DeathPacket &packet) {
@@ -22,6 +24,7 @@ class ClientDeathMessageHandler : public AMessageHandler<DeathPacket> {
 
     protected:
     private:
+        Synchronizer &synchronizer;
 };
 
 #endif /* !CLIENTDEATHMESSAGEHANDLER_HPP_ */

@@ -11,6 +11,8 @@
 #include "lib/Network/AMessageHandler.hpp"
 #include "shared/Packet/PositionPacket.hpp"
 
+#include "shared/Synchronizer/Synchronizer.hpp"
+
 class ServerPositionMessageHandler : public AMessageHandler<PositionPacket> {
     public:
         ServerPositionMessageHandler(Synchronizer &synchronizer) : synchronizer(synchronizer) {}

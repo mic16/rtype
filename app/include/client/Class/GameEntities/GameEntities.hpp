@@ -60,6 +60,10 @@ struct Animation {
     bool reverse = false;
 };
 
+struct EntityId {
+    size_t id;
+};
+
 class GameEntities {
     public:
         GameEntities(sf::RenderWindow &window);
@@ -70,7 +74,7 @@ class GameEntities {
         void update(bool *isDirectionMaintained, float deltaTime);
 
         void createPlayer(int nbOfPlayers, sf::Vector2f position, sf::Vector2u totalFrames, sf::Vector2u startingFrame, 
-            float timeToSwitchFrames, sf::Vector2u textureSize, bool reverse, sf::Texture texture, sf::Sprite sprite);
+            float timeToSwitchFrames, sf::Vector2u textureSize, bool reverse, sf::Texture texture, sf::Sprite sprite, size_t id);
         void createBackground(sf::Texture texture, sf::Sprite sprite);
 
         enum DIRECTION {

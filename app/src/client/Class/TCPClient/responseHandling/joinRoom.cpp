@@ -6,7 +6,6 @@
 */
 
 #include "client/Class/TCPClient/TCPClient.hpp"
-#include "client/Class/UDPClient/UDPClient.hpp"
 
 void TCPClient::handleJoinRoom()
 {
@@ -30,11 +29,11 @@ void TCPClient::handleInfoServer()
         std::cout << "Cannot get Info Server" << std::endl;
     }
     std::cout << "Server info: " << address << ':' << port << std::endl;
-    UDPClient gameClient(ioService, address, std::to_string(port));
+    gameClient = std::make_unique<UDPClient>(ioService, address, std::to_string(port), menu->getNetworkHandler());
 
     menu->getGameEntities()->setGamePlaying(true);
     menu->setScene(sceneName::GAME);
 
-    gameClient.connect();
-    gameClient.run();
+    gameClient->connect();
+    gameClient->run();
 }

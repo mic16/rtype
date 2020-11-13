@@ -11,9 +11,11 @@
 #include "lib/Network/AMessageHandler.hpp"
 #include "shared/Packet/PositionPacket.hpp"
 
+#include "shared/Synchronizer/Synchronizer.hpp"
+
 class ClientPositionMessageHandler : public AMessageHandler<PositionPacket> {
     public:
-        ClientPositionMessageHandler() {}
+        ClientPositionMessageHandler(Synchronizer &synchronizer) : synchronizer(synchronizer) {}
         ~ClientPositionMessageHandler() {}
 
         void onMessage(NetworkHandler &handler, INetworkClient &client, PositionPacket &packet) {
@@ -22,6 +24,7 @@ class ClientPositionMessageHandler : public AMessageHandler<PositionPacket> {
 
     protected:
     private:
+        Synchronizer &synchronizer;
 };
 
 #endif /* !CLIENTPOSITIONMESSAGEHANDLER_HPP */

@@ -11,6 +11,8 @@
 #include "lib/Network/AMessageHandler.hpp"
 #include "shared/Packet/FirePacket.hpp"
 
+#include "shared/Synchronizer/Synchronizer.hpp"
+
 class ServerFireMessageHandler : public AMessageHandler<FirePacket> {
     public:
         ServerFireMessageHandler(Synchronizer &synchronizer) : synchronizer(synchronizer) {}

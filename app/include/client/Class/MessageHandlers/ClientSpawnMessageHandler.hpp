@@ -11,9 +11,11 @@
 #include "lib/Network/AMessageHandler.hpp"
 #include "shared/Packet/SpawnPacket.hpp"
 
+#include "shared/Synchronizer/Synchronizer.hpp"
+
 class ClientSpawnMessageHandler : public AMessageHandler<SpawnPacket> {
     public:
-        ClientSpawnMessageHandler() {}
+        ClientSpawnMessageHandler(Synchronizer &synchronizer) : synchronizer(synchronizer) {}
         ~ClientSpawnMessageHandler() {}
 
         void onMessage(NetworkHandler &handler, INetworkClient &client, SpawnPacket &packet) {
@@ -22,6 +24,7 @@ class ClientSpawnMessageHandler : public AMessageHandler<SpawnPacket> {
 
     protected:
     private:
+        Synchronizer &synchronizer;
 };
 
 #endif /* !CLIENTSPAWNMESSAGEHANDLER_HPP_ */

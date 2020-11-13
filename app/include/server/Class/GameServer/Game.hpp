@@ -49,8 +49,6 @@ class Game : public Synchronizer {
         NetworkHandler networkHandler = {1024};
         Ladder lobby;
         GameServer gameServer;
-        DoubleQueue<IPacket> doubleQueue;
-        DoubleHashmap<size_t, IPacket> doubleMap;
 };
 
 #endif /* !GAME_HPP_ */

@@ -11,9 +11,11 @@
 #include "lib/Network/AMessageHandler.hpp"
 #include "shared/Packet/MovePacket.hpp"
 
+#include "shared/Synchronizer/Synchronizer.hpp"
+
 class ClientMoveMessageHandler : public AMessageHandler<MovePacket> {
     public:
-        ClientMoveMessageHandler() {}
+        ClientMoveMessageHandler(Synchronizer &synchronizer) : synchronizer(synchronizer) {}
         ~ClientMoveMessageHandler() {}
 
         void onMessage(NetworkHandler &handler, INetworkClient &client, MovePacket &packet) {
@@ -22,6 +24,7 @@ class ClientMoveMessageHandler : public AMessageHandler<MovePacket> {
 
     protected:
     private:
+        Synchronizer &synchronizer;
 };
 
 #endif /* !CLIENTMOVEMESSAGEHANDLER_HPP_ */

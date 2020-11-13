@@ -11,9 +11,11 @@
 #include "lib/Network/AMessageHandler.hpp"
 #include "shared/Packet/DamagePacket.hpp"
 
+#include "shared/Synchronizer/Synchronizer.hpp"
+
 class ClientDamageMessageHandler : public AMessageHandler<DamagePacket> {
     public:
-        ClientDamageMessageHandler() {}
+        ClientDamageMessageHandler(Synchronizer &synchronizer) : synchronizer(synchronizer) {}
         ~ClientDamageMessageHandler() {}
 
         void onMessage(NetworkHandler &handler, INetworkClient &client, DamagePacket &packet) {
@@ -22,6 +24,7 @@ class ClientDamageMessageHandler : public AMessageHandler<DamagePacket> {
 
     protected:
     private:
+        Synchronizer &synchronizer;
 };
 
 #endif /* !CLIENTDAMAGEMESSAGEHANDLER_HPP */
