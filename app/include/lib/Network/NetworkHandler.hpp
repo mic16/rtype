@@ -27,10 +27,13 @@ class NetworkHandler {
         }
 
         template<typename T>
-        void registerMessageHandler(size_t id, T type) {
+        void registerMessageHandler(T type) {
             static_assert(std::is_base_of<IMessageHandler, typename std::remove_pointer<T>::type>::value, "Class not derived from AMessageHandler");
             static_assert(std::is_pointer<T>::value, "Expected a pointer, not a copy or reference");
             std::size_t hashcode = typeid(typename std::remove_pointer<T>::type::packetType).hash_code();
+
+            typename std::remove_pointer<T>::type::packetType packet;
+            size_t id = packet.getPacketID();
 
             packetHandlers.insert(std::make_pair(id, std::unique_ptr<IMessageHandler>(reinterpret_cast<IMessageHandler *>(type))));
             packetsID.insert({hashcode, id});

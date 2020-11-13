@@ -13,7 +13,7 @@
 
 class ServerPositionMessageHandler : public AMessageHandler<PositionPacket> {
     public:
-        ServerPositionMessageHandler() {}
+        ServerPositionMessageHandler(Synchronizer &synchronizer) : synchronizer(synchronizer) {}
         ~ServerPositionMessageHandler() {}
 
         void onMessage(NetworkHandler &handler, INetworkClient &client, PositionPacket &packet) {
@@ -22,6 +22,7 @@ class ServerPositionMessageHandler : public AMessageHandler<PositionPacket> {
 
     protected:
     private:
+        Synchronizer &synchronizer;
 };
 
 #endif /* !SERVERPOSITIONMESSAGEHANDLER_HPP */

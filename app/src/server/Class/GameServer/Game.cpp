@@ -14,15 +14,16 @@
 #include "server/Class/MessageHandlers/ServerPositionMessageHandler.hpp"
 
 Game::Game():
+    Synchronizer(),
     lobby(Ladder::genId()),
     gameServer(networkHandler)
 {
-    networkHandler.registerMessageHandler(0, new ServerSpawnMessageHandler());
-    networkHandler.registerMessageHandler(1, new ServerDeathMessageHandler());
-    networkHandler.registerMessageHandler(2, new ServerDamageMessageHandler());
-    networkHandler.registerMessageHandler(3, new ServerFireMessageHandler());
-    networkHandler.registerMessageHandler(4, new ServerMoveMessageHandler());
-    networkHandler.registerMessageHandler(5, new ServerPositionMessageHandler());
+    networkHandler.registerMessageHandler(new ServerSpawnMessageHandler(*this));
+    networkHandler.registerMessageHandler(new ServerDeathMessageHandler(*this));
+    networkHandler.registerMessageHandler(new ServerDamageMessageHandler(*this));
+    networkHandler.registerMessageHandler(new ServerFireMessageHandler(*this));
+    networkHandler.registerMessageHandler(new ServerMoveMessageHandler(*this));
+    networkHandler.registerMessageHandler(new ServerPositionMessageHandler(*this));
 }
 
 Game::~Game()

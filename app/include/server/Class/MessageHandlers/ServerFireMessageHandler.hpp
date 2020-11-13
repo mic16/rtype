@@ -13,7 +13,7 @@
 
 class ServerFireMessageHandler : public AMessageHandler<FirePacket> {
     public:
-        ServerFireMessageHandler() {}
+        ServerFireMessageHandler(Synchronizer &synchronizer) : synchronizer(synchronizer) {}
         ~ServerFireMessageHandler() {}
 
         void onMessage(NetworkHandler &handler, INetworkClient &client, FirePacket &packet) {
@@ -22,6 +22,7 @@ class ServerFireMessageHandler : public AMessageHandler<FirePacket> {
 
     protected:
     private:
+        Synchronizer &synchronizer;
 };
 
 #endif /* !SERVERFIREMESSAGEHANDLER_HPP */

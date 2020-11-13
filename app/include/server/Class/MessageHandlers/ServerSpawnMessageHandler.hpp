@@ -14,7 +14,7 @@
 
 class ServerSpawnMessageHandler : public AMessageHandler<SpawnPacket> {
     public:
-        ServerSpawnMessageHandler() {}
+        ServerSpawnMessageHandler(Synchronizer &synchronizer) : synchronizer(synchronizer) {}
         ~ServerSpawnMessageHandler() {}
 
         void onMessage(NetworkHandler &handler, INetworkClient &client, SpawnPacket &packet) {
@@ -23,6 +23,7 @@ class ServerSpawnMessageHandler : public AMessageHandler<SpawnPacket> {
 
     protected:
     private:
+        Synchronizer &synchronizer;
 };
 
 #endif /* !SERVERSPAWNMESSAGEHANDLER_HPP_ */

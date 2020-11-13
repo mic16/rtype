@@ -13,7 +13,7 @@
 
 class ServerMoveMessageHandler : public AMessageHandler<MovePacket> {
     public:
-        ServerMoveMessageHandler() {}
+        ServerMoveMessageHandler(Synchronizer &synchronizer) : synchronizer(synchronizer) {}
         ~ServerMoveMessageHandler() {}
 
         void onMessage(NetworkHandler &handler, INetworkClient &client, MovePacket &packet) {
@@ -22,6 +22,7 @@ class ServerMoveMessageHandler : public AMessageHandler<MovePacket> {
 
     protected:
     private:
+        Synchronizer &synchronizer;
 };
 
 #endif /* !SERVERMOVEMESSAGEHANDLER_HPP_ */

@@ -16,12 +16,20 @@ class DeathPacket : public ABasePacket {
         DeathPacket(size_t id) : ABasePacket(id) {}
         ~DeathPacket() {}
 
-        void fromBuffer(ByteBuffer &buffer) {
+        void fromBuffer(ByteBuffer &buffer) override {
             ABasePacket::fromBuffer(buffer);
         }
 
-        void toBuffer(ByteBuffer &buffer) {
+        void toBuffer(ByteBuffer &buffer) override {
             ABasePacket::toBuffer(buffer);
+        }
+
+        size_t getPacketID() const override {
+            return DeathPacket::PacketID();
+        }
+
+        static size_t PacketID() {
+            return 1;
         }
 
     protected:

@@ -16,17 +16,19 @@ class ABasePacket : public IPacket {
         ABasePacket() {}
         ~ABasePacket() {}
 
-        void fromBuffer(ByteBuffer &buffer) {
+        virtual void fromBuffer(ByteBuffer &buffer) override {
             m_id = buffer.readUInt(nullptr);
         }
 
-        void toBuffer(ByteBuffer &buffer) {
+        virtual void toBuffer(ByteBuffer &buffer) override {
             buffer.writeUInt(m_id);
         }
 
-        size_t getID() const {
+        size_t getEntityID() const {
             return m_id;
         }
+
+        virtual size_t getPacketID() const = 0;
 
     protected:
     private:

@@ -21,6 +21,9 @@
 #include "client/Class/GameEntities/GameEntities.hpp"
 #include "client/Class/UDPClient/UDPClient.hpp"
 
+#include "lib/Network/NetworkHandler.hpp"
+#include "shared/Synchronizer/Synchronizer.hpp"
+
 #define LAST_FIXED_SPRITE(sceneName) fixedDrawables.at(sceneName)[fixedDrawables.at(sceneName).size() - 1]
 
 class GameMenu : public IGameMenu {
@@ -58,6 +61,10 @@ class GameMenu : public IGameMenu {
 
         GameEntities *getGameEntities() { return (&gameEntities); };
 
+        NetworkHandler &getNetworkHandler() {
+            return networkHandler;
+        }
+
     private:
         void initDrawables();
 
@@ -78,6 +85,9 @@ class GameMenu : public IGameMenu {
 
         void initFixedGameDrawables();
         void initModGameDrawables();
+
+        Synchronizer synchronizer;
+        NetworkHandler networkHandler = {1024};
 
         sceneName scene;
         std::unique_ptr<TCPClient> client;

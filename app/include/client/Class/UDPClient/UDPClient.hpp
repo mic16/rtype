@@ -13,7 +13,7 @@
 
 class UDPClient {
     public:
-        UDPClient(boost::asio::io_context &io_service, const std::string &host, const std::string &port);
+        UDPClient(boost::asio::io_context &io_service, const std::string &host, const std::string &port, NetworkHandler &networkHandler);
         ~UDPClient();
 
         void work();
@@ -23,7 +23,7 @@ class UDPClient {
 
     private:
         RemoteClient *client;
-        NetworkHandler networkHandler;
+        NetworkHandler &networkHandler;
 };
 
 #endif /* !UDPCLIENT_HPP_ */

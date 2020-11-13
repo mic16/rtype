@@ -18,13 +18,13 @@ class PositionPacket : public ABasePacket {
 
         ~PositionPacket() {}
 
-        void fromBuffer(ByteBuffer &buffer) {
+        void fromBuffer(ByteBuffer &buffer) override {
             ABasePacket::fromBuffer(buffer);
             x = buffer.readDouble(nullptr);
             y = buffer.readDouble(nullptr);
         }
 
-        void toBuffer(ByteBuffer &buffer) {
+        void toBuffer(ByteBuffer &buffer) override {
             ABasePacket::toBuffer(buffer);
             buffer.writeDouble(x);
             buffer.writeDouble(y);
@@ -36,6 +36,14 @@ class PositionPacket : public ABasePacket {
 
         double getY() const {
             return y;
+        }
+
+        size_t getPacketID() const override {
+            return PositionPacket::PacketID();
+        }
+
+        static size_t PacketID() {
+            return 4;
         }
 
     protected:

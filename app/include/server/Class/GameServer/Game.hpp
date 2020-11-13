@@ -20,41 +20,10 @@
 #include "shared/Packet/SpawnPacket.hpp"
 #include "shared/Packet/DamagePacket.hpp"
 
-struct Position {
-    double x;
-    double y;
-};
+#include "shared/Components/Components.hpp"
+#include "shared/Synchronizer/Synchronizer.hpp"
 
-struct EntityID {
-    size_t id;
-};
-
-struct Velocity {
-    double dirX;
-    double dirY;
-    double speed;
-};
-
-struct EntityStats {
-    int hp;
-    int maxHP;
-    int damage;
-};
-
-struct EntityInfo {
-    bool isEnemy;
-};
-
-struct Hitbox {
-    double w;
-    double h;
-};
-
-struct ProjectileInfo {
-    int damage;
-};
-
-class Game {
+class Game : public Synchronizer {
     public:
         Game();
         ~Game();
@@ -80,6 +49,8 @@ class Game {
         NetworkHandler networkHandler = {1024};
         Ladder lobby;
         GameServer gameServer;
+        DoubleQueue<IPacket> doubleQueue;
+        DoubleHashmap<size_t, IPacket> doubleMap;
 };
 
 #endif /* !GAME_HPP_ */
