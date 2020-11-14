@@ -23,6 +23,7 @@ bool UDPClient::setClient(const std::shared_ptr<boost::asio::ip::udp::socket> &s
     m_address = m_endpoint.address().to_string();
     m_port = m_endpoint.port();
 
+    idStr = m_address + ':' + std::to_string(m_port);
     return (true);
 }
 
