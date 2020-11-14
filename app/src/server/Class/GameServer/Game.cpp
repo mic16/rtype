@@ -8,6 +8,7 @@
 #include "server/Class/GameServer/Game.hpp"
 #include "server/Class/MessageHandlers/ServerSpawnMessageHandler.hpp"
 #include "server/Class/MessageHandlers/ServerDeathMessageHandler.hpp"
+#include "server/Class/MessageHandlers/ServerPingMessageHandler.hpp"
 #include "server/Class/MessageHandlers/ServerDamageMessageHandler.hpp"
 #include "server/Class/MessageHandlers/ServerFireMessageHandler.hpp"
 #include "server/Class/MessageHandlers/ServerMoveMessageHandler.hpp"
@@ -23,6 +24,7 @@ Game::Game():
 {
     networkHandler.registerMessageHandler(new ServerSpawnMessageHandler(*this));
     networkHandler.registerMessageHandler(new ServerDeathMessageHandler(*this));
+    networkHandler.registerMessageHandler(new ServerPingMessageHandler(*this));
     networkHandler.registerMessageHandler(new ServerDamageMessageHandler(*this));
     networkHandler.registerMessageHandler(new ServerFireMessageHandler(*this));
     networkHandler.registerMessageHandler(new ServerMoveMessageHandler(*this));
@@ -253,6 +255,8 @@ void Game::startGame()
     lastTime = std::chrono::high_resolution_clock::now();
     init();
     compile();
+    auto t1 = std::chrono::high_resolution_clock::now();
+    networkHandler.getLastTRequestStatus() = std::chrono::high_resolution_clock::now();
     while (true) {
         if (getDoubleQueue().isReadOpen()) {
             auto &vector = getDoubleQueue().getReadVector();
@@ -281,6 +285,15 @@ void Game::startGame()
             getDoubleQueue().closeRead();
         }
         update();
+        auto t2 = std::chrono::high_resolution_clock::now();
+        if (std::chrono::duration_cast<std::chrono::duration<double>>(t2 - networkHandler.getLastTRequestStatus()).count() > 0.1) {
+            networkHandler.broadcast(PingPacket());
+            networkHandler.getLastTRequestStatus() = std::chrono::high_resolution_clock::now();
+        }
+        if (std::chrono::duration_cast<std::chrono::duration<double>>(t2 - t1).count() > 10) {
+            networkHandler.checkClientsConnection();
+            t1 = std::chrono::high_resolution_clock::now();
+        }
     }
     gameServer.join();
 }

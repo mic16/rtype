@@ -19,6 +19,7 @@
 #include "shared/Packet/PositionPacket.hpp"
 #include "shared/Packet/SpawnPacket.hpp"
 #include "shared/Packet/DamagePacket.hpp"
+#include "shared/Packet/PingPacket.hpp"
 
 #include "shared/Components/Components.hpp"
 #include "shared/Synchronizer/Synchronizer.hpp"
@@ -49,6 +50,7 @@ class Game : public Synchronizer {
 
     private:
         std::chrono::high_resolution_clock::time_point lastTime;
+        std::chrono::high_resolution_clock::time_point lastRequestStatus;
         ECS ecs;
         NetworkHandler networkHandler = {1024};
         Ladder lobby;
