@@ -9,6 +9,7 @@
 
 #include "client/Class/MessageHandlers/ClientSpawnMessageHandler.hpp"
 #include "client/Class/MessageHandlers/ClientDeathMessageHandler.hpp"
+#include "client/Class/MessageHandlers/ClientPingMessageHandler.hpp"
 #include "client/Class/MessageHandlers/ClientDamageMessageHandler.hpp"
 #include "client/Class/MessageHandlers/ClientFireMessageHandler.hpp"
 #include "client/Class/MessageHandlers/ClientMoveMessageHandler.hpp"
@@ -39,6 +40,7 @@ background(window, 250)
 
     networkHandler.registerMessageHandler(new ClientSpawnMessageHandler(synchronizer));
     networkHandler.registerMessageHandler(new ClientDeathMessageHandler(synchronizer));
+    networkHandler.registerMessageHandler(new ClientPingMessageHandler(synchronizer));
     networkHandler.registerMessageHandler(new ClientDamageMessageHandler(synchronizer));
     networkHandler.registerMessageHandler(new ClientFireMessageHandler(synchronizer));
     networkHandler.registerMessageHandler(new ClientMoveMessageHandler(synchronizer));
