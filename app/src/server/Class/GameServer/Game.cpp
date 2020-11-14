@@ -50,6 +50,47 @@ void Game::init() {
     .addTags({"DamageOnTouch", "Damageable"})
     .finish();
 
+    ecs.newSystem<Velocity, EntityID, EntityInfo>("UpdateEntities")
+    .each([this](float delta, EntityIterator<Velocity, EntityID, EntityInfo> &entity) {
+        if (this->getDoubleMap().isReadClose())
+            return;
+
+        auto &readMap = this->getDoubleMap().getReadMap();
+        while (entity.hasNext()) {
+            entity.next();
+
+            Velocity *velocity = entity.getComponent<Velocity>(0);
+            EntityID *entityID = entity.getComponent<EntityID>(1);
+            EntityInfo *entityInfo = entity.getComponent<EntityInfo>(2);
+
+            if (readMap->find(entityID->id) != readMap->end()) {
+                PacketData &data = readMap->at(entityID->id);
+
+                velocity->dirX = data.dirX;
+                velocity->dirY = data.dirY;
+
+                entityInfo->isFiring = data.isFiring;
+            }
+        }
+        this->getDoubleMap().closeRead();
+    }).finish();
+
+    ecs.newSystem<Position, EntityID, EntityInfo>("SpawnProjectile")
+    .each([this](float delta, EntityIterator<Position, EntityID, EntityInfo> &entity) {
+        auto projectileGenerator = this->getECS().getEntityGenerator("Projectile");
+        while (entity.hasNext()) {
+            entity.next();
+
+            Position *velocity = entity.getComponent<Position>(0);
+            EntityID *entityID = entity.getComponent<EntityID>(1);
+            EntityInfo *entityInfo = entity.getComponent<EntityInfo>(2);
+
+            if (entityInfo->isFiring) {
+
+            }
+        }
+    }).finish();
+
     ecs.newSystem<Position, Velocity, EntityID, EntityInfo, Hitbox>("MoveEntity")
     .each([this](float delta, EntityIterator<Position, Velocity, EntityID, EntityInfo, Hitbox> &entity) {
         while (entity.hasNext()) {

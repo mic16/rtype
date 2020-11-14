@@ -21,28 +21,33 @@ class DoubleQueue {
         ~DoubleQueue() {}
 
         void update() {
-            if (isReadingFinished()) {
+            if (isReadClose()) {
                 readVector->clear();
                 writeVector.swap(readVector);
                 readEnd.store(false, std::memory_order::memory_order_relaxed);
             }
         }
 
-        std::unique_ptr<std::vector<T>> &getWriteVector() const {
-            return &writeVector;
+        std::unique_ptr<std::vector<T>> &getWriteVector() {
+            return writeVector;
         }
 
-        const std::unique_ptr<std::vector<T>> &getReadVector() const {
-            return &readVector;
+        std::unique_ptr<std::vector<T>> &getReadVector() {
+            return readVector;
         }
 
-        void finishReading() {
+        void closeRead() {
             readEnd.store(true, std::memory_order::memory_order_relaxed);
         }
 
-        bool isReadingFinished() {
+        bool isReadClose() {
             return readEnd.load(std::memory_order::memory_order_relaxed);
         }
+
+        bool isReadOpen() {
+            return !readEnd.load(std::memory_order::memory_order_relaxed);
+        }
+
 
     protected:
     private:

@@ -15,39 +15,14 @@
 #include <fstream>
 #include <string>
 
-struct Position {
-    float x;
-    float y;
-};
-
-struct Velocity {
-    short vx;
-    short vy;
-    float speed;
-};
+#include "shared/Components/Components.hpp"
+#include "shared/Synchronizer/Synchronizer.hpp"
+#include "EntitySpriteManager.hpp"
 
 struct Drawable {
     bool visible;
-    sf::Texture texture;
-    sf::Sprite sprite;
-};
-
-struct Status {
-    bool isAlive;
-    size_t hp;
-    size_t maxhp;
-};
-
-struct ProjectileStats {
-    size_t damage;
-    uint8_t type;
-};
-
-struct Hitbox {
-    size_t x;
-    size_t y;
-    size_t w;
-    size_t h;
+    sf::Sprite *sprite;
+    sf::IntRect uvRect;
 };
 
 struct Animation {
@@ -60,22 +35,20 @@ struct Animation {
     bool reverse = false;
 };
 
-struct EntityId {
-    size_t id;
-};
 
 class GameEntities {
     public:
-        GameEntities(sf::RenderWindow &window);
+        GameEntities(sf::RenderWindow &window, Synchronizer &synchronizer, EntitySpriteManager &spriteManager);
         ~GameEntities();
         void init();
         sf::RenderWindow &getWindow() { return window; };
-        ECS getEcs() { return ecs; };
+        ECS &getECS() { return ecs; };
+        Synchronizer &getSynchronizer() {return synchronizer; }
         void update(bool *isDirectionMaintained, float deltaTime);
 
-        void createPlayer(int nbOfPlayers, sf::Vector2f position, sf::Vector2u totalFrames, sf::Vector2u startingFrame, 
-            float timeToSwitchFrames, sf::Vector2u textureSize, bool reverse, sf::Texture texture, sf::Sprite sprite, size_t id);
-        void createBackground(sf::Texture texture, sf::Sprite sprite);
+        void createPlayer(int nbOfPlayers, sf::Vector2f position, sf::Vector2u totalFrames, sf::Vector2u startingFrame,
+            float timeToSwitchFrames, sf::Vector2u textureSize, bool reverse, sf::Sprite *sprite, size_t id);
+        void createBackground(sf::Sprite *sprite);
 
         enum DIRECTION {
             UP,
@@ -96,6 +69,9 @@ class GameEntities {
         int row = 0;
         float deltaTime = 0.0f;
         bool gamePlaying = false;
+        Synchronizer &synchronizer;
+        EntitySpriteManager &spriteManager;
+
 };
 
 #endif /* !GAMEENTITIES_HPP_ */

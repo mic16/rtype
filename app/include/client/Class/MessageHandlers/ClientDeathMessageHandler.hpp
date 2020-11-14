@@ -19,7 +19,16 @@ class ClientDeathMessageHandler : public AMessageHandler<DeathPacket> {
         ~ClientDeathMessageHandler() {}
 
         void onMessage(NetworkHandler &handler, INetworkClient &client, DeathPacket &packet) {
+            auto &writeMap = synchronizer.getDoubleMap().getWriteMap();
 
+            if (writeMap->find(packet.getEntityID()) == writeMap->end()) {
+                writeMap->insert({packet.getEntityID(), PacketData()});
+            }
+            auto &packetData = writeMap->at(packet.getEntityID());
+
+            packetData.isAlive = false;
+
+            synchronizer.getDoubleMap().update();
         }
 
     protected:

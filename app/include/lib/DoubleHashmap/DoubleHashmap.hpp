@@ -22,27 +22,31 @@ class DoubleHashmap {
         ~DoubleHashmap() {}
 
         void update() {
-            if (isReadingFinished()) {
+            if (isReadClose()) {
                 readMap->clear();
                 writeMap.swap(readMap);
                 readEnd.store(false, std::memory_order::memory_order_relaxed);
             }
         }
 
-        std::unique_ptr<std::unordered_map<T, U>> &getWriteMap() const {
-            return &writeMap;
+        std::unique_ptr<std::unordered_map<T, U>> &getWriteMap() {
+            return writeMap;
         }
 
-        const std::unique_ptr<std::unordered_map<T, U>> &getReadMap() const {
-            return &readMap;
+        std::unique_ptr<std::unordered_map<T, U>> &getReadMap() {
+            return readMap;
         }
 
-        void finishReading() {
+        void closeRead() {
             readEnd.store(true, std::memory_order::memory_order_relaxed);
         }
 
-        bool isReadingFinished() {
+        bool isReadClose() {
             return readEnd.load(std::memory_order::memory_order_relaxed);
+        }
+
+        bool isReadOpen() {
+            return !readEnd.load(std::memory_order::memory_order_relaxed);
         }
 
     protected:

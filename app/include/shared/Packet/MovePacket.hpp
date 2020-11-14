@@ -16,6 +16,8 @@ class MovePacket : public ABasePacket {
 
         MovePacket() : ABasePacket() {}
 
+        MovePacket(MovePacket &packet) : ABasePacket(packet), dirX(packet.dirX), dirY(packet.dirY) {}
+
         ~MovePacket() {}
 
         void fromBuffer(ByteBuffer &buffer) override {

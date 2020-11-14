@@ -19,7 +19,17 @@ class ClientPositionMessageHandler : public AMessageHandler<PositionPacket> {
         ~ClientPositionMessageHandler() {}
 
         void onMessage(NetworkHandler &handler, INetworkClient &client, PositionPacket &packet) {
+            auto &writeMap = synchronizer.getDoubleMap().getWriteMap();
 
+            if (writeMap->find(packet.getEntityID()) == writeMap->end()) {
+                writeMap->insert({packet.getEntityID(), PacketData()});
+            }
+            auto &packetData = writeMap->at(packet.getEntityID());
+
+            packetData.x = packet.getX();
+            packetData.y = packet.getY();
+
+            synchronizer.getDoubleMap().update();
         }
 
     protected:

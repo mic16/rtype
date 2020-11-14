@@ -78,7 +78,7 @@ class NetworkHandler {
             std::size_t id = packetsID[hashcode];
 
             prepend.clear();
-            prepend.writeUInt(id);
+            prepend.writeULong(id);
             prepend.writeCharBuffer(reinterpret_cast<const char *>(buffer.flush()), buffer.getSize());
             for (auto &client : clients) {
                 client->write(prepend);
@@ -89,7 +89,7 @@ class NetworkHandler {
             ByteBuffer &buffer = client.getBuffer();
             int err = 0;
             while (buffer.getSize() > 0) {
-                size_t packedType = buffer.readUInt(&err);
+                size_t packedType = buffer.readULong(&err);
                 if (err) {
                     buffer.clear();
                     return;

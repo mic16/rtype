@@ -16,6 +16,8 @@ class PositionPacket : public ABasePacket {
 
         PositionPacket() : ABasePacket() {}
 
+        PositionPacket(PositionPacket &packet) : ABasePacket(packet), x(packet.x), y(packet.y) {}
+
         ~PositionPacket() {}
 
         void fromBuffer(ByteBuffer &buffer) override {

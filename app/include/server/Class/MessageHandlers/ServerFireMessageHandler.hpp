@@ -19,7 +19,17 @@ class ServerFireMessageHandler : public AMessageHandler<FirePacket> {
         ~ServerFireMessageHandler() {}
 
         void onMessage(NetworkHandler &handler, INetworkClient &client, FirePacket &packet) {
+            auto &writeMap = synchronizer.getDoubleMap().getWriteMap();
 
+            if (writeMap->find(packet.getEntityID()) == writeMap->end()) {
+                writeMap->insert({packet.getEntityID(), PacketData()});
+            }
+
+            PacketData &data = writeMap->at(packet.getEntityID());
+
+            data.isFiring = packet.isHolding();
+
+            synchronizer.getDoubleMap().update();
         }
 
     protected:

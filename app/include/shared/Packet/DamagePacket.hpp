@@ -14,6 +14,7 @@ class DamagePacket : public ABasePacket {
     public:
         DamagePacket() : ABasePacket() {}
         DamagePacket(size_t id, int damage, int hp, int maxHP) : ABasePacket(id), damage(damage), hp(hp), maxHP(maxHP) {}
+        DamagePacket(DamagePacket &packet) : ABasePacket(packet), damage(packet.damage), hp(packet.hp), maxHP(packet.maxHP) {}
         ~DamagePacket() {}
 
         virtual void fromBuffer(ByteBuffer &buffer) override {

@@ -25,6 +25,9 @@
 #include "shared/Synchronizer/Synchronizer.hpp"
 #include "shared/Packet/MovePacket.hpp"
 
+#include "client/Class/GameEntities/EntitySpriteManager.hpp"
+#include "shared/Structs/EntityType.hpp"
+
 #define LAST_FIXED_SPRITE(sceneName) fixedDrawables.at(sceneName)[fixedDrawables.at(sceneName).size() - 1]
 
 class GameMenu : public IGameMenu {
@@ -90,6 +93,8 @@ class GameMenu : public IGameMenu {
 
         Synchronizer synchronizer;
         NetworkHandler networkHandler = {1024};
+
+        EntitySpriteManager spriteManager;
 
         sceneName scene;
         std::unique_ptr<TCPClient> client;

@@ -19,7 +19,10 @@ class ClientSpawnMessageHandler : public AMessageHandler<SpawnPacket> {
         ~ClientSpawnMessageHandler() {}
 
         void onMessage(NetworkHandler &handler, INetworkClient &client, SpawnPacket &packet) {
+            auto &vector = synchronizer.getDoubleQueue().getWriteVector();
 
+            vector->emplace_back(new SpawnPacket(packet));
+            synchronizer.getDoubleQueue().update();
         }
 
     protected:

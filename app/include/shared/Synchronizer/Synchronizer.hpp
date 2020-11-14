@@ -13,13 +13,14 @@
 #include "lib/DoubleHashmap/DoubleHashmap.hpp"
 #include "lib/DoubleQueue/DoubleQueue.hpp"
 #include "lib/Network/IPacket.hpp"
+#include "PacketData.hpp"
 
 class Synchronizer {
     public:
         Synchronizer() {}
         ~Synchronizer() {}
 
-        DoubleHashmap<size_t, std::unique_ptr<IPacket>> &getDoubleMap() {
+        DoubleHashmap<size_t, PacketData> &getDoubleMap() {
             return doubleMap;
         }
 
@@ -28,7 +29,7 @@ class Synchronizer {
         }
 
     protected:
-        DoubleHashmap<size_t, std::unique_ptr<IPacket>> doubleMap;
+        DoubleHashmap<size_t, PacketData> doubleMap;
         DoubleQueue<std::unique_ptr<IPacket>> doubleQueue;
     private:
 };

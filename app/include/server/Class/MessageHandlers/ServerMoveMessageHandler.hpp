@@ -19,7 +19,30 @@ class ServerMoveMessageHandler : public AMessageHandler<MovePacket> {
         ~ServerMoveMessageHandler() {}
 
         void onMessage(NetworkHandler &handler, INetworkClient &client, MovePacket &packet) {
+            auto &writeMap = synchronizer.getDoubleMap().getWriteMap();
 
+            if (writeMap->find(packet.getEntityID()) == writeMap->end()) {
+                writeMap->insert({packet.getEntityID(), PacketData()});
+            }
+
+            PacketData &data = writeMap->at(packet.getEntityID());
+            if (packet.getDirectionX() < 0) {
+                data.dirX = -1;
+            } else if (packet.getDirectionX() > 0) {
+                data.dirX = 1;
+            } else {
+                data.dirX = 0;
+            }
+
+            if (packet.getDirectionY() < 0) {
+                data.dirY = -1;
+            } else if (packet.getDirectionY() > 0) {
+                data.dirY = 1;
+            } else {
+                data.dirY = 0;
+            }
+
+            synchronizer.getDoubleMap().update();
         }
 
     protected:

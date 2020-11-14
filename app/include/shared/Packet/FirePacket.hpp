@@ -16,6 +16,8 @@ class FirePacket : public ABasePacket {
 
         FirePacket() : ABasePacket() {}
 
+        FirePacket(FirePacket &packet) : ABasePacket(packet), holding(packet.holding) {}
+
         ~FirePacket() {}
 
         void fromBuffer(ByteBuffer &buffer) override {

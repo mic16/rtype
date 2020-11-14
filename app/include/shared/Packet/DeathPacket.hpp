@@ -14,6 +14,7 @@ class DeathPacket : public ABasePacket {
     public:
         DeathPacket() : ABasePacket() {}
         DeathPacket(size_t id) : ABasePacket(id) {}
+        DeathPacket(ABasePacket &packet) : ABasePacket(packet) {}
         ~DeathPacket() {}
 
         void fromBuffer(ByteBuffer &buffer) override {

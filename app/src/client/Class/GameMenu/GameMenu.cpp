@@ -25,7 +25,7 @@ window(
 ),
 buffer(1024),
 actualButton(menuButton::B_CREATE),
-gameEntities(window)
+gameEntities(window, synchronizer, spriteManager)
 {
     client = std::make_unique<TCPClient>(this);
     initDrawables();
@@ -35,7 +35,6 @@ gameEntities(window)
         isDirectionMaintained[i] = false;
     window.setFramerateLimit(60);
     window.setKeyRepeatEnabled(false);
-    displayThread = std::make_unique<std::thread>(&GameMenu::handleDisplay, this);
 
     networkHandler.registerMessageHandler(new ClientSpawnMessageHandler(synchronizer));
     networkHandler.registerMessageHandler(new ClientDeathMessageHandler(synchronizer));
@@ -43,6 +42,8 @@ gameEntities(window)
     networkHandler.registerMessageHandler(new ClientFireMessageHandler(synchronizer));
     networkHandler.registerMessageHandler(new ClientMoveMessageHandler(synchronizer));
     networkHandler.registerMessageHandler(new ClientPositionMessageHandler(synchronizer));
+
+    displayThread = std::make_unique<std::thread>(&GameMenu::handleDisplay, this);
 }
 
 GameMenu::~GameMenu()
@@ -79,10 +80,13 @@ void GameMenu::draw()
 
 void GameMenu::draw(float deltaTime)
 {
-    window.clear(sf::Color::White);
-    if (gameEntities.isGamePlaying())
-        gameEntities.update(isDirectionMaintained, deltaTime);
-    window.display();
+    if (gameEntities.isGamePlaying()) {
+        if (synchronizer.getDoubleMap().isReadOpen() || synchronizer.getDoubleQueue().isReadOpen()) {
+            window.clear(sf::Color::White);
+            gameEntities.update(isDirectionMaintained, deltaTime);
+            window.display();
+        }
+    }
 }
 
 bool GameMenu::isOpen()
@@ -96,16 +100,17 @@ void GameMenu::handleDisplay()
     sf::Clock clock;
 
     gameEntities.createPlayer(1, sf::Vector2f(200.0f, 200.0f), sf::Vector2u(5, 5), sf::Vector2u(2, 0), 0.05f,
-        loadedTextures["players"].get()->getSize(), false, *loadedTextures["players"].get(), sf::Sprite(*loadedTextures["players"].get()), playerId);
+        loadedTextures["players"].get()->getSize(), false, spriteManager.getSprite(EntityType::PLAYER1), playerId);
     playerId++;
-    gameEntities.createBackground(*loadedTextures["space"].get(), sf::Sprite(*loadedTextures["space"].get()));
+    gameEntities.createBackground(spriteManager.getSprite(EntityType::BACKGROUND));
     while (isOpen()) {
         deltaTime = clock.restart().asSeconds();
         handleEvents();
-        if (getScene() == sceneName::GAME)
+        if (getScene() == sceneName::GAME) {
             draw(deltaTime);
-        else
+        } else {
             draw();
+        }
     }
 }
 

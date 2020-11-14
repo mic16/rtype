@@ -14,6 +14,7 @@ class SpawnPacket : public PositionPacket {
     public:
         SpawnPacket() : PositionPacket() {}
         SpawnPacket(size_t id, size_t entityType, double x, double y) : PositionPacket(id, x, y), entityType(entityType) {}
+        SpawnPacket(SpawnPacket &packet) : PositionPacket(packet), entityType(packet.entityType) {}
         ~SpawnPacket() {}
 
         void fromBuffer(ByteBuffer &buffer) override {

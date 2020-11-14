@@ -31,6 +31,7 @@ struct EntityStats {
 
 struct EntityInfo {
     bool isEnemy;
+    bool isFiring;
 };
 
 struct Hitbox {

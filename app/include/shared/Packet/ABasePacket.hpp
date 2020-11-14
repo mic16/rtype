@@ -9,23 +9,37 @@
 #define BASEPACKET_HPP_
 
 #include "lib/Network/IPacket.hpp"
+#include <chrono>
 
 class ABasePacket : public IPacket {
     public:
-        ABasePacket(size_t id) : m_id(id) {}
-        ABasePacket() {}
+        ABasePacket(size_t id) : m_id(id) {
+            auto now = std::chrono::system_clock::now();
+            m_time = now.time_since_epoch().count();
+        }
+        ABasePacket() {
+            auto now = std::chrono::system_clock::now();
+            m_time = now.time_since_epoch().count();
+        }
+        ABasePacket(ABasePacket &packet) : m_time(packet.m_time), m_id(packet.m_id) {}
         ~ABasePacket() {}
 
         virtual void fromBuffer(ByteBuffer &buffer) override {
-            m_id = buffer.readUInt(nullptr);
+            m_time = buffer.readULong(nullptr);
+            m_id = buffer.readULong(nullptr);
         }
 
         virtual void toBuffer(ByteBuffer &buffer) override {
-            buffer.writeUInt(m_id);
+            buffer.writeULong(m_time);
+            buffer.writeULong(m_id);
         }
 
         size_t getEntityID() const {
             return m_id;
+        }
+
+        size_t getTime() {
+            return m_time;
         }
 
         virtual size_t getPacketID() const = 0;
@@ -33,6 +47,7 @@ class ABasePacket : public IPacket {
     protected:
     private:
         size_t m_id;
+        size_t m_time;
 
 };
 
