@@ -251,6 +251,7 @@ const server_info_t Game::setGameServer()
 
 void Game::startGame()
 {
+    static unsigned short playerID = 1;
     gameServer.run();
     lastTime = std::chrono::high_resolution_clock::now();
     init();
@@ -279,7 +280,8 @@ void Game::startGame()
                     EntityInfo{false, false},
                     EntityStats{100, 100, 20});
 
-                    networkHandler.broadcast(SpawnPacket(id, EntityType::PLAYER1, x, y, 1));
+                    networkHandler.broadcast(SpawnPacket(id, EntityType::PLAYER1, x, y, playerID));
+                    playerID += 1;
                 }
             }
             getDoubleQueue().closeRead();
