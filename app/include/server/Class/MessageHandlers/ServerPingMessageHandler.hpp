@@ -8,6 +8,7 @@
 #ifndef SERVERPINGMESSAGEHANDLER_HPP_
 #define SERVERPINGMESSAGEHANDLER_HPP_
 
+#include <chrono>
 #include "lib/Network/AMessageHandler.hpp"
 #include "shared/Packet/PingPacket.hpp"
 
@@ -19,7 +20,9 @@ class ServerPingMessageHandler : public AMessageHandler<PingPacket> {
         ~ServerPingMessageHandler() {}
 
         void onMessage(NetworkHandler &handler, INetworkClient &client, PingPacket &packet) {
-            std::cout << "received" << std::endl;
+            if (handler.getClientConnection(client.getId())) {
+                handler.getLastClientRes(client.getId()) = std::chrono::high_resolution_clock::now();
+            }
             synchronizer.getDoubleMap().update();
             synchronizer.getDoubleQueue().update();
         }

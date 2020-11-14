@@ -12,12 +12,14 @@
 #include <string>
 #include <memory>
 #include "lib/ByteBuffer/ByteBuffer.hpp"
-#include "lib/Network/INetworkClient.hpp"
+#include "lib/Network/ANetworkClient.hpp"
 
-class UDPClient : public INetworkClient {
+class UDPClient : public ANetworkClient {
     public:
         UDPClient();
         ~UDPClient();
+
+        unsigned int getId() const { return m_id; }
 
         bool setClient(const std::shared_ptr<boost::asio::ip::udp::socket> &s_acceptor);
 
@@ -30,6 +32,7 @@ class UDPClient : public INetworkClient {
         ByteBuffer &getBuffer();
 
     private:
+        const unsigned int m_id;
         std::string m_address;
         char *m_packet = nullptr;
         unsigned int m_port;

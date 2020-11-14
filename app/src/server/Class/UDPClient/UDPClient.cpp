@@ -7,7 +7,7 @@
 
 #include "server/Class/UDPClient/UDPClient.hpp"
 
-UDPClient::UDPClient(): buffer(1024)
+UDPClient::UDPClient(): m_id(UDPClient::genId()), buffer(1024)
 {
     m_packet = new char[1024];
 }

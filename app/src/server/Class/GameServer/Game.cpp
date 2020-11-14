@@ -232,12 +232,16 @@ void Game::startGame()
     init();
     compile();
     auto t1 = std::chrono::high_resolution_clock::now();
+    networkHandler.getLastTRequestStatus() = std::chrono::high_resolution_clock::now();
     while (true) {
         update();
         auto t2 = std::chrono::high_resolution_clock::now();
-        if (std::chrono::duration_cast<std::chrono::duration<double>>(t2 - t1).count() > 10) {
+        if (std::chrono::duration_cast<std::chrono::duration<double>>(t2 - networkHandler.getLastTRequestStatus()).count() > 0.1) {
             networkHandler.broadcast(PingPacket());
-            networkHandler.askStatus();
+            networkHandler.getLastTRequestStatus() = std::chrono::high_resolution_clock::now();
+        }
+        if (std::chrono::duration_cast<std::chrono::duration<double>>(t2 - t1).count() > 10) {
+            networkHandler.checkClientsConnection();
             t1 = std::chrono::high_resolution_clock::now();
         }
     }

@@ -42,13 +42,15 @@ class NetworkHandler {
         void addClient(INetworkClient *client) {
             clients.emplace_back(client);
             buffers.emplace_back(new ByteBuffer(1024));
-            clientStatus.emplace_back(std::make_pair(true, true));
+            clientConnection.insert(std::pair<unsigned int, bool>(client->getId(), true));
+            lastClientRes.insert(std::pair<unsigned int, std::chrono::high_resolution_clock::time_point>(client->getId(), std::chrono::high_resolution_clock::now()));
         }
 
         void clear() {
             clients.clear();
             buffers.clear();
-            clientStatus.clear();
+            clientConnection.clear();
+            lastClientRes.clear();
         }
 
         template<typename T>
@@ -82,16 +84,9 @@ class NetworkHandler {
             prepend.clear();
             prepend.writeULong(id);
             prepend.writeCharBuffer(reinterpret_cast<const char *>(buffer.flush()), buffer.getSize());
-            for (size_t i = 0; i < clients.size() && i < clientStatus.size(); i++) {
-                if (clientStatus[i].second) {
-                    clients[i]->write(prepend);
-                }
-            }
-        }
-
-        void askStatus() {
-            for (std::pair<bool, bool> &status : clientStatus) {
-                status.first = false;
+            for (auto &client : clients) {
+                if (clientConnection[client->getId()])
+                    client->write(prepend);
             }
         }
 
@@ -123,6 +118,27 @@ class NetworkHandler {
 
         }
 
+        std::chrono::high_resolution_clock::time_point &getLastTRequestStatus() {
+            return (lastTRequestStatus);
+        }
+
+        std::chrono::high_resolution_clock::time_point &getLastClientRes(unsigned int clientid) {
+            return lastClientRes[clientid];
+        }
+
+        bool &getClientConnection(unsigned int clientid) {
+            return clientConnection[clientid];
+        }
+
+        void checkClientsConnection() {
+            for (auto &client: clients) {
+                if (std::chrono::duration_cast<std::chrono::duration<double>>(lastTRequestStatus - lastClientRes[client->getId()]).count() >= 25) {
+                    clientConnection[client->getId()] = false;
+                    std::cout << "Player " << client->getId() << " is not responding" << std::endl;
+                }
+            }
+        }
+
     protected:
     private:
 
@@ -130,7 +146,9 @@ class NetworkHandler {
         ByteBuffer buffer = {1024};
         std::vector<std::unique_ptr<INetworkClient>> clients;
         std::vector<std::unique_ptr<ByteBuffer>> buffers;
-        std::vector<std::pair<bool, bool>> clientStatus;
+        std::map<unsigned int, bool> clientConnection;
+        std::map<unsigned int, std::chrono::high_resolution_clock::time_point> lastClientRes;
+        std::chrono::high_resolution_clock::time_point lastTRequestStatus;
         std::size_t m_packetMaxSize;
         std::unordered_map<std::size_t, std::unique_ptr<IMessageHandler>> packetHandlers;
         std::unordered_map<std::size_t, std::size_t> packetsID;
