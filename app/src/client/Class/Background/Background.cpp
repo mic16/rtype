@@ -7,34 +7,32 @@
 
 #include "client/Class/Background/Background.hpp"
 
-#include <SFML/Graphics.hpp>
-#include <iostream>
-
-Background::Background(sf::RenderWindow &window) : window(window)
+Background::Background(sf::RenderWindow &window, float speed) : window(window)
 {
-    texture.loadFromFile("app/assets/images/backgrounds/background_space.png");
+    texture.loadFromFile("app/assets/images/backgrounds/space.png");
     sprite.setTexture(texture);
-    sprite.scale(4, 4);
 
-    view.setViewport(sf::FloatRect(0, 0, 1.0f, 1.0f));
-    x = 0;
-    y = 0;
+    sprite.setScale(4, 4);
+    position.x = 0;
+    position.y = 0;
+    this->speed = speed;
 }
 
 Background::~Background()
 {
 }
 
-void Background::update()
-{
-    x += 1;
+void Background::update(float delta)
+{ 
+    position.x += -1 * speed * delta;
+
+    if (position.x <= -4904)
+        position.x = position.x + 4904;
+
+    sprite.setPosition(position.x, position.y);
 }
 
 void Background::draw()
 {
     window.draw(sprite);
-    view.reset(sf::FloatRect(x, y, 1000, 800));
-    view.setCenter(500.f + x, 500.f);
-    window.setView(view);
 }
-

@@ -12,10 +12,10 @@
 
 class Background {
     public:
-        Background(sf::RenderWindow &window);
-        Background();
+        Background(sf::RenderWindow &window, float speed);
         ~Background();
-        void update();
+
+        void update(float delta);
         void draw();
 
     protected:
@@ -23,10 +23,8 @@ class Background {
         sf::RenderWindow &window;
         sf::Texture texture;
         sf::Sprite sprite;
-        sf::View view;
-        short speed;
-        int x;
-        int y;
+        float speed;
+        sf::Vector2i position;
 };
 
 #endif /* !BACKGROUND_HPP_ */
