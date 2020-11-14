@@ -28,23 +28,34 @@ void GameMenu::handleKeyPressed()
 {
     if (gameEntities.isGamePlaying()) {
         sf::Vector2i dir(0, 0);
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space))
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space)) {
             networkHandler.broadcast(FirePacket(playerId, true));
+            if (laserSound.load("app/assets/sounds/lazer.wav"))
+                laserSound.play(10.0f);
+        }
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Z)) {
             dir.y += -1;
             isDirectionMaintained[GameEntities::UP] = true;
+            if (sound.load("app/assets/sounds/robotsound.wav"))
+                sound.play(5.0f);
         }
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Q)) {
             dir.x += -1;
             isDirectionMaintained[GameEntities::LEFT] = true;
+            if (sound.load("app/assets/sounds/robotsound.wav"))
+                sound.play(5.0f);
         }
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)) {
             dir.y += 1;
             isDirectionMaintained[GameEntities::DOWN] = true;
+            if (sound.load("app/assets/sounds/robotsound.wav"))
+                sound.play(5.0f);
         }
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)) {
             dir.x += 1;
             isDirectionMaintained[GameEntities::RIGHT] = true;
+            if (sound.load("app/assets/sounds/robotsound.wav"))
+                sound.play(5.0f);
         }
         networkHandler.broadcast(MovePacket(playerId, dir.x, dir.y));
     }
