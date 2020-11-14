@@ -11,6 +11,7 @@
 #include "lib/Server/UDPServer/UDPServer.hpp"
 #include "server/Class/UDPClient/UDPClient.hpp"
 #include "lib/Network/NetworkHandler.hpp"
+#include "shared/Synchronizer/Synchronizer.hpp"
 
 #include <memory>
 
@@ -21,7 +22,7 @@ typedef struct server_info_s {
 
 class GameServer : public UDPServer {
     public:
-        GameServer(NetworkHandler &netwHandler);
+        GameServer(Synchronizer &synchronizer, NetworkHandler &netwHandler);
         ~GameServer();
 
         void work() override;
@@ -37,6 +38,7 @@ class GameServer : public UDPServer {
         UDPClient client;
         std::map<std::string, UDPClient *> players;
         NetworkHandler &networkHandler;
+        Synchronizer &synchronizer;
 };
 
 #endif /* !GAMESERVER_HPP_ */

@@ -28,7 +28,7 @@ void RemoteClient::write(const ByteBuffer &buffer)
     socket.async_send_to(boost::asio::buffer(buffer.flush(), buffer.getSize()), endpoint,
     [this](const boost::system::error_code &errc, std::size_t bytes_transferred) {
         if (!errc) {
-            std::cout << "Sending: " << bytes_transferred << " bytes." << std::endl;
+            // std::cout << "Sending: " << bytes_transferred << " bytes." << std::endl;
         } else {
             std::cout << "Error sending" << std::endl;
         }

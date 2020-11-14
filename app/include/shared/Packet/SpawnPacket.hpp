@@ -13,17 +13,19 @@
 class SpawnPacket : public PositionPacket {
     public:
         SpawnPacket() : PositionPacket() {}
-        SpawnPacket(size_t id, size_t entityType, double x, double y) : PositionPacket(id, x, y), entityType(entityType) {}
-        SpawnPacket(SpawnPacket &packet) : PositionPacket(packet), entityType(packet.entityType) {}
+        SpawnPacket(size_t id, size_t entityType, double x, double y, bool player) : PositionPacket(id, x, y), entityType(entityType), player(player) {}
+        SpawnPacket(SpawnPacket &packet) : PositionPacket(packet), entityType(packet.entityType), player(packet.player) {}
         ~SpawnPacket() {}
 
         void fromBuffer(ByteBuffer &buffer) override {
             PositionPacket::fromBuffer(buffer);
+            player = buffer.readBool(nullptr);
             entityType = buffer.readUInt(nullptr);
         }
 
         void toBuffer(ByteBuffer &buffer) override {
             PositionPacket::toBuffer(buffer);
+            buffer.writeBool(player);
             buffer.writeUInt(entityType);
         }
 
@@ -39,9 +41,14 @@ class SpawnPacket : public PositionPacket {
             return 5;
         }
 
+        bool isPlayer() {
+            return player;
+        }
+
     protected:
     private:
         size_t entityType = 0;
+        bool player = false;
 };
 
 #endif /* !SPAWNPACKET_HPP_ */

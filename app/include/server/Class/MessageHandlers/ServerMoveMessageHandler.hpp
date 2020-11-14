@@ -42,7 +42,7 @@ class ServerMoveMessageHandler : public AMessageHandler<MovePacket> {
                 data.dirY = 0;
             }
 
-            synchronizer.getDoubleMap().update();
+            synchronizer.update();
         }
 
     protected:

@@ -43,8 +43,8 @@ class Game : public Synchronizer {
         ECS &getECS();
         NetworkHandler &getNetworkHandler();
 
-        static double getMapWidth() {return 2000; }
-        static double getMapHeight() {return 2000/3; }
+        static double getMapWidth() {return 1600; }
+        static double getMapHeight() {return 1100; }
         size_t getNextEntityID();
 
     private:

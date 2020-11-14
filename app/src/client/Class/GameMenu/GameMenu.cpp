@@ -13,6 +13,7 @@
 #include "client/Class/MessageHandlers/ClientFireMessageHandler.hpp"
 #include "client/Class/MessageHandlers/ClientMoveMessageHandler.hpp"
 #include "client/Class/MessageHandlers/ClientPositionMessageHandler.hpp"
+#include "client/Class/MessageHandlers/ClientInstanciatePlayerMessageHandler.hpp"
 
 
 GameMenu::GameMenu(): scene(LOGIN),
@@ -25,7 +26,7 @@ window(
 ),
 buffer(1024),
 actualButton(menuButton::B_CREATE),
-gameEntities(window, synchronizer, spriteManager),
+gameEntities(this, window, synchronizer, spriteManager),
 background(window, 250)
 {
     client = std::make_unique<TCPClient>(this);
@@ -43,6 +44,7 @@ background(window, 250)
     networkHandler.registerMessageHandler(new ClientFireMessageHandler(synchronizer));
     networkHandler.registerMessageHandler(new ClientMoveMessageHandler(synchronizer));
     networkHandler.registerMessageHandler(new ClientPositionMessageHandler(synchronizer));
+    networkHandler.registerMessageHandler(new ClientInstanciatePlayerMessageHandler(synchronizer));
 
     displayThread = std::make_unique<std::thread>(&GameMenu::handleDisplay, this);
 }
@@ -82,13 +84,11 @@ void GameMenu::draw()
 void GameMenu::draw(float deltaTime)
 {
     if (gameEntities.isGamePlaying()) {
-        if (synchronizer.getDoubleMap().isReadOpen() || synchronizer.getDoubleQueue().isReadOpen()) {
             window.clear(sf::Color::White);
             background.update(deltaTime);
             background.draw();
             gameEntities.update(isDirectionMaintained, deltaTime);
             window.display();
-        }
     }
 }
 
@@ -102,9 +102,6 @@ void GameMenu::handleDisplay()
     float deltaTime = 0.0f;
     sf::Clock clock;
 
-    gameEntities.createPlayer(1, sf::Vector2f(200.0f, 200.0f), sf::Vector2u(5, 5), sf::Vector2u(2, 0), 0.05f,
-        loadedTextures["players"].get()->getSize(), false, spriteManager.getSprite(EntityType::PLAYER1), playerId);
-    playerId++;
     while (isOpen()) {
         deltaTime = clock.restart().asSeconds();
         handleEvents();

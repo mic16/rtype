@@ -39,14 +39,16 @@ class NetworkHandler {
             packetsID.insert({hashcode, id});
         }
 
+        std::vector<std::unique_ptr<INetworkClient>> &getClients() {
+            return clients;
+        }
+
         void addClient(INetworkClient *client) {
             clients.emplace_back(client);
-            buffers.emplace_back(new ByteBuffer(1024));
         }
 
         void clear() {
             clients.clear();
-            buffers.clear();
         }
 
         template<typename T>
@@ -85,6 +87,40 @@ class NetworkHandler {
             }
         }
 
+        template<typename T>
+        void send(INetworkClient &client, T packet) {
+
+            static_assert(std::is_pointer<T>::value || std::is_reference<T>::value || std::is_object<T>::value, "Cannot broadcast an unsupported type");
+
+            buffer.clear();
+
+            std::size_t hashcode;
+            if constexpr(std::is_pointer<T>::value) {
+                static_assert(std::is_base_of<IPacket, typename std::remove_pointer<T>::type>::value, "Cannot broadcast something that is not a child of IPacket");
+                packet->toBuffer(buffer);
+                hashcode = typeid(typename std::remove_pointer<T>::type).hash_code();
+            } else if constexpr(std::is_reference<T>::value) {
+                static_assert(std::is_base_of<IPacket, typename std::remove_reference<T>::type>::value, "Cannot broadcast something that is not a child of IPacket");
+                packet.toBuffer(buffer);
+                hashcode = typeid(typename std::remove_reference<T>::type).hash_code();
+            } else if constexpr(std::is_object<T>::value) {
+                static_assert(std::is_base_of<IPacket, T>::value, "Cannot broadcast something that is not a child of IPacket");
+                packet.toBuffer(buffer);
+                hashcode = typeid(T).hash_code();
+            }
+
+            if (packetsID.find(hashcode) == packetsID.end()) {
+                return;
+            }
+
+            std::size_t id = packetsID[hashcode];
+
+            prepend.clear();
+            prepend.writeULong(id);
+            prepend.writeCharBuffer(reinterpret_cast<const char *>(buffer.flush()), buffer.getSize());
+            client.write(prepend);
+        }
+
         void processMessage(INetworkClient &client) {
             ByteBuffer &buffer = client.getBuffer();
             int err = 0;
@@ -119,7 +155,6 @@ class NetworkHandler {
         ByteBuffer prepend = {1024};
         ByteBuffer buffer = {1024};
         std::vector<std::unique_ptr<INetworkClient>> clients;
-        std::vector<std::unique_ptr<ByteBuffer>> buffers;
         std::size_t m_packetMaxSize;
         std::unordered_map<std::size_t, std::unique_ptr<IMessageHandler>> packetHandlers;
         std::unordered_map<std::size_t, std::size_t> packetsID;

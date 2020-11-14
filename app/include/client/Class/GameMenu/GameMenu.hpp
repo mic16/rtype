@@ -72,6 +72,10 @@ class GameMenu : public IGameMenu {
             return networkHandler;
         }
 
+        void setPlayerID(size_t id) {
+            playerId = id;
+        }
+
     private:
         void initDrawables();
 
