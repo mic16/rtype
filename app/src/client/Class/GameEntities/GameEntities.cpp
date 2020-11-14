@@ -22,8 +22,8 @@ void GameEntities::init()
     ecs.newEntityModel<Position, Animation, EntityID, Drawable>("Player")
         .addTags({ "PlayerControlled", "Drawable" })
         .finish();
-
-    ecs.newEntityModel<Position, EntityID, Drawable>("Enemy")
+    
+    ecs.newEntityModel<Position, Animation, EntityID, Drawable>("Enemy")
         .addTags({"Enemy", "Drawable"})
         .finish();
 
@@ -94,6 +94,33 @@ void GameEntities::init()
             })
         .finish();
 
+    ecs.newSystem<Animation, Drawable>("AnimateSimpleEnemy")
+        .withTags({ "Enemy" })
+        .each([](float delta, EntityIterator<Animation, Drawable> &entity){
+            while (entity.hasNext()) {
+                entity.next();
+
+                Animation *animation = entity.getComponent<Animation>(0);
+                Drawable *drawable = entity.getComponent<Drawable>(1);
+
+                if (animation->totalTime >= animation->switchTime) {
+                    animation->totalTime -= animation->switchTime;
+                    if (animation->currentImage.x < animation->imageCount.x - 1)
+                        animation->currentImage.x = 0;
+                    else
+                        animation->currentImage.x++;
+                }
+                animation->uvRect.left = animation->currentImage.x * animation->uvRect.width;
+                animation->uvRect.top = animation->currentImage.y * animation->uvRect.height;
+
+                drawable->uvRect.left = animation->uvRect.left;
+                drawable->uvRect.top = animation->uvRect.top;
+                drawable->uvRect.width = animation->uvRect.width;
+                drawable->uvRect.height = animation->uvRect.height;
+            }
+        })
+        .finish();
+
     ecs.newSystem<Position, Drawable>("Draw")
         .withTags({ "Drawable" })
         .each([this](float delta, EntityIterator<Position, Drawable> &entity) {
@@ -124,6 +151,18 @@ void GameEntities::createPlayer(int nbOfPlayers, sf::Vector2f position, sf::Vect
     playerGenerator.reserve(nbOfPlayers);
     playerGenerator
         .instanciate(nbOfPlayers, Position{ position.x, position.y },
+        Animation{ totalFrames, startingFrame, startingFrame, 0, timeToSwitchFrames,
+        sf::IntRect(0, 0, textureSize.x / totalFrames.x, textureSize.y / totalFrames.y),
+        reverse }, Drawable{ true, sprite }, EntityID { id });
+}
+
+void GameEntities::createEnemy(sf::Vector2f position, sf::Vector2u totalFrames, sf::Vector2u startingFrame,
+    float timeToSwitchFrames, sf::Vector2u textureSize, bool reverse, sf::Sprite *sprite, size_t id)
+{
+    auto enemyGenerator = ecs.getEntityGenerator("Enemy");
+    enemyGenerator.reserve(1);
+    enemyGenerator
+        .instanciate(1, Position{ position.x, position.y },
         Animation{ totalFrames, startingFrame, startingFrame, 0, timeToSwitchFrames,
         sf::IntRect(0, 0, textureSize.x / totalFrames.x, textureSize.y / totalFrames.y),
         reverse }, Drawable{ true, sprite }, EntityID { id });

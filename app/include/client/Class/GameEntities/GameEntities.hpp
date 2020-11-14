@@ -18,6 +18,7 @@
 #include "shared/Components/Components.hpp"
 #include "shared/Synchronizer/Synchronizer.hpp"
 #include "EntitySpriteManager.hpp"
+#include "EntityAnimationManager.hpp"
 #include "client/Interfaces/IGame.hpp"
 
 struct Drawable {
@@ -25,17 +26,6 @@ struct Drawable {
     sf::Sprite *sprite;
     sf::IntRect uvRect;
 };
-
-struct Animation {
-    sf::Vector2u imageCount;
-    sf::Vector2u currentImage;
-    sf::Vector2u startingImage;
-    float totalTime = 0;
-    float switchTime;
-    sf::IntRect uvRect;
-    bool reverse = false;
-};
-
 
 class GameEntities {
     public:
@@ -48,6 +38,8 @@ class GameEntities {
         void update(bool *isDirectionMaintained, float deltaTime);
 
         void createPlayer(int nbOfPlayers, sf::Vector2f position, sf::Vector2u totalFrames, sf::Vector2u startingFrame,
+            float timeToSwitchFrames, sf::Vector2u textureSize, bool reverse, sf::Sprite *sprite, size_t id);
+        void createEnemy(sf::Vector2f position, sf::Vector2u totalFrames, sf::Vector2u startingFrame,
             float timeToSwitchFrames, sf::Vector2u textureSize, bool reverse, sf::Sprite *sprite, size_t id);
 
         enum DIRECTION {
