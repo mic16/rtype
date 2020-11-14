@@ -481,7 +481,6 @@ class EntityIterator {
             return m_entities->getEntityModel();
         }
 
-
     private:
         size_t indexes[sizeof...(Args)] = {0};
         UnorderedEntityArray *m_entities = nullptr;
@@ -603,6 +602,7 @@ private:
         ECS &m_ecs;
         std::vector<size_t> models;
         std::function<void(EntitySystem *, float)> func;
+        std::function<void(void)> done;
         EntitySystem(ECS &ecs) : m_ecs(ecs) {}
         ~EntitySystem() {}
     };
@@ -649,6 +649,18 @@ private:
                             func(delta, it);
                         }
                     }
+                    if (system->done != nullptr) {
+                        system->done();
+                    }
+                };
+                return *this;
+            }
+
+            SystemBuilder<Args...> &whenDone(typename Functor<void>::type func) {
+                if (finished)
+                    return *this;
+                system->done = [func]() {
+                    func();
                 };
                 return *this;
             }
@@ -754,7 +766,9 @@ public:
 
     void update(float delta) {
         for (EntitySystem *system : systems) {
-            system->func(system, delta);
+            if (system->func != nullptr) {
+                system->func(system, delta);
+            }
         }
     }
 

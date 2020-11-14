@@ -23,8 +23,8 @@ void GameEntities::init()
         .addTags({ "PlayerControlled", "Drawable" })
         .finish();
 
-    ecs.newEntityModel<Position, EntityID, Drawable>("Enemy")
-        .addTags({"Enemy", "Drawable"})
+    ecs.newEntityModel<Position, EntityID, Drawable>("Entity")
+        .addTags({"Entity", "Drawable"})
         .finish();
 
     ecs.newSystem<Position, EntityID>("UpdateEntities")
@@ -51,12 +51,14 @@ void GameEntities::init()
 
                 position->x = data.x;
                 position->y = data.y;
-                std::cout << position->x << " " << position->y << std::endl;
             }
         }
 
-        synchronizer.getDoubleMap().closeRead();
 
+    })
+    .whenDone([this](void){
+        Synchronizer &synchronizer = this->getSynchronizer();
+        synchronizer.getDoubleMap().closeRead();
     }).finish();
 
     ecs.newSystem<Animation, Drawable>("AnimatePlayer")
@@ -100,7 +102,6 @@ void GameEntities::init()
             while (entity.hasNext()) {
                 entity.next();
 
-                std::cout << "Hey" << std::endl;
                 Position *position = entity.getComponent<Position>(0);
                 Drawable *drawable = entity.getComponent<Drawable>(1);
                 drawable->sprite->setTextureRect(drawable->uvRect);
@@ -138,7 +139,7 @@ void GameEntities::update(bool *isDirectionMaintained, float deltaTime)
     if (synchronizer.getDoubleQueue().isReadOpen()) {
         auto &vector = synchronizer.getDoubleQueue().getReadVector();
 
-        auto enemyGenerator = ecs.getEntityGenerator("Enemy");
+        auto entityGenerator = ecs.getEntityGenerator("Entity");
         auto playerGenerator = ecs.getEntityGenerator("Player");
         for (std::unique_ptr<IPacket> &packet : *vector) {
             if (packet->getPacketID() == SpawnPacket::PacketID()) {
@@ -150,7 +151,7 @@ void GameEntities::update(bool *isDirectionMaintained, float deltaTime)
                     Animation{sf::Vector2u(5, 5), sf::Vector2u(2, 0), sf::Vector2u(2, 0), 0, 0.05f, sf::IntRect{0, 0, 33, 17}, false},
                     Drawable{true, spriteManager.getSprite(spawnpacket->getEntityType())});
                 } else {
-                    enemyGenerator.instanciate(1,
+                    entityGenerator.instanciate(1,
                     Position{spawnpacket->getX(), spawnpacket->getY()},
                     EntityID{spawnpacket->getEntityID()},
                     Drawable{true,

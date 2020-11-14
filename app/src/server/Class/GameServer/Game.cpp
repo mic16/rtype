@@ -60,8 +60,6 @@ void Game::init() {
         if (this->getDoubleMap().isReadClose())
             return;
 
-            std::cout << "UpdateEntities: " << entity.getSize() << std::endl;
-
         auto &readMap = this->getDoubleMap().getReadMap();
         while (entity.hasNext()) {
             entity.next();
@@ -70,22 +68,20 @@ void Game::init() {
             EntityID *entityID = entity.getComponent<EntityID>(1);
             EntityInfo *entityInfo = entity.getComponent<EntityInfo>(2);
 
-            std::cout << entityID->id << std::endl;
-
             if (readMap->find(entityID->id) != readMap->end()) {
                 PacketData &data = readMap->at(entityID->id);
 
                 velocity->dirX = data.dirX;
                 velocity->dirY = data.dirY;
 
-                std::cout << velocity->dirX << " " << velocity->dirY << std::endl;
-
                 entityInfo->isFiring = data.isFiring;
             }
         }
-
+    })
+    .whenDone([this](void){
         this->getDoubleMap().closeRead();
-    }).finish();
+    })
+    .finish();
 
     ecs.newSystem<Position, EntityID, EntityInfo, Hitbox, EntityStats>("SpawnProjectile")
     .withoutTags({"Projectile"})
@@ -115,15 +111,16 @@ void Game::init() {
                     ProjectileInfo{entityStats->damage}
                 );
 
-                this->getNetworkHandler().broadcast(SpawnPacket(id, EntityType::PROJECTILE, x, y, false));
+                this->getNetworkHandler().broadcast(SpawnPacket(id, EntityType::PLAYER1, x, y, 0));
             }
         }
     }).finish();
-
+    size_t hashProjectile = ecs.getHash("Projectile");
     ecs.newSystem<Position, Velocity, EntityID, EntityInfo, Hitbox>("MoveEntity")
-    .each([this](float delta, EntityIterator<Position, Velocity, EntityID, EntityInfo, Hitbox> &entity) {
+    .each([this, hashProjectile](float delta, EntityIterator<Position, Velocity, EntityID, EntityInfo, Hitbox> &entity) {
         while (entity.hasNext()) {
             entity.next();
+
 
             Position *position = entity.getComponent<Position>(0);
             Velocity *velocity = entity.getComponent<Velocity>(1);
@@ -141,15 +138,26 @@ void Game::init() {
                     continue;
                 }
             } else {
-                if (position->x + hitbox->w + moveX < 0 || position->x + moveX > this->getMapWidth() ||
-                    position->y + hitbox->h + moveY < 0 || position->y + moveY > this->getMapHeight()) {
-                        continue;
+                    if (entity.getEntityType() == hashProjectile) {
+                        if (position->x + hitbox->w  < 0 || position->x > this->getMapWidth() ||
+                            position->y + hitbox->h  < 0 || position->y > this->getMapHeight()) {
+                            this->getNetworkHandler().broadcast(DeathPacket(entityID->id));
+                            entity.remove();
+                            continue;
+                        }
+                    } else {
+                        if (position->x + moveX < 0 || position->x + hitbox->w + moveX > this->getMapWidth() ||
+                            position->y + moveY < 0 || position->y + hitbox->h + moveY > this->getMapHeight()) {
+                            continue;
+                        }
                     }
             }
 
-            position->x += moveX;
-            position->y += moveY;
-            this->getNetworkHandler().broadcast(PositionPacket(entityID->id, position->x, position->y));
+            if (moveX != 0 || moveY != 0) {
+                position->x += moveX;
+                position->y += moveY;
+                this->getNetworkHandler().broadcast(PositionPacket(entityID->id, position->x, position->y));
+            }
         }
     }).finish();
 
@@ -236,46 +244,6 @@ const server_info_t Game::setGameServer()
     return (info);
 }
 
-/*
-    std::vector<std::unique_ptr<INetworkClient>> &vector = networkHandler.getClients();
-
-    auto playerGenerator = ecs.getEntityGenerator("Player");
-    for (int i = 0; i < vector.size(); i++) {
-        double x = 0;
-        double y = getMapHeight() / 2 - 100 + i * 50;
-        size_t id = getNextEntityID();
-        size_t type = 0;
-
-        switch (i)
-        {
-            case 0:
-                type = EntityType::PLAYER1;
-                break;
-            case 1:
-                type = EntityType::PLAYER2;
-                break;
-            case 2:
-                type = EntityType::PLAYER3;
-                break;
-            case 3:
-                type = EntityType::PLAYER4;
-                break;
-            default:
-                break;
-        }
-
-        playerGenerator.instanciate(1,
-        Position{x, y},
-        Velocity{0, 0, 1000},
-        EntityID{id},
-        PlayerHitbox,
-        EntityInfo{false, false},
-        EntityStats{100, 100, 20});
-
-        networkHandler.broadcast(SpawnPacket(id, type, x, y, true));
-    }
-*/
-
 void Game::startGame()
 {
     gameServer.run();
@@ -304,7 +272,7 @@ void Game::startGame()
                     EntityInfo{false, false},
                     EntityStats{100, 100, 20});
 
-                    networkHandler.broadcast(SpawnPacket(id, EntityType::PLAYER1, x, y, true));
+                    networkHandler.broadcast(SpawnPacket(id, EntityType::PLAYER1, x, y, 1));
                 }
             }
             getDoubleQueue().closeRead();
