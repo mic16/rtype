@@ -21,7 +21,7 @@ void GameMenu::tryStartGame()
 
 void GameMenu::initFixedGameDrawables()
 {
-
+    
 }
 
 void GameMenu::initModGameDrawables()
@@ -37,6 +37,10 @@ void GameMenu::initModGameDrawables()
     // modDrawables.at(sceneName::GAME).insert(std::pair<std::string, std::unique_ptr<sf::Drawable>>("projectile", std::make_unique<sf::Sprite>()));
     // dynamic_cast<sf::Sprite *>(modDrawables.at(sceneName::GAME)["projectile"].get())->setTexture(*loadedTextures["projectile1"]);
     // dynamic_cast<sf::Sprite *>(modDrawables.at(sceneName::GAME)["projectile"].get())->setOrigin(sf::Vector2f(0, 0));
+
+    // modDrawables.at(sceneName::GAME).insert(std::pair<std::string, std::unique_ptr<sf::Drawable>>("wall", std::make_unique<sf::Sprite>()));
+    // dynamic_cast<sf::Sprite *>(modDrawables.at(sceneName::GAME)["wall"].get())->setTexture(*loadedTextures["wall"]);
+    // dynamic_cast<sf::Sprite *>(modDrawables.at(sceneName::GAME)["wall"].get())->setOrigin(sf::Vector2f(0, 0));
 
     sf::Sprite *player1Sprite = new sf::Sprite();
     player1Sprite->setTexture(*loadedTextures["players"]);
@@ -117,4 +121,8 @@ void GameMenu::initModGameDrawables()
     Animation *projectile3Animation = new Animation{sf::Vector2u(4, 1), sf::Vector2u(0, 0), sf::Vector2u(0, 0), 0, 0.05f, 
         sf::IntRect(0, 0, loadedTextures["projectile3"].get()->getSize().x / 4, loadedTextures["projectile3"].get()->getSize().y / 1), false};
     animationManager.pushAnimation(EntityType::PROJECTILE3, projectile3Animation);
+
+    sf::Sprite *wallSprite = new sf::Sprite();
+    wallSprite->setTexture(*loadedTextures["wall"]);
+    spriteManager.pushSprite(EntityType::WALL, wallSprite);
 }

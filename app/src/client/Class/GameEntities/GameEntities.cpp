@@ -18,13 +18,16 @@ GameEntities::GameEntities(IGame *gameMenu, sf::RenderWindow &window, Synchroniz
 
 void GameEntities::init()
 {
-
     ecs.newEntityModel<Position, Animation, EntityID, Drawable>("Player")
         .addTags({ "PlayerControlled", "Drawable" })
         .finish();
     
     ecs.newEntityModel<Position, Animation, EntityID, Drawable>("Enemy")
         .addTags({"Enemy", "Drawable"})
+        .finish();
+
+    ecs.newEntityModel<Position, Animation, EntityID, Drawable>("Wall")
+        .addTags({"Wall", "Drawable"})
         .finish();
 
     ecs.newSystem<Position, EntityID>("UpdateEntities")
