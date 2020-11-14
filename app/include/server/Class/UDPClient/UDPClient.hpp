@@ -20,6 +20,7 @@ class UDPClient : public ANetworkClient {
         ~UDPClient();
 
         unsigned int getId() const { return m_id; }
+        const std::string &getIdStr() const { return idStr; }
 
         bool setClient(const std::shared_ptr<boost::asio::ip::udp::socket> &s_acceptor);
 
@@ -33,6 +34,7 @@ class UDPClient : public ANetworkClient {
 
     private:
         const unsigned int m_id;
+        std::string idStr;
         std::string m_address;
         char *m_packet = nullptr;
         unsigned int m_port;

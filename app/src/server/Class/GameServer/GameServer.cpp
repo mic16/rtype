@@ -31,17 +31,17 @@ bool GameServer::handleConnection()
             client.setClient(acceptor);
             // std::cout << "Client " << client.getAddress() << ':'
                 // << client.getPort() << std::endl;
-            if (players.find(client.getAddress()) == players.end()) {
+            if (players.find(client.getIdStr()) == players.end()) {
                 players.insert(std::pair<std::string, UDPClient *>(
-                    client.getAddress(),
+                    client.getIdStr(),
                     new UDPClient(client)
                 ));
-                networkHandler.addClient(players.at(client.getAddress()));
-                synchronizer.getDoubleQueue().getWriteVector()->emplace_back(new PlayerEnterRoomPacket(players.at(client.getAddress())));
+                networkHandler.addClient(players.at(client.getIdStr()));
+                synchronizer.getDoubleQueue().getWriteVector()->emplace_back(new PlayerEnterRoomPacket(players.at(client.getIdStr())));
                 synchronizer.getDoubleQueue().update();
             } else { // message handling
-                players.at(client.getAddress())->getBuffer().append(client.getPacket(), bytes_transferred);
-                networkHandler.processMessage(*players.at(client.getAddress()));
+                players.at(client.getIdStr())->getBuffer().append(client.getPacket(), bytes_transferred);
+                networkHandler.processMessage(*players.at(client.getIdStr()));
             }
             this->handleConnection();
         } else {
