@@ -28,8 +28,16 @@ void GameMenu::handleKeyPressed()
 {
     if (gameEntities.isGamePlaying()) {
         sf::Vector2i dir(0, 0);
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space))
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space)) {
             networkHandler.broadcast(FirePacket(playerId, true));
+            sf::SoundBuffer buffer;
+            if (buffer.loadFromFile("assets/sounds/lazer.wav")) {
+                sf::Sound sound;
+                sound.setBuffer(buffer);
+                sound.play();
+            } else
+                std::cout << "lazer could not be played" << std::endl;
+        }
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Z))
             dir.y += -1;
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Q))

@@ -13,6 +13,7 @@
 #include <mutex>
 #include <map>
 #include <cctype>
+#include <SFML/Audio.hpp>
 
 #include "client/Class/TCPClient/TCPClient.hpp"
 #include "client/Class/ResourceLoader/ResourceLoader.hpp"
