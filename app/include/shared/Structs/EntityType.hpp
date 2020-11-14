@@ -18,7 +18,8 @@ enum EntityType {
 
     WALL = 5,
 
-    PROJECTILE = 6,
+    PROJECTILE1 = 6,
+    PROJECTILE2 = 7,
 };
 
 #endif /* !ENTITYTYPE_HPP_ */
