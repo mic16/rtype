@@ -20,7 +20,6 @@ class ClientInstanciatePlayerMessageHandler : public AMessageHandler<Instanciate
 
         void onMessage(NetworkHandler &handler, INetworkClient &client, InstanciatePlayerPacket &packet) {
             auto &vector = synchronizer.getDoubleQueue().getWriteVector();
-
             vector->emplace_back(new InstanciatePlayerPacket(packet));
             synchronizer.update();
         }
