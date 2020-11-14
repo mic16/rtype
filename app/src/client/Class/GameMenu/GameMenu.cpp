@@ -58,7 +58,7 @@ GameMenu::~GameMenu()
 int GameMenu::run()
 {
     try {
-        client->connectTo(boost::asio::ip::tcp::endpoint(boost::asio::ip::address::from_string("127.0.0.1"), 3000));
+        client->connectTo(boost::asio::ip::tcp::endpoint(boost::asio::ip::address::from_string("86.75.229.121"), 4000));
         client->run();
     } catch (std::exception &ec) {
         std::cout << ec.what() << std::endl;

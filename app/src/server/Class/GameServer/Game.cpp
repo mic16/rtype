@@ -269,8 +269,8 @@ const server_info_t Game::setGameServer()
 {
     server_info_t info;
 
-    gameServer.configure();
-    info.address = "127.0.0.1";
+    gameServer.configure(3333);
+    info.address = "86.75.229.121";
     info.port = gameServer.getPort();
     return (info);
 }
