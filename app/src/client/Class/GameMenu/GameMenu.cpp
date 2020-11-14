@@ -28,7 +28,8 @@ window(
 buffer(1024),
 actualButton(menuButton::B_CREATE),
 gameEntities(this, window, synchronizer, spriteManager, animationManager),
-background(window, 250)
+background(window, 250),
+music("app/assets/musics", 7)
 {
     client = std::make_unique<TCPClient>(this);
     initDrawables();
@@ -49,6 +50,7 @@ background(window, 250)
     networkHandler.registerMessageHandler(new ClientInstanciatePlayerMessageHandler(synchronizer));
 
     displayThread = std::make_unique<std::thread>(&GameMenu::handleDisplay, this);
+    music.playMenu();
 }
 
 GameMenu::~GameMenu()
@@ -65,6 +67,7 @@ int GameMenu::run()
         return (1);
     }
     displayThread->join();
+    music.play();
     return (0);
 }
 
@@ -86,11 +89,13 @@ void GameMenu::draw()
 void GameMenu::draw(float deltaTime)
 {
     if (gameEntities.isGamePlaying()) {
-            window.clear(sf::Color::White);
-            background.update(deltaTime);
-            background.draw();
-            gameEntities.update(isDirectionMaintained, deltaTime);
-            window.display();
+        if (music.getisMenu())
+            music.play();
+        window.clear(sf::Color::White);
+        background.update(deltaTime);
+        background.draw();
+        gameEntities.update(isDirectionMaintained, deltaTime);
+        window.display();
     }
 }
 

@@ -21,6 +21,7 @@
 #include "client/Class/GameEntities/GameEntities.hpp"
 #include "client/Class/UDPClient/UDPClient.hpp"
 #include "client/Class/Background/Background.hpp"
+#include "client/Class/Music/Music.hpp"
 
 #include "shared/Packet/FirePacket.hpp"
 #include "lib/Network/NetworkHandler.hpp"
@@ -118,6 +119,7 @@ class GameMenu : public IGameMenu {
         sf::Font mainFont;
 
         Background background;
+        Music music;
 
         std::unique_ptr<std::thread> displayThread;
 
