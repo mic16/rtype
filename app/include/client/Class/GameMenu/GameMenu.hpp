@@ -21,6 +21,7 @@
 #include "client/Class/GameEntities/GameEntities.hpp"
 #include "client/Class/UDPClient/UDPClient.hpp"
 
+#include "shared/Packet/FirePacket.hpp"
 #include "shared/Packet/MovePacket.hpp"
 
 #define LAST_FIXED_SPRITE(sceneName) fixedDrawables.at(sceneName)[fixedDrawables.at(sceneName).size() - 1]

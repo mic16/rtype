@@ -28,6 +28,8 @@ void GameMenu::handleKeyPressed()
 {
     if (gameEntities.isGamePlaying()) {
         sf::Vector2i dir(0, 0);
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space))
+            client.get()->getGameClient()->getNetworkHandler().broadcast(FirePacket(playerId, true));
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Z))
             dir.y += -1;
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Q))
@@ -69,6 +71,8 @@ void GameMenu::handleKeyReleased()
 {
     if (gameEntities.isGamePlaying()) {
         sf::Vector2i dir(0, 0);
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space))
+            client.get()->getGameClient()->getNetworkHandler().broadcast(FirePacket(playerId, false));
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Z))
             dir.y -= -1;
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Q))
