@@ -50,8 +50,17 @@ class GameEntities {
             RIGHT
         };
 
+        void setDead() {
+            dead = true;
+        }
+
+        bool getDead() {
+            return (dead);
+        }
+
         bool isGamePlaying() { return (gamePlaying); };
         void setGamePlaying(bool gamePlaying) { this->gamePlaying = gamePlaying; };
+        IGame *getGameMenu() { return gameMenu; }
 
     protected:
     private:
@@ -65,6 +74,8 @@ class GameEntities {
         Synchronizer &synchronizer;
         EntitySpriteManager &spriteManager;
         EntityAnimationManager &animationManager;
+
+        bool dead = false;
 
 };
 

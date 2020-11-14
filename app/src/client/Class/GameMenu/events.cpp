@@ -16,10 +16,12 @@ void GameMenu::handleEvents()
             if (event.text.unicode < 128) {
                 handleTextEntered();
             }
-        } else if (event.type == sf::Event::KeyPressed) {
+        } else if (event.type == sf::Event::KeyPressed && !this->getGameEntities()->getDead()) {
             handleKeyPressed();
-        } else if (event.type == sf::Event::KeyReleased) {
+        } else if (event.type == sf::Event::KeyReleased && !this->getGameEntities()->getDead()) {
             handleKeyReleased();
+        } else if (this->getGameEntities()->getDead() && (event.type == sf::Event::KeyPressed || event.type == sf::Event::KeyReleased)) {
+            networkHandler.broadcast(MovePacket(playerId, 0, 0));
         }
     }
 }

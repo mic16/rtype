@@ -46,6 +46,8 @@ void GameEntities::init()
 
                 if (!data.isAlive) {
                     entity.remove();
+                    if (entityID->id == getGameMenu()->getPlayerID())
+                        this->setDead();
                     continue;
                 }
 
