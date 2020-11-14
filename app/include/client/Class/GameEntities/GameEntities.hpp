@@ -52,6 +52,9 @@ class GameEntities {
 
         bool isGamePlaying() { return (gamePlaying); };
         void setGamePlaying(bool gamePlaying) { this->gamePlaying = gamePlaying; };
+        IGame *getGame() {
+            return gameMenu;
+        }
 
     protected:
     private:

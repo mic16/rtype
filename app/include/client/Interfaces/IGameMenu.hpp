@@ -46,7 +46,9 @@ class IGameMenu : public IGame {
 
         virtual GameEntities *getGameEntities() = 0;
         virtual NetworkHandler &getNetworkHandler() = 0;
+
         virtual void setPlayerID(size_t id) = 0;
+        virtual size_t getPlayerID() = 0;
 };
 
 #endif /* !IGAMEMENU_HPP_ */

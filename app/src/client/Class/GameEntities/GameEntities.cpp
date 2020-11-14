@@ -55,8 +55,6 @@ void GameEntities::init()
                 readMap->erase(entityID->id);
             }
         }
-
-
     })
     .whenDone([this](void){
         auto entityGenerator = ecs.getEntityGenerator("Entity");
@@ -93,30 +91,34 @@ void GameEntities::init()
         synchronizer.getDoubleMap().closeRead();
     }).finish();
 
-    ecs.newSystem<Animation, Drawable>("AnimatePlayer")
+    ecs.newSystem<Animation, Drawable, EntityID>("AnimatePlayer")
         .withTags({ "PlayerControlled" })
-        .each([this](float delta, EntityIterator<Animation, Drawable> &entity){
+        .each([this](float delta, EntityIterator<Animation, Drawable, EntityID> &entity){
                 while (entity.hasNext()) {
                     entity.next();
 
                     Animation *animation = entity.getComponent<Animation>(0);
                     Drawable *drawable = entity.getComponent<Drawable>(1);
+                    EntityID *entityID = entity.getComponent<EntityID>(2);
 
-                    animation->currentImage.y = row;
-                    animation->totalTime += delta;
-                    if (animation->totalTime >= animation->switchTime) {
-                        animation->totalTime -= animation->switchTime;
-                        if (isDirectionMaintained[DIRECTION::UP] && animation->currentImage.x < animation->imageCount.x - 1)
-                            animation->currentImage.x++;
-                        else if (isDirectionMaintained[DIRECTION::DOWN] && animation->currentImage.x > 0)
-                            animation->currentImage.x--;
-                        else if (!isDirectionMaintained[DIRECTION::UP] && !isDirectionMaintained[DIRECTION::DOWN]) {
-                            if (animation->currentImage.x > animation->startingImage.x)
-                                animation->currentImage.x--;
-                            else if (animation->currentImage.x < animation->startingImage.x)
+                    if (entityID->id == this->getGame()->getPlayerID()) {
+                        animation->currentImage.y = row;
+                        animation->totalTime += delta;
+                        if (animation->totalTime >= animation->switchTime) {
+                            animation->totalTime -= animation->switchTime;
+                            if (isDirectionMaintained[DIRECTION::UP] && animation->currentImage.x < animation->imageCount.x - 1)
                                 animation->currentImage.x++;
+                            else if (isDirectionMaintained[DIRECTION::DOWN] && animation->currentImage.x > 0)
+                                animation->currentImage.x--;
+                            else if (!isDirectionMaintained[DIRECTION::UP] && !isDirectionMaintained[DIRECTION::DOWN]) {
+                                if (animation->currentImage.x > animation->startingImage.x)
+                                    animation->currentImage.x--;
+                                else if (animation->currentImage.x < animation->startingImage.x)
+                                    animation->currentImage.x++;
+                            }
                         }
                     }
+
                     animation->uvRect.left = animation->currentImage.x * animation->uvRect.width;
                     animation->uvRect.top = animation->currentImage.y * animation->uvRect.height;
 

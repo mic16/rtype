@@ -77,6 +77,10 @@ class GameMenu : public IGameMenu {
             playerId = id;
         }
 
+        size_t getPlayerID() {
+            return playerId;
+        }
+
     private:
         void initDrawables();
 
