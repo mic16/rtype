@@ -252,6 +252,7 @@ const server_info_t Game::setGameServer()
 void Game::startGame()
 {
     static unsigned short playerID = 1;
+    bool canLogin = true;
     gameServer.run();
     lastTime = std::chrono::high_resolution_clock::now();
     init();
@@ -259,7 +260,7 @@ void Game::startGame()
     auto t1 = std::chrono::high_resolution_clock::now();
     networkHandler.getLastTRequestStatus() = std::chrono::high_resolution_clock::now();
     while (true) {
-        if (getDoubleQueue().isReadOpen()) {
+        if (canLogin && getDoubleQueue().isReadOpen()) {
             auto &vector = getDoubleQueue().getReadVector();
             for (std::unique_ptr<IPacket> &packet : *vector) {
                 if (packet->getPacketID() == PlayerEnterRoomPacket::PacketID()) {
@@ -295,6 +296,7 @@ void Game::startGame()
         if (std::chrono::duration_cast<std::chrono::duration<double>>(t2 - t1).count() > 10) {
             networkHandler.checkClientsConnection();
             t1 = std::chrono::high_resolution_clock::now();
+            if (canLogin) canLogin = false;
         }
     }
     gameServer.join();
