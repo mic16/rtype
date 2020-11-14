@@ -115,7 +115,7 @@ void Game::init() {
                     ProjectileInfo{entityStats->damage}
                 );
 
-                this->getNetworkHandler().broadcast(SpawnPacket(id, EntityType::PROJECTILE, x, y, false));
+                this->getNetworkHandler().broadcast(SpawnPacket(id, EntityType::PROJECTILE1, x, y, false));
             }
         }
     }).finish();

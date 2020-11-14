@@ -15,18 +15,17 @@ enum EntityType {
     PLAYER4 = 3,
 
     ENEMY1 = 4,
-    ENEMY2 = 10,
-    ENEMY3 = 11,
-    ENEMY4 = 12,
-    ENEMY5 = 13,
-    ENEMY6 = 14,
+    ENEMY2 = 9,
+    ENEMY3 = 10,
+    ENEMY4 = 11,
+    ENEMY5 = 12,
+    ENEMY6 = 13,
 
     WALL = 5,
 
     PROJECTILE1 = 6,
     PROJECTILE2 = 7,
-    PROJECTILE2 = 8,
-    PROJECTILE3 = 9,
+    PROJECTILE3 = 8,
 };
 
 #endif /* !ENTITYTYPE_HPP_ */
