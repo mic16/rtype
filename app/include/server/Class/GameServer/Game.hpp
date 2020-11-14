@@ -19,6 +19,7 @@
 #include "shared/Packet/PositionPacket.hpp"
 #include "shared/Packet/SpawnPacket.hpp"
 #include "shared/Packet/DamagePacket.hpp"
+#include "shared/Packet/PingPacket.hpp"
 
 #include "shared/Components/Components.hpp"
 #include "shared/Synchronizer/Synchronizer.hpp"

@@ -229,8 +229,14 @@ void Game::startGame()
     lastTime = std::chrono::high_resolution_clock::now();
     init();
     compile();
+    auto t1 = std::chrono::high_resolution_clock::now();
     while (true) {
         update();
+        auto t2 = std::chrono::high_resolution_clock::now();
+        if (std::chrono::duration_cast<std::chrono::duration<double>>(t2 - t1).count() > 30) {
+            networkHandler.broadcast(PingPacket());
+            t1 = std::chrono::high_resolution_clock::now();
+        }
     }
     gameServer.join();
 }
