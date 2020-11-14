@@ -74,13 +74,13 @@ void GameMenu::handleKeyReleased()
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space))
             networkHandler.broadcast(FirePacket(playerId, false));
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Z))
-            dir.y -= -1;
+            dir.y += -1;
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Q))
-            dir.x -= -1;
+            dir.x += -1;
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::S))
-            dir.y -= 1;
+            dir.y += 1;
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
-            dir.x -= 1;
+            dir.x += 1;
         networkHandler.broadcast(MovePacket(playerId, dir.x, dir.y));
     } else {
         if (event.key.code == sf::Keyboard::Backspace) {

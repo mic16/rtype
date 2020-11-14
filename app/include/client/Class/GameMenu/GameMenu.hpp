@@ -28,6 +28,7 @@
 #include "shared/Packet/MovePacket.hpp"
 
 #include "client/Class/GameEntities/EntitySpriteManager.hpp"
+#include "client/Class/GameEntities/EntityAnimationManager.hpp"
 #include "shared/Structs/EntityType.hpp"
 
 #define LAST_FIXED_SPRITE(sceneName) fixedDrawables.at(sceneName)[fixedDrawables.at(sceneName).size() - 1]
@@ -72,6 +73,10 @@ class GameMenu : public IGameMenu {
             return networkHandler;
         }
 
+        void setPlayerID(size_t id) {
+            playerId = id;
+        }
+
     private:
         void initDrawables();
 
@@ -97,6 +102,7 @@ class GameMenu : public IGameMenu {
         NetworkHandler networkHandler = {1024};
 
         EntitySpriteManager spriteManager;
+        EntityAnimationManager animationManager;
 
         sceneName scene;
         std::unique_ptr<TCPClient> client;

@@ -43,4 +43,12 @@ void GameMenu::initModGameDrawables()
     sf::Sprite *enemy1Sprite = new sf::Sprite();
     enemy1Sprite->setTexture(*loadedTextures["enemy1"]);
     spriteManager.pushSprite(EntityType::ENEMY1, enemy1Sprite);
+
+    Animation *player1Animation = new Animation{sf::Vector2u(5, 5), sf::Vector2u(2, 0), sf::Vector2u(2, 0), 0, 0.05f, 
+        sf::IntRect(0, 0, loadedTextures["players"].get()->getSize().x / 5, loadedTextures["players"].get()->getSize().y / 5), false};
+    animationManager.pushAnimation(EntityType::PLAYER1, player1Animation);
+
+    Animation *enemy1Animation = new Animation{sf::Vector2u(7, 1), sf::Vector2u(0, 0), sf::Vector2u(0, 0), 0, 0.05f, 
+        sf::IntRect(0, 0, loadedTextures["enemy1"].get()->getSize().x / 7, loadedTextures["players"].get()->getSize().y / 1), false};
+    animationManager.pushAnimation(EntityType::ENEMY1, enemy1Animation);
 }

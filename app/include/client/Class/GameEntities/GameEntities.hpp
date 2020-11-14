@@ -18,6 +18,8 @@
 #include "shared/Components/Components.hpp"
 #include "shared/Synchronizer/Synchronizer.hpp"
 #include "EntitySpriteManager.hpp"
+#include "EntityAnimationManager.hpp"
+#include "client/Interfaces/IGame.hpp"
 
 struct Drawable {
     bool visible;
@@ -25,20 +27,9 @@ struct Drawable {
     sf::IntRect uvRect;
 };
 
-struct Animation {
-    sf::Vector2u imageCount;
-    sf::Vector2u currentImage;
-    sf::Vector2u startingImage;
-    float totalTime = 0;
-    float switchTime;
-    sf::IntRect uvRect;
-    bool reverse = false;
-};
-
-
 class GameEntities {
     public:
-        GameEntities(sf::RenderWindow &window, Synchronizer &synchronizer, EntitySpriteManager &spriteManager);
+        GameEntities(IGame *gameMenu, sf::RenderWindow &window, Synchronizer &synchronizer, EntitySpriteManager &spriteManager);
         ~GameEntities();
         void init();
         sf::RenderWindow &getWindow() { return window; };
@@ -63,6 +54,7 @@ class GameEntities {
 
     protected:
     private:
+        IGame *gameMenu;
         sf::RenderWindow &window;
         std::vector<Drawable> resources;
         ECS ecs;
