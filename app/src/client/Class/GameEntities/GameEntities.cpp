@@ -162,13 +162,6 @@ void GameEntities::createEnemy(sf::Vector2f position, sf::Vector2u totalFrames, 
         reverse }, Drawable{ true, sprite }, EntityID { id });
 }
 
-void GameEntities::createBackground(sf::Sprite *sprite)
-{
-    sprite->setScale(4, 4);
-    ecs.getEntityGenerator("Background")
-        .instanciate(1, Position{0, 0}, Velocity{ -1, 0, 50}, Drawable{true, sprite});
-}
-
 void GameEntities::update(bool *isDirectionMaintained, float deltaTime)
 {
     for (int i = 0; i != 4; i++)

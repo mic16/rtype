@@ -36,7 +36,7 @@ void Game::init() {
     .finish();
 
     ecs.newEntityModel<Position, Velocity, EntityID, Hitbox, EntityInfo, ProjectileInfo>("Projectile")
-    .addTags({"DamageOnTouch"})
+    .addTags({"DamageOnTouch", "Projectile"})
     .finish();
 
     ecs.newEntityModel<Position, Velocity, EntityID, Hitbox, EntityInfo, EntityStats>("Enemy")
@@ -75,18 +75,34 @@ void Game::init() {
         this->getDoubleMap().closeRead();
     }).finish();
 
-    ecs.newSystem<Position, EntityID, EntityInfo>("SpawnProjectile")
-    .each([this](float delta, EntityIterator<Position, EntityID, EntityInfo> &entity) {
+    ecs.newSystem<Position, EntityID, EntityInfo, Hitbox>("SpawnProjectile")
+    .withoutTags({"Projectile"})
+    .each([this](float delta, EntityIterator<Position, EntityID, EntityInfo, Hitbox> &entity) {
         auto projectileGenerator = this->getECS().getEntityGenerator("Projectile");
         while (entity.hasNext()) {
             entity.next();
 
-            Position *velocity = entity.getComponent<Position>(0);
+            Position *position = entity.getComponent<Position>(0);
             EntityID *entityID = entity.getComponent<EntityID>(1);
             EntityInfo *entityInfo = entity.getComponent<EntityInfo>(2);
+            Hitbox *hitbox = entity.getComponent<Hitbox>(3);
 
             if (entityInfo->isFiring) {
+                bool isEnemy = entityInfo->isEnemy;
+                size_t id = this->getNextEntityID();
+                double x = isEnemy?position->x:position->x + hitbox->w;
+                double y = position->y + hitbox->h / 2;
 
+                projectileGenerator.instanciate(1,
+                    Position{x, y},
+                    Velocity{isEnemy?-1.0:1.0, 0, 1000},
+                    EntityID{id},
+                    ProjectileHitbox,
+                    EntityInfo{isEnemy, false},
+                    ProjectileInfo{20}
+                );
+
+                this->getNetworkHandler().broadcast(SpawnPacket(id, EntityType::PROJECTILE, x, y));
             }
         }
     }).finish();
@@ -230,4 +246,8 @@ ECS &Game::getECS() {
 
 NetworkHandler &Game::getNetworkHandler() {
     return networkHandler;
+}
+
+size_t Game::getNextEntityID() {
+    return entityId++;
 }
