@@ -24,6 +24,10 @@ void GameMenu::initFixedGameDrawables()
     modDrawables.at(sceneName::GAME).insert(std::pair<std::string, std::unique_ptr<sf::Drawable>>("wall", std::make_unique<sf::Sprite>()));
     dynamic_cast<sf::Sprite *>(modDrawables.at(sceneName::GAME)["wall"].get())->setTexture(*loadedTextures["wall"]);
     dynamic_cast<sf::Sprite *>(modDrawables.at(sceneName::GAME)["wall"].get())->setOrigin(sf::Vector2f(0, 0));
+
+    sf::Sprite *wallSprite = new sf::Sprite();
+    wallSprite->setTexture(*loadedTextures["wall"]);
+    spriteManager.pushSprite(EntityType::WALL, wallSprite);
 }
 
 void GameMenu::initModGameDrawables()

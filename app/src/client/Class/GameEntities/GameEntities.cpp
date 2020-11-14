@@ -18,7 +18,6 @@ GameEntities::GameEntities(IGame *gameMenu, sf::RenderWindow &window, Synchroniz
 
 void GameEntities::init()
 {
-
     ecs.newEntityModel<Position, Animation, EntityID, Drawable>("Player")
         .addTags({ "PlayerControlled", "Drawable" })
         .finish();
