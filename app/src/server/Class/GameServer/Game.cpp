@@ -36,7 +36,7 @@ void Game::init() {
     .finish();
 
     ecs.newEntityModel<Position, Velocity, EntityID, Hitbox, EntityInfo, ProjectileInfo>("Projectile")
-    .addTags({"DamageOnTouch"})
+    .addTags({"DamageOnTouch", "Projectile"})
     .finish();
 
     ecs.newEntityModel<Position, Velocity, EntityID, Hitbox, EntityInfo, EntityStats>("Enemy")
@@ -75,18 +75,29 @@ void Game::init() {
         this->getDoubleMap().closeRead();
     }).finish();
 
-    ecs.newSystem<Position, EntityID, EntityInfo>("SpawnProjectile")
-    .each([this](float delta, EntityIterator<Position, EntityID, EntityInfo> &entity) {
+    ecs.newSystem<Position, EntityID, EntityInfo, Hitbox>("SpawnProjectile")
+    .withoutTags({"Projectile"})
+    .each([this](float delta, EntityIterator<Position, EntityID, EntityInfo, Hitbox> &entity) {
         auto projectileGenerator = this->getECS().getEntityGenerator("Projectile");
         while (entity.hasNext()) {
             entity.next();
 
-            Position *velocity = entity.getComponent<Position>(0);
+            Position *position = entity.getComponent<Position>(0);
             EntityID *entityID = entity.getComponent<EntityID>(1);
             EntityInfo *entityInfo = entity.getComponent<EntityInfo>(2);
+            Hitbox *hitbox = entity.getComponent<Hitbox>(3);
 
             if (entityInfo->isFiring) {
-                
+                bool isEnemy = entityInfo->isEnemy;
+
+                projectileGenerator.instanciate(1,
+                Position{isEnemy?position->x:position->x + hitbox->w, position->y + hitbox->h / 2},
+                Velocity{isEnemy?-1:1, 0, 1000},
+                EntityID{this->getNextEntityID()},
+                ProjectileHitbox,
+                EntityInfo{isEnemy, false},
+                ProjectileInfo{20}
+            );
             }
         }
     }).finish();
