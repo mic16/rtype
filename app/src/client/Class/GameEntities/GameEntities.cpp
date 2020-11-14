@@ -27,6 +27,10 @@ void GameEntities::init()
         .addTags({"Enemy", "Drawable"})
         .finish();
 
+    ecs.newEntityModel<Position, Animation, EntityID, Drawable>("Wall")
+        .addTags({"Wall", "Drawable"})
+        .finish();
+
     ecs.newSystem<Position, EntityID>("UpdateEntities")
     .each([this](float delta, EntityIterator<Position, EntityID> &entity) {
         if (this->getSynchronizer().getDoubleMap().isReadClose())
