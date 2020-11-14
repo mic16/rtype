@@ -80,7 +80,7 @@ class GameMenu : public IGameMenu {
         }
 
         size_t getPlayerID() {
-            return (playerId);
+            return playerId;
         }
 
     private:

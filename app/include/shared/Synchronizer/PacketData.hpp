@@ -13,6 +13,7 @@ struct PacketData {
     ~PacketData() {}
     double x, y;
     int dirX, dirY;
+    size_t entityType;
     bool isAlive = true;
     bool isFiring = false;
     bool fireChanged = false;
