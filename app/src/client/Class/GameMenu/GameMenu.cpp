@@ -101,6 +101,8 @@ void GameMenu::handleDisplay()
 
     gameEntities.createPlayer(1, sf::Vector2f(200.0f, 200.0f), sf::Vector2u(5, 5), sf::Vector2u(2, 0), 0.05f,
         loadedTextures["players"].get()->getSize(), false, spriteManager.getSprite(EntityType::PLAYER1), playerId);
+    gameEntities.createEnemy(sf::Vector2f(400.0f, 200.0f), sf::Vector2u(7, 1), sf::Vector2u(0, 0), 0.05f,
+        loadedTextures["enemy1"].get()->getSize(), false, spriteManager.getSprite(EntityType::ENEMY1), playerId);
     playerId++;
     gameEntities.createBackground(spriteManager.getSprite(EntityType::BACKGROUND));
     while (isOpen()) {

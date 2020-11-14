@@ -31,6 +31,11 @@ void GameMenu::initModGameDrawables()
     dynamic_cast<sf::Sprite *>(modDrawables.at(sceneName::GAME)["player"].get())->setOrigin(sf::Vector2f(16, 16));
     dynamic_cast<sf::Sprite *>(modDrawables.at(sceneName::GAME)["player"].get())->setPosition(sf::Vector2f(200, 200));
 
+    modDrawables.at(sceneName::GAME).insert(std::pair<std::string, std::unique_ptr<sf::Drawable>>("enemy", std::make_unique<sf::Sprite>()));
+    dynamic_cast<sf::Sprite *>(modDrawables.at(sceneName::GAME)["enemy"].get())->setTexture(*loadedTextures["enemy1"]);
+    dynamic_cast<sf::Sprite *>(modDrawables.at(sceneName::GAME)["enemy"].get())->setOrigin(sf::Vector2f(0, 0));
+    dynamic_cast<sf::Sprite *>(modDrawables.at(sceneName::GAME)["enemy"].get())->setPosition(sf::Vector2f(400, 200));
+
     modDrawables.at(sceneName::GAME).insert(std::pair<std::string, std::unique_ptr<sf::Drawable>>("space", std::make_unique<sf::Sprite>()));
     dynamic_cast<sf::Sprite *>(modDrawables.at(sceneName::GAME)["space"].get())->setTexture(*loadedTextures["space"]);
     dynamic_cast<sf::Sprite *>(modDrawables.at(sceneName::GAME)["space"].get())->setPosition(sf::Vector2f(0, 0));
@@ -38,6 +43,10 @@ void GameMenu::initModGameDrawables()
     sf::Sprite *player1Sprite = new sf::Sprite();
     player1Sprite->setTexture(*loadedTextures["players"]);
     spriteManager.pushSprite(EntityType::PLAYER1, player1Sprite);
+
+    sf::Sprite *enemy1Sprite = new sf::Sprite();
+    enemy1Sprite->setTexture(*loadedTextures["enemy1"]);
+    spriteManager.pushSprite(EntityType::ENEMY1, enemy1Sprite);
 
     sf::Sprite *backgroundSprite = new sf::Sprite();
     backgroundSprite->setTexture(*loadedTextures["space"]);
