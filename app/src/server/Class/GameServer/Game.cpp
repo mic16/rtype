@@ -86,7 +86,7 @@ void Game::init() {
             EntityInfo *entityInfo = entity.getComponent<EntityInfo>(2);
 
             if (entityInfo->isFiring) {
-
+                
             }
         }
     }).finish();
