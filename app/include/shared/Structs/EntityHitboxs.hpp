@@ -11,5 +11,6 @@
 #include "shared/Components/Components.hpp"
 
 #define PlayerHitbox Hitbox{33, 17}
+#define ProjectileHitbox Hitbox{33, 17}
 
 #endif /* !ENTITYHITBOXS_HPP_ */

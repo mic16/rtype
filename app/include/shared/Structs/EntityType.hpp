@@ -18,6 +18,8 @@ enum EntityType {
 
     WALL = 5,
 
+    PROJECTILE = 6,
+
     BACKGROUND = -1,
 };
 

@@ -89,15 +89,20 @@ void Game::init() {
 
             if (entityInfo->isFiring) {
                 bool isEnemy = entityInfo->isEnemy;
+                size_t id = this->getNextEntityID();
+                double x = isEnemy?position->x:position->x + hitbox->w;
+                double y = position->y + hitbox->h / 2;
 
                 projectileGenerator.instanciate(1,
-                Position{isEnemy?position->x:position->x + hitbox->w, position->y + hitbox->h / 2},
-                Velocity{isEnemy?-1:1, 0, 1000},
-                EntityID{this->getNextEntityID()},
-                ProjectileHitbox,
-                EntityInfo{isEnemy, false},
-                ProjectileInfo{20}
-            );
+                    Position{x, y},
+                    Velocity{isEnemy?-1.0:1.0, 0, 1000},
+                    EntityID{id},
+                    ProjectileHitbox,
+                    EntityInfo{isEnemy, false},
+                    ProjectileInfo{20}
+                );
+
+                this->getNetworkHandler().broadcast(SpawnPacket(id, EntityType::PROJECTILE, x, y));
             }
         }
     }).finish();
@@ -241,4 +246,8 @@ ECS &Game::getECS() {
 
 NetworkHandler &Game::getNetworkHandler() {
     return networkHandler;
+}
+
+size_t Game::getNextEntityID() {
+    return entityId++;
 }

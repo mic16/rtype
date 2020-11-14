@@ -23,6 +23,9 @@
 #include "shared/Components/Components.hpp"
 #include "shared/Synchronizer/Synchronizer.hpp"
 
+#include "shared/Structs/EntityHitboxs.hpp"
+#include "shared/Structs/EntityType.hpp"
+
 class Game : public Synchronizer {
     public:
         Game();
