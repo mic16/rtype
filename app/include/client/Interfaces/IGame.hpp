@@ -11,6 +11,7 @@
 class IGame {
     public:
         virtual void setPlayerID(size_t id) = 0;
+        virtual size_t getPlayerID() = 0;
 };
 
 

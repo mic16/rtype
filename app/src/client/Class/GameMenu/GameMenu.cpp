@@ -112,6 +112,8 @@ void GameMenu::handleDisplay()
     while (isOpen()) {
         deltaTime = clock.restart().asSeconds();
         handleEvents();
+        laserSound.update();
+        sound.update();
         if (getScene() == sceneName::GAME) {
             draw(deltaTime);
         } else {
