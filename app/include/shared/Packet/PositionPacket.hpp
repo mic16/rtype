@@ -12,11 +12,11 @@
 
 class PositionPacket : public ABasePacket {
     public:
-        PositionPacket(size_t id, double x, double y) : ABasePacket(id), x(x), y(y) {}
+        PositionPacket(size_t id, double x, double y, size_t entityType) : ABasePacket(id), x(x), y(y), entityType(entityType) {}
 
         PositionPacket() : ABasePacket() {}
 
-        PositionPacket(PositionPacket &packet) : ABasePacket(packet), x(packet.x), y(packet.y) {}
+        PositionPacket(PositionPacket &packet) : ABasePacket(packet), x(packet.x), y(packet.y), entityType(packet.entityType) {}
 
         ~PositionPacket() {}
 
@@ -24,12 +24,18 @@ class PositionPacket : public ABasePacket {
             ABasePacket::fromBuffer(buffer);
             x = buffer.readDouble(nullptr);
             y = buffer.readDouble(nullptr);
+            entityType = buffer.readUInt(nullptr);
         }
 
         void toBuffer(ByteBuffer &buffer) override {
             ABasePacket::toBuffer(buffer);
             buffer.writeDouble(x);
             buffer.writeDouble(y);
+            buffer.writeUInt(entityType);
+        }
+
+        size_t getEntityType() const {
+            return entityType;
         }
 
         double getX() const {
@@ -50,6 +56,7 @@ class PositionPacket : public ABasePacket {
 
     protected:
     private:
+        size_t entityType = 0;
         double x;
         double y;
 };

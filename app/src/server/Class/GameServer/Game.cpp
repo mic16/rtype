@@ -106,7 +106,7 @@ void Game::init() {
                         Velocity{-1, 0, 400},
                         EntityID{id},
                         Enemy1Hitbox,
-                        EntityInfo{true, true},
+                        EntityInfo{true, true, EntityType::ENEMY1},
                         EntityStats{100, 100, 20, 0}
                     );
                     this->getNetworkHandler().broadcast(SpawnPacket(id, EntityType::ENEMY1, x, y, 0));
@@ -143,7 +143,7 @@ void Game::init() {
                         Velocity{isEnemy?-1.0:1.0, 0, 1000},
                         EntityID{id},
                         ProjectileHitbox,
-                        EntityInfo{isEnemy, false},
+                        EntityInfo{isEnemy, false, EntityType::PROJECTILE1},
                         ProjectileInfo{entityStats->damage}
                     );
 
@@ -194,7 +194,7 @@ void Game::init() {
             if (moveX != 0 || moveY != 0) {
                 position->x += moveX;
                 position->y += moveY;
-                this->getNetworkHandler().broadcast(PositionPacket(entityID->id, position->x, position->y));
+                this->getNetworkHandler().broadcast(PositionPacket(entityID->id, position->x, position->y, entityInfo->entityType));
             }
         }
     }).finish();
@@ -302,7 +302,7 @@ void Game::startGame()
                     Velocity{0, 0, 400},
                     EntityID{id},
                     PlayerHitbox,
-                    EntityInfo{false, false},
+                    EntityInfo{false, false, EntityType::PLAYER1},
                     EntityStats{100, 100, 20});
 
                     networkHandler.broadcast(SpawnPacket(id, EntityType::PLAYER1, x, y, 1));
