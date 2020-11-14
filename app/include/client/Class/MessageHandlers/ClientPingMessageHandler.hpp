@@ -20,8 +20,7 @@ class ClientPingMessageHandler : public AMessageHandler<PingPacket> {
 
         void onMessage(NetworkHandler &handler, INetworkClient &client, PingPacket &packet) {
             handler.broadcast(packet);
-            synchronizer.getDoubleMap().update();
-            synchronizer.getDoubleQueue().update();
+            synchronizer.update();
         }
 
     protected:

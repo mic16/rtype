@@ -23,8 +23,7 @@ class ServerPingMessageHandler : public AMessageHandler<PingPacket> {
             if (handler.getClientConnection(client.getId())) {
                 handler.getLastClientRes(client.getId()) = std::chrono::high_resolution_clock::now();
             }
-            synchronizer.getDoubleMap().update();
-            synchronizer.getDoubleQueue().update();
+            synchronizer.update();
         }
 
     protected:
