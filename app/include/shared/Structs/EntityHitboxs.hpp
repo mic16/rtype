@@ -11,6 +11,7 @@
 #include "shared/Components/Components.hpp"
 
 #define PlayerHitbox Hitbox{33, 17}
+#define ProjectileHitbox Hitbox{33, 17}
 
 #define Enemy1Hitbox Hitbox{22, 24}
 #define Enemy2Hitbox Hitbox{32, 22}

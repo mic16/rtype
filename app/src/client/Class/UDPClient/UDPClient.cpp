@@ -39,8 +39,8 @@ void UDPClient::run()
 
 void UDPClient::connect()
 {
+    networkHandler.addClient(client);
     client->getBuffer().writeInt(666);
     client->write(client->getBuffer());
     client->getBuffer().clear();
-    networkHandler.addClient(client);
 }

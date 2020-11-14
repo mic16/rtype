@@ -42,7 +42,7 @@ void UDPClient::write(const ByteBuffer &buffer)
         m_endpoint,
         [this](const boost::system::error_code &errc,  std::size_t bytes_transferred) {
         if (!errc) {
-            std::cout << "Send " << bytes_transferred << " bytes." << std::endl;
+            // std::cout << "Send " << bytes_transferred << " bytes." << std::endl;
         } else {
             std::cout << "Failed writing to client" << std::endl;
         }

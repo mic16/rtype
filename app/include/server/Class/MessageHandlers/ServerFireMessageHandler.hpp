@@ -29,7 +29,7 @@ class ServerFireMessageHandler : public AMessageHandler<FirePacket> {
 
             data.isFiring = packet.isHolding();
 
-            synchronizer.getDoubleMap().update();
+            synchronizer.update();
         }
 
     protected:

@@ -7,9 +7,10 @@
 
 #include "client/Class/GameEntities/GameEntities.hpp"
 #include "shared/Packet/SpawnPacket.hpp"
+#include "shared/Packet/InstanciatePlayerPacket.hpp"
 #include <boost/algorithm/string.hpp>
 
-GameEntities::GameEntities(sf::RenderWindow &window, Synchronizer &synchronizer, EntitySpriteManager &spriteManager) : window(window), synchronizer(synchronizer), spriteManager(spriteManager)
+GameEntities::GameEntities(IGame *gameMenu, sf::RenderWindow &window, Synchronizer &synchronizer, EntitySpriteManager &spriteManager) : gameMenu(gameMenu), window(window), synchronizer(synchronizer), spriteManager(spriteManager)
 {
     for (int i = 0; i != 4 ; i++)
         isDirectionMaintained[i] = false;
@@ -21,13 +22,16 @@ void GameEntities::init()
     ecs.newEntityModel<Position, Animation, EntityID, Drawable>("Player")
         .addTags({ "PlayerControlled", "Drawable" })
         .finish();
-    
+
     ecs.newEntityModel<Position, EntityID, Drawable>("Enemy")
-    .addTags({"Enemy"})
-    .finish();
+        .addTags({"Enemy", "Drawable"})
+        .finish();
 
     ecs.newSystem<Position, EntityID>("UpdateEntities")
     .each([this](float delta, EntityIterator<Position, EntityID> &entity) {
+        if (this->getSynchronizer().getDoubleMap().isReadClose())
+            return;
+
         Synchronizer &synchronizer = this->getSynchronizer();
         auto &readMap = synchronizer.getDoubleMap().getReadMap();
 
@@ -47,6 +51,7 @@ void GameEntities::init()
 
                 position->x = data.x;
                 position->y = data.y;
+                std::cout << position->x << " " << position->y << std::endl;
             }
         }
 
@@ -95,6 +100,7 @@ void GameEntities::init()
             while (entity.hasNext()) {
                 entity.next();
 
+                std::cout << "Hey" << std::endl;
                 Position *position = entity.getComponent<Position>(0);
                 Drawable *drawable = entity.getComponent<Drawable>(1);
                 drawable->sprite->setTextureRect(drawable->uvRect);
@@ -123,30 +129,39 @@ void GameEntities::createPlayer(int nbOfPlayers, sf::Vector2f position, sf::Vect
         reverse }, Drawable{ true, sprite }, EntityID { id });
 }
 
-void GameEntities::createBackground(sf::Sprite *sprite)
-{
-    sprite->setScale(4, 4);
-    ecs.getEntityGenerator("Background")
-        .instanciate(1, Position{0, 0}, Velocity{ -1, 0, 50}, Drawable{true, sprite});
-}
-
 void GameEntities::update(bool *isDirectionMaintained, float deltaTime)
 {
     for (int i = 0; i != 4; i++)
         this->isDirectionMaintained[i] = isDirectionMaintained[i];
     this->deltaTime = deltaTime;
 
-    auto &vector = synchronizer.getDoubleQueue().getReadVector();
+    if (synchronizer.getDoubleQueue().isReadOpen()) {
+        auto &vector = synchronizer.getDoubleQueue().getReadVector();
 
-    auto enemyGenerator = ecs.getEntityGenerator("Enemy");
-    for (std::unique_ptr<IPacket> &packet : *vector) {
-        if (packet->getPacketID() == SpawnPacket::PacketID()) {
-            SpawnPacket *spawnpacket = dynamic_cast<SpawnPacket *>(packet.get());
-
-            enemyGenerator.instanciate(1,
-            Position{spawnpacket->getX(), spawnpacket->getY()},
-            EntityID{spawnpacket->getEntityID()},
-            Drawable{true, spriteManager.getSprite(spawnpacket->getEntityType())});
+        auto enemyGenerator = ecs.getEntityGenerator("Enemy");
+        auto playerGenerator = ecs.getEntityGenerator("Player");
+        for (std::unique_ptr<IPacket> &packet : *vector) {
+            if (packet->getPacketID() == SpawnPacket::PacketID()) {
+                SpawnPacket *spawnpacket = dynamic_cast<SpawnPacket *>(packet.get());
+                if (spawnpacket->isPlayer()) {
+                    playerGenerator.instanciate(1,
+                    Position{spawnpacket->getX(), spawnpacket->getY()},
+                    EntityID{spawnpacket->getEntityID()},
+                    Animation{sf::Vector2u(5, 5), sf::Vector2u(2, 0), sf::Vector2u(2, 0), 0, 0.05f, sf::IntRect{0, 0, 33, 17}, false},
+                    Drawable{true, spriteManager.getSprite(spawnpacket->getEntityType())});
+                } else {
+                    enemyGenerator.instanciate(1,
+                    Position{spawnpacket->getX(), spawnpacket->getY()},
+                    EntityID{spawnpacket->getEntityID()},
+                    Drawable{true,
+                            spriteManager.getSprite(spawnpacket->getEntityType()),
+                            sf::IntRect{0, 0, 33, 17}
+                        });
+                }
+            } else if (packet->getPacketID() == InstanciatePlayerPacket::PacketID()) {
+                InstanciatePlayerPacket *ipacket = dynamic_cast<InstanciatePlayerPacket *>(packet.get());
+                gameMenu->setPlayerID(ipacket->getEntityID());
+            }
         }
     }
 

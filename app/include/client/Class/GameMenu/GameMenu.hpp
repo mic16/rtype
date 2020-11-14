@@ -20,6 +20,7 @@
 #include "lib/ByteBuffer/ByteBuffer.hpp"
 #include "client/Class/GameEntities/GameEntities.hpp"
 #include "client/Class/UDPClient/UDPClient.hpp"
+#include "client/Class/Background/Background.hpp"
 
 #include "shared/Packet/FirePacket.hpp"
 #include "lib/Network/NetworkHandler.hpp"
@@ -71,6 +72,10 @@ class GameMenu : public IGameMenu {
             return networkHandler;
         }
 
+        void setPlayerID(size_t id) {
+            playerId = id;
+        }
+
     private:
         void initDrawables();
 
@@ -109,6 +114,8 @@ class GameMenu : public IGameMenu {
         sf::RenderWindow window;
         sf::Event event;
         sf::Font mainFont;
+
+        Background background;
 
         std::unique_ptr<std::thread> displayThread;
 

@@ -6,9 +6,10 @@
 */
 
 #include "server/Class/GameServer/GameServer.hpp"
+#include "shared/Packet/PlayerEnterRoomPacket.hpp"
 
-GameServer::GameServer(NetworkHandler &netwHandler): UDPServer(),
-    networkHandler(netwHandler)
+GameServer::GameServer(Synchronizer &synchronizer, NetworkHandler &netwHandler) : UDPServer(),
+    synchronizer(synchronizer), networkHandler(netwHandler)
 {
 }
 
@@ -36,6 +37,8 @@ bool GameServer::handleConnection()
                     new UDPClient(client)
                 ));
                 networkHandler.addClient(players.at(client.getAddress()));
+                synchronizer.getDoubleQueue().getWriteVector()->emplace_back(new PlayerEnterRoomPacket(players.at(client.getAddress())));
+                synchronizer.getDoubleQueue().update();
             } else { // message handling
                 players.at(client.getAddress())->getBuffer().append(client.getPacket(), bytes_transferred);
                 networkHandler.processMessage(*players.at(client.getAddress()));

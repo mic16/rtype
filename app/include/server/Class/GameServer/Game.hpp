@@ -23,6 +23,9 @@
 #include "shared/Components/Components.hpp"
 #include "shared/Synchronizer/Synchronizer.hpp"
 
+#include "shared/Structs/EntityHitboxs.hpp"
+#include "shared/Structs/EntityType.hpp"
+
 class Game : public Synchronizer {
     public:
         Game();
@@ -40,8 +43,9 @@ class Game : public Synchronizer {
         ECS &getECS();
         NetworkHandler &getNetworkHandler();
 
-        static double getMapWidth() {return 2000; }
-        static double getMapHeight() {return 2000/3; }
+        static double getMapWidth() {return 1600; }
+        static double getMapHeight() {return 1100; }
+        size_t getNextEntityID();
 
     private:
         std::chrono::high_resolution_clock::time_point lastTime;
@@ -49,6 +53,7 @@ class Game : public Synchronizer {
         NetworkHandler networkHandler = {1024};
         Ladder lobby;
         GameServer gameServer;
+        size_t entityId = 0;
 };
 
 #endif /* !GAME_HPP_ */
