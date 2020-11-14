@@ -22,7 +22,7 @@ class ClientSpawnMessageHandler : public AMessageHandler<SpawnPacket> {
             auto &vector = synchronizer.getDoubleQueue().getWriteVector();
 
             vector->emplace_back(new SpawnPacket(packet));
-            synchronizer.getDoubleQueue().update();
+            synchronizer.update();
         }
 
     protected:

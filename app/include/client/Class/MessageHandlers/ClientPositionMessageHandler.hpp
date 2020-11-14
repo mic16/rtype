@@ -29,7 +29,7 @@ class ClientPositionMessageHandler : public AMessageHandler<PositionPacket> {
             packetData.x = packet.getX();
             packetData.y = packet.getY();
 
-            synchronizer.getDoubleMap().update();
+            synchronizer.update();
         }
 
     protected:

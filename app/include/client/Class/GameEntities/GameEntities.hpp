@@ -18,6 +18,7 @@
 #include "shared/Components/Components.hpp"
 #include "shared/Synchronizer/Synchronizer.hpp"
 #include "EntitySpriteManager.hpp"
+#include "client/Interfaces/IGame.hpp"
 
 struct Drawable {
     bool visible;
@@ -38,7 +39,7 @@ struct Animation {
 
 class GameEntities {
     public:
-        GameEntities(sf::RenderWindow &window, Synchronizer &synchronizer, EntitySpriteManager &spriteManager);
+        GameEntities(IGame *gameMenu, sf::RenderWindow &window, Synchronizer &synchronizer, EntitySpriteManager &spriteManager);
         ~GameEntities();
         void init();
         sf::RenderWindow &getWindow() { return window; };
@@ -61,6 +62,7 @@ class GameEntities {
 
     protected:
     private:
+        IGame *gameMenu;
         sf::RenderWindow &window;
         std::vector<Drawable> resources;
         ECS ecs;

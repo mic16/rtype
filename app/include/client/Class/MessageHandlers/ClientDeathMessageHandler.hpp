@@ -28,7 +28,7 @@ class ClientDeathMessageHandler : public AMessageHandler<DeathPacket> {
 
             packetData.isAlive = false;
 
-            synchronizer.getDoubleMap().update();
+            synchronizer.update();
         }
 
     protected:

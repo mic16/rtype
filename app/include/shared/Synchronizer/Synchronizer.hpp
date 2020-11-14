@@ -28,6 +28,11 @@ class Synchronizer {
             return doubleQueue;
         }
 
+        void update() {
+            doubleQueue.update();
+            doubleMap.update();
+        }
+
     protected:
         DoubleHashmap<size_t, PacketData> doubleMap;
         DoubleQueue<std::unique_ptr<IPacket>> doubleQueue;

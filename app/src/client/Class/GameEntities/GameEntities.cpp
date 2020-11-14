@@ -7,9 +7,10 @@
 
 #include "client/Class/GameEntities/GameEntities.hpp"
 #include "shared/Packet/SpawnPacket.hpp"
+#include "shared/Packet/InstanciatePlayerPacket.hpp"
 #include <boost/algorithm/string.hpp>
 
-GameEntities::GameEntities(sf::RenderWindow &window, Synchronizer &synchronizer, EntitySpriteManager &spriteManager) : window(window), synchronizer(synchronizer), spriteManager(spriteManager)
+GameEntities::GameEntities(IGame *gameMenu, sf::RenderWindow &window, Synchronizer &synchronizer, EntitySpriteManager &spriteManager) : gameMenu(gameMenu), window(window), synchronizer(synchronizer), spriteManager(spriteManager)
 {
     for (int i = 0; i != 4 ; i++)
         isDirectionMaintained[i] = false;
@@ -22,12 +23,15 @@ void GameEntities::init()
         .addTags({ "PlayerControlled", "Drawable" })
         .finish();
 
-    ecs.newEntityModel<Position, EntityID, Drawable>("Enemy")
-    .addTags({"Enemy"})
-    .finish();
+    ecs.newEntityModel<Position, EntityID, Drawable>("Entity")
+        .addTags({"Entity", "Drawable"})
+        .finish();
 
     ecs.newSystem<Position, EntityID>("UpdateEntities")
     .each([this](float delta, EntityIterator<Position, EntityID> &entity) {
+        if (this->getSynchronizer().getDoubleMap().isReadClose())
+            return;
+
         Synchronizer &synchronizer = this->getSynchronizer();
         auto &readMap = synchronizer.getDoubleMap().getReadMap();
 
@@ -50,8 +54,11 @@ void GameEntities::init()
             }
         }
 
-        synchronizer.getDoubleMap().closeRead();
 
+    })
+    .whenDone([this](void){
+        Synchronizer &synchronizer = this->getSynchronizer();
+        synchronizer.getDoubleMap().closeRead();
     }).finish();
 
     ecs.newSystem<Animation, Drawable>("AnimatePlayer")
@@ -129,17 +136,33 @@ void GameEntities::update(bool *isDirectionMaintained, float deltaTime)
         this->isDirectionMaintained[i] = isDirectionMaintained[i];
     this->deltaTime = deltaTime;
 
-    auto &vector = synchronizer.getDoubleQueue().getReadVector();
+    if (synchronizer.getDoubleQueue().isReadOpen()) {
+        auto &vector = synchronizer.getDoubleQueue().getReadVector();
 
-    auto enemyGenerator = ecs.getEntityGenerator("Enemy");
-    for (std::unique_ptr<IPacket> &packet : *vector) {
-        if (packet->getPacketID() == SpawnPacket::PacketID()) {
-            SpawnPacket *spawnpacket = dynamic_cast<SpawnPacket *>(packet.get());
-
-            enemyGenerator.instanciate(1,
-            Position{spawnpacket->getX(), spawnpacket->getY()},
-            EntityID{spawnpacket->getEntityID()},
-            Drawable{true, spriteManager.getSprite(spawnpacket->getEntityType())});
+        auto entityGenerator = ecs.getEntityGenerator("Entity");
+        auto playerGenerator = ecs.getEntityGenerator("Player");
+        for (std::unique_ptr<IPacket> &packet : *vector) {
+            if (packet->getPacketID() == SpawnPacket::PacketID()) {
+                SpawnPacket *spawnpacket = dynamic_cast<SpawnPacket *>(packet.get());
+                if (spawnpacket->isPlayer()) {
+                    playerGenerator.instanciate(1,
+                    Position{spawnpacket->getX(), spawnpacket->getY()},
+                    EntityID{spawnpacket->getEntityID()},
+                    Animation{sf::Vector2u(5, 5), sf::Vector2u(2, 0), sf::Vector2u(2, 0), 0, 0.05f, sf::IntRect{0, 0, 33, 17}, false},
+                    Drawable{true, spriteManager.getSprite(spawnpacket->getEntityType())});
+                } else {
+                    entityGenerator.instanciate(1,
+                    Position{spawnpacket->getX(), spawnpacket->getY()},
+                    EntityID{spawnpacket->getEntityID()},
+                    Drawable{true,
+                            spriteManager.getSprite(spawnpacket->getEntityType()),
+                            sf::IntRect{0, 0, 33, 17}
+                        });
+                }
+            } else if (packet->getPacketID() == InstanciatePlayerPacket::PacketID()) {
+                InstanciatePlayerPacket *ipacket = dynamic_cast<InstanciatePlayerPacket *>(packet.get());
+                gameMenu->setPlayerID(ipacket->getEntityID());
+            }
         }
     }
 

@@ -11,12 +11,13 @@
 #include "SFML/Graphics.hpp"
 #include "client/Class/GameEntities/GameEntities.hpp"
 #include "lib/Network/NetworkHandler.hpp"
+#include "client/Interfaces/IGame.hpp"
 
 enum sceneName { LOGIN, MENU, CREATE, JOIN, ROOM, GAME };
 
 enum menuButton { B_CREATE, B_JOIN };
 
-class IGameMenu {
+class IGameMenu : public IGame {
     public:
         virtual int run() = 0;
 
@@ -45,6 +46,7 @@ class IGameMenu {
 
         virtual GameEntities *getGameEntities() = 0;
         virtual NetworkHandler &getNetworkHandler() = 0;
+        virtual void setPlayerID(size_t id) = 0;
 };
 
 #endif /* !IGAMEMENU_HPP_ */

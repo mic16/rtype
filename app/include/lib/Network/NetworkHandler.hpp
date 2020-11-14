@@ -39,18 +39,19 @@ class NetworkHandler {
             packetsID.insert({hashcode, id});
         }
 
+        std::vector<std::unique_ptr<INetworkClient>> &getClients() {
+            return clients;
+        }
+
         void addClient(INetworkClient *client) {
             clients.emplace_back(client);
-            buffers.emplace_back(new ByteBuffer(1024));
             clientConnection.insert(std::pair<unsigned int, bool>(client->getId(), true));
             lastClientRes.insert(std::pair<unsigned int, std::chrono::high_resolution_clock::time_point>(client->getId(), std::chrono::high_resolution_clock::now()));
         }
 
         void clear() {
             clients.clear();
-            buffers.clear();
             clientConnection.clear();
-            lastClientRes.clear();
         }
 
         template<typename T>
@@ -88,6 +89,40 @@ class NetworkHandler {
                 if (clientConnection[client->getId()])
                     client->write(prepend);
             }
+        }
+
+        template<typename T>
+        void send(INetworkClient &client, T packet) {
+
+            static_assert(std::is_pointer<T>::value || std::is_reference<T>::value || std::is_object<T>::value, "Cannot broadcast an unsupported type");
+
+            buffer.clear();
+
+            std::size_t hashcode;
+            if constexpr(std::is_pointer<T>::value) {
+                static_assert(std::is_base_of<IPacket, typename std::remove_pointer<T>::type>::value, "Cannot broadcast something that is not a child of IPacket");
+                packet->toBuffer(buffer);
+                hashcode = typeid(typename std::remove_pointer<T>::type).hash_code();
+            } else if constexpr(std::is_reference<T>::value) {
+                static_assert(std::is_base_of<IPacket, typename std::remove_reference<T>::type>::value, "Cannot broadcast something that is not a child of IPacket");
+                packet.toBuffer(buffer);
+                hashcode = typeid(typename std::remove_reference<T>::type).hash_code();
+            } else if constexpr(std::is_object<T>::value) {
+                static_assert(std::is_base_of<IPacket, T>::value, "Cannot broadcast something that is not a child of IPacket");
+                packet.toBuffer(buffer);
+                hashcode = typeid(T).hash_code();
+            }
+
+            if (packetsID.find(hashcode) == packetsID.end()) {
+                return;
+            }
+
+            std::size_t id = packetsID[hashcode];
+
+            prepend.clear();
+            prepend.writeULong(id);
+            prepend.writeCharBuffer(reinterpret_cast<const char *>(buffer.flush()), buffer.getSize());
+            client.write(prepend);
         }
 
         void processMessage(INetworkClient &client) {
@@ -145,7 +180,6 @@ class NetworkHandler {
         ByteBuffer prepend = {1024};
         ByteBuffer buffer = {1024};
         std::vector<std::unique_ptr<INetworkClient>> clients;
-        std::vector<std::unique_ptr<ByteBuffer>> buffers;
         std::map<unsigned int, bool> clientConnection;
         std::map<unsigned int, std::chrono::high_resolution_clock::time_point> lastClientRes;
         std::chrono::high_resolution_clock::time_point lastTRequestStatus;
