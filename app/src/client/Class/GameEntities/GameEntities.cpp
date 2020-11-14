@@ -21,7 +21,7 @@ void GameEntities::init()
     ecs.newEntityModel<Position, Animation, EntityID, Drawable>("Player")
         .addTags({ "PlayerControlled", "Drawable" })
         .finish();
-    
+
     ecs.newEntityModel<Position, EntityID, Drawable>("Enemy")
     .addTags({"Enemy"})
     .finish();
@@ -121,13 +121,6 @@ void GameEntities::createPlayer(int nbOfPlayers, sf::Vector2f position, sf::Vect
         Animation{ totalFrames, startingFrame, startingFrame, 0, timeToSwitchFrames,
         sf::IntRect(0, 0, textureSize.x / totalFrames.x, textureSize.y / totalFrames.y),
         reverse }, Drawable{ true, sprite }, EntityID { id });
-}
-
-void GameEntities::createBackground(sf::Sprite *sprite)
-{
-    sprite->setScale(4, 4);
-    ecs.getEntityGenerator("Background")
-        .instanciate(1, Position{0, 0}, Velocity{ -1, 0, 50}, Drawable{true, sprite});
 }
 
 void GameEntities::update(bool *isDirectionMaintained, float deltaTime)
