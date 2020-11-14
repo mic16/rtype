@@ -26,7 +26,7 @@ window(
 ),
 buffer(1024),
 actualButton(menuButton::B_CREATE),
-gameEntities(this, window, synchronizer, spriteManager),
+gameEntities(this, window, synchronizer, spriteManager, animationManager),
 background(window, 250)
 {
     client = std::make_unique<TCPClient>(this);

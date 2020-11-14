@@ -71,10 +71,14 @@ void Game::init() {
             if (readMap->find(entityID->id) != readMap->end()) {
                 PacketData &data = readMap->at(entityID->id);
 
-                velocity->dirX = data.dirX;
-                velocity->dirY = data.dirY;
+                if (data.moveChanged) {
+                    velocity->dirX = data.dirX;
+                    velocity->dirY = data.dirY;
+                }
 
-                entityInfo->isFiring = data.isFiring;
+                if (data.fireChanged) {
+                    entityInfo->isFiring = data.isFiring;
+                }
             }
         }
     })
@@ -97,24 +101,29 @@ void Game::init() {
             EntityStats *entityStats = entity.getComponent<EntityStats>(4);
 
             if (entityInfo->isFiring) {
-                bool isEnemy = entityInfo->isEnemy;
-                size_t id = this->getNextEntityID();
-                double x = isEnemy?position->x:position->x + hitbox->w;
-                double y = position->y + hitbox->h / 2;
+                entityStats->fireTimer += delta;
+                if (entityStats->fireTimer > 0.1) {
+                    bool isEnemy = entityInfo->isEnemy;
+                    size_t id = this->getNextEntityID();
+                    double x = isEnemy?position->x:position->x + hitbox->w;
+                    double y = position->y + hitbox->h / 2;
 
-                projectileGenerator.instanciate(1,
-                    Position{x, y},
-                    Velocity{isEnemy?-1.0:1.0, 0, 1000},
-                    EntityID{id},
-                    ProjectileHitbox,
-                    EntityInfo{isEnemy, false},
-                    ProjectileInfo{entityStats->damage}
-                );
+                    projectileGenerator.instanciate(1,
+                        Position{x, y},
+                        Velocity{isEnemy?-1.0:1.0, 0, 1000},
+                        EntityID{id},
+                        ProjectileHitbox,
+                        EntityInfo{isEnemy, false},
+                        ProjectileInfo{entityStats->damage}
+                    );
 
-                this->getNetworkHandler().broadcast(SpawnPacket(id, EntityType::PLAYER1, x, y, 0));
+                    this->getNetworkHandler().broadcast(SpawnPacket(id, EntityType::PROJECTILE1, x, y, 0));
+                    entityStats->fireTimer = 0;
+                }
             }
         }
     }).finish();
+
     size_t hashProjectile = ecs.getHash("Projectile");
     ecs.newSystem<Position, Velocity, EntityID, EntityInfo, Hitbox>("MoveEntity")
     .each([this, hashProjectile](float delta, EntityIterator<Position, Velocity, EntityID, EntityInfo, Hitbox> &entity) {
@@ -139,8 +148,8 @@ void Game::init() {
                 }
             } else {
                     if (entity.getEntityType() == hashProjectile) {
-                        if (position->x + hitbox->w  < 0 || position->x > this->getMapWidth() ||
-                            position->y + hitbox->h  < 0 || position->y > this->getMapHeight()) {
+                        if (position->x + hitbox->w  <= -50 || position->x >= this->getMapWidth() + 50 ||
+                            position->y + hitbox->h  <= 0 || position->y >= this->getMapHeight()) {
                             this->getNetworkHandler().broadcast(DeathPacket(entityID->id));
                             entity.remove();
                             continue;
@@ -217,12 +226,6 @@ void Game::loadExtensions(std::vector<std::unique_ptr<IExtension>> &extensions) 
 
 void Game::compile() {
     ecs.compile();
-
-    // ecs.getEntityGenerator("DestructibleWall")
-    // .instanciate(1, Hitbox {200, getMapHeight()}, EntityInfo {true}, EntityStats{100, 100});
-
-    // ecs.getEntityGenerator("Projectile")
-    // .instanciate(1, Position{.x = getMapWidth(), .y = getMapHeight() / 2}, Velocity{.dirX = -1, .dirY = 0, .speed = 1000}, ProjectileInfo{.damage = 100}, Hitbox{.w = 50, .h = 50}, EntityInfo{false});
 }
 
 void Game::update() {
@@ -266,7 +269,7 @@ void Game::startGame()
 
                     playerGenerator.instanciate(1,
                     Position{x, y},
-                    Velocity{0, 0, 1000},
+                    Velocity{0, 0, 400},
                     EntityID{id},
                     PlayerHitbox,
                     EntityInfo{false, false},

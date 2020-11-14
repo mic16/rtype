@@ -15,6 +15,8 @@ struct PacketData {
     int dirX, dirY;
     bool isAlive = true;
     bool isFiring = false;
+    bool fireChanged = false;
+    bool moveChanged = false;
 };
 
 #endif /* !PACKETDATA_HPP_ */

@@ -44,7 +44,7 @@ class Game : public Synchronizer {
         NetworkHandler &getNetworkHandler();
 
         static double getMapWidth() {return 1600; }
-        static double getMapHeight() {return 1100; }
+        static double getMapHeight() {return 800; }
         size_t getNextEntityID();
 
     private:

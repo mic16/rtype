@@ -42,6 +42,8 @@ class ServerMoveMessageHandler : public AMessageHandler<MovePacket> {
                 data.dirY = 0;
             }
 
+            data.moveChanged = true;
+
             synchronizer.update();
         }
 

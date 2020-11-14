@@ -28,6 +28,7 @@ class ServerFireMessageHandler : public AMessageHandler<FirePacket> {
             PacketData &data = writeMap->at(packet.getEntityID());
 
             data.isFiring = packet.isHolding();
+            data.fireChanged = true;
 
             synchronizer.update();
         }

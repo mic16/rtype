@@ -29,8 +29,8 @@ bool GameServer::handleConnection()
     [this](const boost::system::error_code &errc,  std::size_t bytes_transferred) {
         if (!errc) {
             client.setClient(acceptor);
-            std::cout << "Client " << client.getAddress() << ':'
-                << client.getPort() << std::endl;
+            // std::cout << "Client " << client.getAddress() << ':'
+                // << client.getPort() << std::endl;
             if (players.find(client.getAddress()) == players.end()) {
                 players.insert(std::pair<std::string, UDPClient *>(
                     client.getAddress(),

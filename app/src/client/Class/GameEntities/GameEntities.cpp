@@ -10,7 +10,7 @@
 #include "shared/Packet/InstanciatePlayerPacket.hpp"
 #include <boost/algorithm/string.hpp>
 
-GameEntities::GameEntities(IGame *gameMenu, sf::RenderWindow &window, Synchronizer &synchronizer, EntitySpriteManager &spriteManager) : gameMenu(gameMenu), window(window), synchronizer(synchronizer), spriteManager(spriteManager)
+GameEntities::GameEntities(IGame *gameMenu, sf::RenderWindow &window, Synchronizer &synchronizer, EntitySpriteManager &spriteManager, EntityAnimationManager &animationManager) : gameMenu(gameMenu), window(window), synchronizer(synchronizer), spriteManager(spriteManager), animationManager(animationManager)
 {
     for (int i = 0; i != 4 ; i++)
         isDirectionMaintained[i] = false;
@@ -23,7 +23,7 @@ void GameEntities::init()
         .addTags({ "PlayerControlled", "Drawable" })
         .finish();
 
-    ecs.newEntityModel<Position, EntityID, Drawable>("Entity")
+    ecs.newEntityModel<Position, Animation, EntityID, Drawable>("Entity")
         .addTags({"Entity", "Drawable"})
         .finish();
 
@@ -71,7 +71,7 @@ void GameEntities::init()
                     Drawable *drawable = entity.getComponent<Drawable>(1);
 
                     animation->currentImage.y = row;
-                    animation->totalTime += deltaTime;
+                    animation->totalTime += delta;
                     if (animation->totalTime >= animation->switchTime) {
                         animation->totalTime -= animation->switchTime;
                         if (isDirectionMaintained[DIRECTION::UP] && animation->currentImage.x < animation->imageCount.x - 1)
@@ -96,6 +96,33 @@ void GameEntities::init()
             })
         .finish();
 
+    ecs.newSystem<Animation, Drawable>("AnimateSimpleEntity")
+        .withTags({ "Entity" })
+        .each([](float delta, EntityIterator<Animation, Drawable> &entity){
+            while (entity.hasNext()) {
+                entity.next();
+
+                Animation *animation = entity.getComponent<Animation>(0);
+                Drawable *drawable = entity.getComponent<Drawable>(1);
+
+                if (animation->totalTime >= animation->switchTime) {
+                    animation->totalTime -= animation->switchTime;
+                    if (animation->currentImage.x < animation->imageCount.x - 1)
+                        animation->currentImage.x = 0;
+                    else
+                        animation->currentImage.x++;
+                }
+                animation->uvRect.left = animation->currentImage.x * animation->uvRect.width;
+                animation->uvRect.top = animation->currentImage.y * animation->uvRect.height;
+
+                drawable->uvRect.left = animation->uvRect.left;
+                drawable->uvRect.top = animation->uvRect.top;
+                drawable->uvRect.width = animation->uvRect.width;
+                drawable->uvRect.height = animation->uvRect.height;
+            }
+        })
+        .finish();
+
     ecs.newSystem<Position, Drawable>("Draw")
         .withTags({ "Drawable" })
         .each([this](float delta, EntityIterator<Position, Drawable> &entity) {
@@ -104,6 +131,14 @@ void GameEntities::init()
 
                 Position *position = entity.getComponent<Position>(0);
                 Drawable *drawable = entity.getComponent<Drawable>(1);
+
+                if (position->x + drawable->uvRect.width <= 0 || position->x >= 1600
+                    || position->y + drawable->uvRect.height <= 0 || position->y >= 800
+                ) {
+                    entity.remove();
+                    continue;
+                }
+
                 drawable->sprite->setTextureRect(drawable->uvRect);
                 drawable->sprite->setPosition(sf::Vector2f(position->x, position->y));
                 this->getWindow().draw(*drawable->sprite);
@@ -118,23 +153,10 @@ GameEntities::~GameEntities()
 {
 }
 
-void GameEntities::createPlayer(int nbOfPlayers, sf::Vector2f position, sf::Vector2u totalFrames, sf::Vector2u startingFrame,
-    float timeToSwitchFrames, sf::Vector2u textureSize, bool reverse, sf::Sprite *sprite, size_t id)
-{
-    auto playerGenerator = ecs.getEntityGenerator("Player");
-    playerGenerator.reserve(nbOfPlayers);
-    playerGenerator
-        .instanciate(nbOfPlayers, Position{ position.x, position.y },
-        Animation{ totalFrames, startingFrame, startingFrame, 0, timeToSwitchFrames,
-        sf::IntRect(0, 0, textureSize.x / totalFrames.x, textureSize.y / totalFrames.y),
-        reverse }, Drawable{ true, sprite }, EntityID { id });
-}
-
 void GameEntities::update(bool *isDirectionMaintained, float deltaTime)
 {
     for (int i = 0; i != 4; i++)
         this->isDirectionMaintained[i] = isDirectionMaintained[i];
-    this->deltaTime = deltaTime;
 
     if (synchronizer.getDoubleQueue().isReadOpen()) {
         auto &vector = synchronizer.getDoubleQueue().getReadVector();
@@ -148,16 +170,15 @@ void GameEntities::update(bool *isDirectionMaintained, float deltaTime)
                     playerGenerator.instanciate(1,
                     Position{spawnpacket->getX(), spawnpacket->getY()},
                     EntityID{spawnpacket->getEntityID()},
-                    Animation{sf::Vector2u(5, 5), sf::Vector2u(2, 0), sf::Vector2u(2, 0), 0, 0.05f, sf::IntRect{0, 0, 33, 17}, false},
+                    animationManager.getAnimation(spawnpacket->getEntityType()),
                     Drawable{true, spriteManager.getSprite(spawnpacket->getEntityType())});
                 } else {
                     entityGenerator.instanciate(1,
                     Position{spawnpacket->getX(), spawnpacket->getY()},
                     EntityID{spawnpacket->getEntityID()},
-                    Drawable{true,
-                            spriteManager.getSprite(spawnpacket->getEntityType()),
-                            sf::IntRect{0, 0, 33, 17}
-                        });
+                    animationManager.getAnimation(spawnpacket->getEntityType()),
+                    Drawable{true, spriteManager.getSprite(spawnpacket->getEntityType())}
+                    );
                 }
             } else if (packet->getPacketID() == InstanciatePlayerPacket::PacketID()) {
                 InstanciatePlayerPacket *ipacket = dynamic_cast<InstanciatePlayerPacket *>(packet.get());

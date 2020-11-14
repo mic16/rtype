@@ -30,14 +30,22 @@ void GameMenu::handleKeyPressed()
         sf::Vector2i dir(0, 0);
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space))
             networkHandler.broadcast(FirePacket(playerId, true));
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Z))
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Z)) {
             dir.y += -1;
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Q))
+            isDirectionMaintained[GameEntities::UP] = true;
+        }
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Q)) {
             dir.x += -1;
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::S))
+            isDirectionMaintained[GameEntities::LEFT] = true;
+        }
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)) {
             dir.y += 1;
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
+            isDirectionMaintained[GameEntities::DOWN] = true;
+        }
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)) {
             dir.x += 1;
+            isDirectionMaintained[GameEntities::RIGHT] = true;
+        }
         networkHandler.broadcast(MovePacket(playerId, dir.x, dir.y));
     }
 }
@@ -71,16 +79,28 @@ void GameMenu::handleKeyReleased()
 {
     if (gameEntities.isGamePlaying()) {
         sf::Vector2i dir(0, 0);
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space))
+        if (!sf::Keyboard::isKeyPressed(sf::Keyboard::Space))
             networkHandler.broadcast(FirePacket(playerId, false));
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Z))
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Z)) {
             dir.y += -1;
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Q))
+        } else {
+            isDirectionMaintained[GameEntities::UP] = false;
+        }
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Q)) {
             dir.x += -1;
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::S))
+        } else {
+            isDirectionMaintained[GameEntities::LEFT] = false;
+        }
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)) {
             dir.y += 1;
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
+        } else {
+            isDirectionMaintained[GameEntities::DOWN] = false;
+        }
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)) {
             dir.x += 1;
+        } else {
+            isDirectionMaintained[GameEntities::RIGHT] = false;
+        }
         networkHandler.broadcast(MovePacket(playerId, dir.x, dir.y));
     } else {
         if (event.key.code == sf::Keyboard::Backspace) {

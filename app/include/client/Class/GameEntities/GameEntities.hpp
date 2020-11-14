@@ -18,7 +18,9 @@
 #include "shared/Components/Components.hpp"
 #include "shared/Synchronizer/Synchronizer.hpp"
 #include "EntitySpriteManager.hpp"
+#include "EntityAnimationManager.hpp"
 #include "client/Interfaces/IGame.hpp"
+#include "EntityAnimationManager.hpp"
 
 struct Drawable {
     bool visible;
@@ -26,20 +28,9 @@ struct Drawable {
     sf::IntRect uvRect;
 };
 
-struct Animation {
-    sf::Vector2u imageCount;
-    sf::Vector2u currentImage;
-    sf::Vector2u startingImage;
-    float totalTime = 0;
-    float switchTime;
-    sf::IntRect uvRect;
-    bool reverse = false;
-};
-
-
 class GameEntities {
     public:
-        GameEntities(IGame *gameMenu, sf::RenderWindow &window, Synchronizer &synchronizer, EntitySpriteManager &spriteManager);
+        GameEntities(IGame *gameMenu, sf::RenderWindow &window, Synchronizer &synchronizer, EntitySpriteManager &spriteManager, EntityAnimationManager &animationManager);
         ~GameEntities();
         void init();
         sf::RenderWindow &getWindow() { return window; };
@@ -48,6 +39,8 @@ class GameEntities {
         void update(bool *isDirectionMaintained, float deltaTime);
 
         void createPlayer(int nbOfPlayers, sf::Vector2f position, sf::Vector2u totalFrames, sf::Vector2u startingFrame,
+            float timeToSwitchFrames, sf::Vector2u textureSize, bool reverse, sf::Sprite *sprite, size_t id);
+        void createEnemy(sf::Vector2f position, sf::Vector2u totalFrames, sf::Vector2u startingFrame,
             float timeToSwitchFrames, sf::Vector2u textureSize, bool reverse, sf::Sprite *sprite, size_t id);
 
         enum DIRECTION {
@@ -68,10 +61,10 @@ class GameEntities {
         ECS ecs;
         bool isDirectionMaintained[4];
         int row = 0;
-        float deltaTime = 0.0f;
         bool gamePlaying = false;
         Synchronizer &synchronizer;
         EntitySpriteManager &spriteManager;
+        EntityAnimationManager &animationManager;
 
 };
 
