@@ -12,12 +12,13 @@ username("..."),
 loadedTextures("./app/assets/Menu/"),
 window(
     sf::VideoMode(1600, 800),
-    "R-Type Menu",
+    "R-Type",
     sf::Style::Close | sf::Style::Titlebar
 ),
 buffer(1024),
 actualButton(menuButton::B_CREATE),
-gameEntities(window)
+gameEntities(window),
+background(window, 250)
 {
     client = std::make_unique<TCPClient>(this);
     initDrawables();
@@ -65,8 +66,11 @@ void GameMenu::draw()
 void GameMenu::draw(float deltaTime)
 {
     window.clear(sf::Color::White);
-    if (gameEntities.isGamePlaying())
+    if (gameEntities.isGamePlaying()) {
+        background.update(deltaTime);
+        background.draw();
         gameEntities.update(isDirectionMaintained, deltaTime);
+    }
     window.display();
 }
 
@@ -83,7 +87,6 @@ void GameMenu::handleDisplay()
     gameEntities.createPlayer(1, sf::Vector2f(200.0f, 200.0f), sf::Vector2u(5, 5), sf::Vector2u(2, 0), 0.05f,
         loadedTextures["players"].get()->getSize(), false, *loadedTextures["players"].get(), sf::Sprite(*loadedTextures["players"].get()), playerId);
     playerId++;
-    gameEntities.createBackground(*loadedTextures["space"].get(), sf::Sprite(*loadedTextures["space"].get()));
     while (isOpen()) {
         deltaTime = clock.restart().asSeconds();
         handleEvents();

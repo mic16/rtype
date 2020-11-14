@@ -16,30 +16,9 @@ GameEntities::GameEntities(sf::RenderWindow &window) : window(window)
 
 void GameEntities::init()
 {
-    ecs.newEntityModel<Position, Velocity, Drawable>("Background")
-        .addTags({"Background", "Drawable"})
-        .finish();
-
     ecs.newEntityModel<Position, Animation, Drawable, EntityId>("Player")
         .addTags({ "PlayerControlled", "Drawable" })
         .finish();
-
-    ecs.newSystem<Position, Velocity, Drawable>("BackgroundScroll")
-        .withTags({ "Background" })
-        .each([](float delta, EntityIterator<Position, Velocity, Drawable> &entity) {
-            while (entity.hasNext()) {
-                Position* position = entity.getComponent<Position>(0);
-                Velocity* velocity = entity.getComponent<Velocity>(1);
-                Drawable* drawable = entity.getComponent<Drawable>(2);
-
-                position->x += velocity->vx * velocity->speed * delta;
-                position->y += velocity->vy * velocity->speed * delta;
-                if (position->x <= -4904)
-                    position->x = position->x + 4904;
-                drawable->sprite.setPosition(position->x, position->y);
-                entity.next();
-            }
-        }).finish();
 
     ecs.newSystem<Position, Drawable>("Movement")
         .withTags({ "PlayerControlled" })
@@ -125,13 +104,6 @@ void GameEntities::createPlayer(int nbOfPlayers, sf::Vector2f position, sf::Vect
         Animation{ totalFrames, startingFrame, startingFrame, 0, timeToSwitchFrames,
         sf::IntRect(0, 0, textureSize.x / totalFrames.x, textureSize.y / totalFrames.y),
         reverse }, Drawable{ true, texture, sprite }, EntityId{ id });
-}
-
-void GameEntities::createBackground(sf::Texture texture, sf::Sprite sprite)
-{
-    sprite.setScale(4, 4);
-    ecs.getEntityGenerator("Background")
-        .instanciate(1, Position{0, 0}, Velocity{ -1, 0, 50}, Drawable{true, texture, sprite});
 }
 
 void GameEntities::update(bool *isDirectionMaintained, float deltaTime)
