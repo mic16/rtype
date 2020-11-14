@@ -436,7 +436,7 @@ class EntityIterator {
 
         template<typename T>
         typename std::add_pointer<T>::type getComponent(size_t index) {
-            if (m_entities->size() == 0)
+            if (m_entities == nullptr || m_entities->size() == 0)
                 return nullptr;
             return reinterpret_cast<typename std::add_pointer<T>::type>(m_entities->at(entity_index, indexes[index]));
         }
@@ -446,20 +446,28 @@ class EntityIterator {
         }
 
         const std::string &getName() {
+            if (m_entities == nullptr)
+                return "";
             return m_entities->getEntityModel()->getName();
         }
 
         size_t getSize() {
+            if (m_entities == nullptr)
+                return 0;
             return m_entities->size();
         }
 
         bool hasNext() {
+            if (m_entities == nullptr)
+                return false;
             if (first)
                 return entity_index < m_entities->size();
             return (entity_index + 1) < m_entities->size();
         }
 
         void next() {
+            if (m_entities == nullptr)
+                return;
             if (first) {
                 first = false;
                 return;
@@ -468,19 +476,24 @@ class EntityIterator {
         }
 
         void reset() {
+            if (m_entities == nullptr)
+                return;
             entity_index = 0;
             first = true;
         }
 
         void remove() {
+            if (m_entities == nullptr)
+                return;
             m_entities->remove(entity_index);
             first = true;
         }
 
         EntityModel *getEntityModel() {
+            if (m_entities == nullptr)
+                return nullptr;
             return m_entities->getEntityModel();
         }
-
 
     private:
         size_t indexes[sizeof...(Args)] = {0};
@@ -490,6 +503,8 @@ class EntityIterator {
         size_t entity_index = 0;
         template<int N, typename T, typename ...TArgs>
         void setupOffset() {
+            if (m_entities == nullptr)
+                return;
             indexes[N] = m_entities->getEntityModel()->getComponentIndex<T>();
             if constexpr(sizeof...(TArgs) > 0) {
                 setupOffset<N+1, TArgs...>();
@@ -603,6 +618,7 @@ private:
         ECS &m_ecs;
         std::vector<size_t> models;
         std::function<void(EntitySystem *, float)> func;
+        std::function<void(void)> done;
         EntitySystem(ECS &ecs) : m_ecs(ecs) {}
         ~EntitySystem() {}
     };
@@ -644,11 +660,21 @@ private:
                 system->func = [func](EntitySystem *system, float delta) {
                     for (size_t model : system->models) {
                         UnorderedEntityArray *entities = system->m_ecs.getEntityMap(model);
-                        if (entities != nullptr) {
-                            EntityIterator<Args...> it(entities, model);
-                            func(delta, it);
-                        }
+                        EntityIterator<Args...> it(entities, model);
+                        func(delta, it);
                     }
+                    if (system->done != nullptr) {
+                        system->done();
+                    }
+                };
+                return *this;
+            }
+
+            SystemBuilder<Args...> &whenDone(typename Functor<void>::type func) {
+                if (finished)
+                    return *this;
+                system->done = [func]() {
+                    func();
                 };
                 return *this;
             }
@@ -754,7 +780,9 @@ public:
 
     void update(float delta) {
         for (EntitySystem *system : systems) {
-            system->func(system, delta);
+            if (system->func != nullptr) {
+                system->func(system, delta);
+            }
         }
     }
 

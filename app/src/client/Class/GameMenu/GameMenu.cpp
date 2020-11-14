@@ -9,6 +9,7 @@
 
 #include "client/Class/MessageHandlers/ClientSpawnMessageHandler.hpp"
 #include "client/Class/MessageHandlers/ClientDeathMessageHandler.hpp"
+#include "client/Class/MessageHandlers/ClientPingMessageHandler.hpp"
 #include "client/Class/MessageHandlers/ClientDamageMessageHandler.hpp"
 #include "client/Class/MessageHandlers/ClientFireMessageHandler.hpp"
 #include "client/Class/MessageHandlers/ClientMoveMessageHandler.hpp"
@@ -26,7 +27,7 @@ window(
 ),
 buffer(1024),
 actualButton(menuButton::B_CREATE),
-gameEntities(this, window, synchronizer, spriteManager),
+gameEntities(this, window, synchronizer, spriteManager, animationManager),
 background(window, 250)
 {
     client = std::make_unique<TCPClient>(this);
@@ -40,6 +41,7 @@ background(window, 250)
 
     networkHandler.registerMessageHandler(new ClientSpawnMessageHandler(synchronizer));
     networkHandler.registerMessageHandler(new ClientDeathMessageHandler(synchronizer));
+    networkHandler.registerMessageHandler(new ClientPingMessageHandler(synchronizer));
     networkHandler.registerMessageHandler(new ClientDamageMessageHandler(synchronizer));
     networkHandler.registerMessageHandler(new ClientFireMessageHandler(synchronizer));
     networkHandler.registerMessageHandler(new ClientMoveMessageHandler(synchronizer));
@@ -105,6 +107,8 @@ void GameMenu::handleDisplay()
     while (isOpen()) {
         deltaTime = clock.restart().asSeconds();
         handleEvents();
+        laserSound.update();
+        sound.update();
         if (getScene() == sceneName::GAME) {
             draw(deltaTime);
         } else {

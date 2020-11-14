@@ -20,6 +20,7 @@
 #include "EntitySpriteManager.hpp"
 #include "EntityAnimationManager.hpp"
 #include "client/Interfaces/IGame.hpp"
+#include "EntityAnimationManager.hpp"
 
 struct Drawable {
     bool visible;
@@ -29,7 +30,7 @@ struct Drawable {
 
 class GameEntities {
     public:
-        GameEntities(IGame *gameMenu, sf::RenderWindow &window, Synchronizer &synchronizer, EntitySpriteManager &spriteManager);
+        GameEntities(IGame *gameMenu, sf::RenderWindow &window, Synchronizer &synchronizer, EntitySpriteManager &spriteManager, EntityAnimationManager &animationManager);
         ~GameEntities();
         void init();
         sf::RenderWindow &getWindow() { return window; };
@@ -49,8 +50,17 @@ class GameEntities {
             RIGHT
         };
 
+        void setDead() {
+            dead = true;
+        }
+
+        bool getDead() {
+            return (dead);
+        }
+
         bool isGamePlaying() { return (gamePlaying); };
         void setGamePlaying(bool gamePlaying) { this->gamePlaying = gamePlaying; };
+        IGame *getGameMenu() { return gameMenu; }
 
     protected:
     private:
@@ -60,10 +70,12 @@ class GameEntities {
         ECS ecs;
         bool isDirectionMaintained[4];
         int row = 0;
-        float deltaTime = 0.0f;
         bool gamePlaying = false;
         Synchronizer &synchronizer;
         EntitySpriteManager &spriteManager;
+        EntityAnimationManager &animationManager;
+
+        bool dead = false;
 
 };
 

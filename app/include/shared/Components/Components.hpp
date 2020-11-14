@@ -27,6 +27,7 @@ struct EntityStats {
     int hp;
     int maxHP;
     int damage;
+    double fireTimer;
 };
 
 struct EntityInfo {

@@ -8,6 +8,7 @@
 #include "server/Class/GameServer/Game.hpp"
 #include "server/Class/MessageHandlers/ServerSpawnMessageHandler.hpp"
 #include "server/Class/MessageHandlers/ServerDeathMessageHandler.hpp"
+#include "server/Class/MessageHandlers/ServerPingMessageHandler.hpp"
 #include "server/Class/MessageHandlers/ServerDamageMessageHandler.hpp"
 #include "server/Class/MessageHandlers/ServerFireMessageHandler.hpp"
 #include "server/Class/MessageHandlers/ServerMoveMessageHandler.hpp"
@@ -23,6 +24,7 @@ Game::Game():
 {
     networkHandler.registerMessageHandler(new ServerSpawnMessageHandler(*this));
     networkHandler.registerMessageHandler(new ServerDeathMessageHandler(*this));
+    networkHandler.registerMessageHandler(new ServerPingMessageHandler(*this));
     networkHandler.registerMessageHandler(new ServerDamageMessageHandler(*this));
     networkHandler.registerMessageHandler(new ServerFireMessageHandler(*this));
     networkHandler.registerMessageHandler(new ServerMoveMessageHandler(*this));
@@ -44,7 +46,7 @@ void Game::init() {
     .finish();
 
     ecs.newEntityModel<Position, Velocity, EntityID, Hitbox, EntityInfo, EntityStats>("Enemy")
-    .addTags({"DamageOnTouch", "Damageable"})
+    .addTags({"Enemy", "DamageOnTouch", "Damageable"})
     .finish();
 
     ecs.newEntityModel<Position, Velocity, EntityID, Hitbox>("Wall")
@@ -60,8 +62,6 @@ void Game::init() {
         if (this->getDoubleMap().isReadClose())
             return;
 
-            std::cout << "UpdateEntities: " << entity.getSize() << std::endl;
-
         auto &readMap = this->getDoubleMap().getReadMap();
         while (entity.hasNext()) {
             entity.next();
@@ -70,26 +70,56 @@ void Game::init() {
             EntityID *entityID = entity.getComponent<EntityID>(1);
             EntityInfo *entityInfo = entity.getComponent<EntityInfo>(2);
 
-            std::cout << entityID->id << std::endl;
-
             if (readMap->find(entityID->id) != readMap->end()) {
                 PacketData &data = readMap->at(entityID->id);
+                if (data.moveChanged) {
+                    velocity->dirX = data.dirX;
+                    velocity->dirY = data.dirY;
+                }
 
-                velocity->dirX = data.dirX;
-                velocity->dirY = data.dirY;
-
-                std::cout << velocity->dirX << " " << velocity->dirY << std::endl;
-
-                entityInfo->isFiring = data.isFiring;
+                if (data.fireChanged) {
+                    entityInfo->isFiring = data.isFiring;
+                }
             }
         }
-
+    })
+    .whenDone([this](void){
         this->getDoubleMap().closeRead();
+    })
+    .finish();
+
+    ecs.newSystem<EntityID>("SpawnEnemy")
+    .withTags({"Enemy"})
+    .each([this](float delta, EntityIterator<EntityID> &entity) {
+        auto enemyGenerator = this->getECS().getEntityGenerator("Enemy");
+        if (entity.getSize() == 0) {
+            size_t spawnType = rand() % 1;
+            if (spawnType == 0) {
+
+                for (int i = 0; i < 5; i++) {
+                    double x = this->getMapWidth();
+                    double y = this->getMapHeight()/5.0*i;
+                    size_t id = this->getNextEntityID();
+
+                    enemyGenerator.instanciate(1,
+                        Position{x, y},
+                        Velocity{-1, 0, 400},
+                        EntityID{id},
+                        Enemy1Hitbox,
+                        EntityInfo{true, true},
+                        EntityStats{100, 100, 20, 0}
+                    );
+                    this->getNetworkHandler().broadcast(SpawnPacket(id, EntityType::ENEMY1, x, y, 0));
+                }
+            }
+        }
     }).finish();
 
+    size_t hashEnemy = ecs.getHash("Enemy");
     ecs.newSystem<Position, EntityID, EntityInfo, Hitbox, EntityStats>("SpawnProjectile")
     .withoutTags({"Projectile"})
-    .each([this](float delta, EntityIterator<Position, EntityID, EntityInfo, Hitbox, EntityStats> &entity) {
+    .each([this, hashEnemy](float delta, EntityIterator<Position, EntityID, EntityInfo, Hitbox, EntityStats> &entity) {
+        static Hitbox projectile = ProjectileHitbox;
         auto projectileGenerator = this->getECS().getEntityGenerator("Projectile");
         while (entity.hasNext()) {
             entity.next();
@@ -101,27 +131,32 @@ void Game::init() {
             EntityStats *entityStats = entity.getComponent<EntityStats>(4);
 
             if (entityInfo->isFiring) {
-                bool isEnemy = entityInfo->isEnemy;
-                size_t id = this->getNextEntityID();
-                double x = isEnemy?position->x:position->x + hitbox->w;
-                double y = position->y + hitbox->h / 2;
+                entityStats->fireTimer += delta;
+                if ((entity.getEntityType() != hashEnemy && entityStats->fireTimer > 0.1) || entityStats->fireTimer > 0.5) {
+                    bool isEnemy = entityInfo->isEnemy;
+                    size_t id = this->getNextEntityID();
+                    double x = isEnemy?position->x-projectile.w:position->x + hitbox->w;
+                    double y = position->y + hitbox->h / 2;
 
-                projectileGenerator.instanciate(1,
-                    Position{x, y},
-                    Velocity{isEnemy?-1.0:1.0, 0, 1000},
-                    EntityID{id},
-                    ProjectileHitbox,
-                    EntityInfo{isEnemy, false},
-                    ProjectileInfo{entityStats->damage}
-                );
+                    projectileGenerator.instanciate(1,
+                        Position{x, y},
+                        Velocity{isEnemy?-1.0:1.0, 0, 1000},
+                        EntityID{id},
+                        ProjectileHitbox,
+                        EntityInfo{isEnemy, false},
+                        ProjectileInfo{entityStats->damage}
+                    );
 
-                this->getNetworkHandler().broadcast(SpawnPacket(id, EntityType::PROJECTILE1, x, y, false));
+                    this->getNetworkHandler().broadcast(SpawnPacket(id, EntityType::PROJECTILE1, x, y, 0));
+                    entityStats->fireTimer = 0;
+                }
             }
         }
     }).finish();
 
+    size_t hashProjectile = ecs.getHash("Projectile");
     ecs.newSystem<Position, Velocity, EntityID, EntityInfo, Hitbox>("MoveEntity")
-    .each([this](float delta, EntityIterator<Position, Velocity, EntityID, EntityInfo, Hitbox> &entity) {
+    .each([this, hashProjectile](float delta, EntityIterator<Position, Velocity, EntityID, EntityInfo, Hitbox> &entity) {
         while (entity.hasNext()) {
             entity.next();
 
@@ -141,15 +176,26 @@ void Game::init() {
                     continue;
                 }
             } else {
-                if (position->x + hitbox->w + moveX < 0 || position->x + moveX > this->getMapWidth() ||
-                    position->y + hitbox->h + moveY < 0 || position->y + moveY > this->getMapHeight()) {
-                        continue;
+                    if (entity.getEntityType() == hashProjectile) {
+                        if (position->x + hitbox->w  <= -50 || position->x >= this->getMapWidth() + 50 ||
+                            position->y + hitbox->h  <= 0 || position->y >= this->getMapHeight()) {
+                            this->getNetworkHandler().broadcast(DeathPacket(entityID->id));
+                            entity.remove();
+                            continue;
+                        }
+                    } else {
+                        if (position->x + moveX < 0 || position->x + hitbox->w + moveX > this->getMapWidth() ||
+                            position->y + moveY < 0 || position->y + hitbox->h + moveY > this->getMapHeight()) {
+                            continue;
+                        }
                     }
             }
 
-            position->x += moveX;
-            position->y += moveY;
-            this->getNetworkHandler().broadcast(PositionPacket(entityID->id, position->x, position->y));
+            if (moveX != 0 || moveY != 0) {
+                position->x += moveX;
+                position->y += moveY;
+                this->getNetworkHandler().broadcast(PositionPacket(entityID->id, position->x, position->y));
+            }
         }
     }).finish();
 
@@ -174,7 +220,6 @@ void Game::init() {
                 if ((!entityInfo->isEnemy && projectileEntityInfo->isEnemy) ||
                     (entityInfo->isEnemy && !projectileEntityInfo->isEnemy))
                 {
-
                     Position *projectilePosition = projectileIterator.getComponent<Position>(0);
                     Hitbox *projectileHitbox = projectileIterator.getComponent<Hitbox>(1);
                     EntityID *projectileID = projectileIterator.getComponent<EntityID>(3);
@@ -209,12 +254,6 @@ void Game::loadExtensions(std::vector<std::unique_ptr<IExtension>> &extensions) 
 
 void Game::compile() {
     ecs.compile();
-
-    // ecs.getEntityGenerator("DestructibleWall")
-    // .instanciate(1, Hitbox {200, getMapHeight()}, EntityInfo {true}, EntityStats{100, 100});
-
-    // ecs.getEntityGenerator("Projectile")
-    // .instanciate(1, Position{.x = getMapWidth(), .y = getMapHeight() / 2}, Velocity{.dirX = -1, .dirY = 0, .speed = 1000}, ProjectileInfo{.damage = 100}, Hitbox{.w = 50, .h = 50}, EntityInfo{false});
 }
 
 void Game::update() {
@@ -236,54 +275,18 @@ const server_info_t Game::setGameServer()
     return (info);
 }
 
-/*
-    std::vector<std::unique_ptr<INetworkClient>> &vector = networkHandler.getClients();
-
-    auto playerGenerator = ecs.getEntityGenerator("Player");
-    for (int i = 0; i < vector.size(); i++) {
-        double x = 0;
-        double y = getMapHeight() / 2 - 100 + i * 50;
-        size_t id = getNextEntityID();
-        size_t type = 0;
-
-        switch (i)
-        {
-            case 0:
-                type = EntityType::PLAYER1;
-                break;
-            case 1:
-                type = EntityType::PLAYER2;
-                break;
-            case 2:
-                type = EntityType::PLAYER3;
-                break;
-            case 3:
-                type = EntityType::PLAYER4;
-                break;
-            default:
-                break;
-        }
-
-        playerGenerator.instanciate(1,
-        Position{x, y},
-        Velocity{0, 0, 1000},
-        EntityID{id},
-        PlayerHitbox,
-        EntityInfo{false, false},
-        EntityStats{100, 100, 20});
-
-        networkHandler.broadcast(SpawnPacket(id, type, x, y, true));
-    }
-*/
-
 void Game::startGame()
 {
+    static unsigned short playerID = 1;
+    bool canLogin = true;
     gameServer.run();
     lastTime = std::chrono::high_resolution_clock::now();
     init();
     compile();
+    auto t1 = std::chrono::high_resolution_clock::now();
+    networkHandler.getLastTRequestStatus() = std::chrono::high_resolution_clock::now();
     while (true) {
-        if (getDoubleQueue().isReadOpen()) {
+        if (canLogin && getDoubleQueue().isReadOpen()) {
             auto &vector = getDoubleQueue().getReadVector();
             for (std::unique_ptr<IPacket> &packet : *vector) {
                 if (packet->getPacketID() == PlayerEnterRoomPacket::PacketID()) {
@@ -298,18 +301,30 @@ void Game::startGame()
 
                     playerGenerator.instanciate(1,
                     Position{x, y},
-                    Velocity{0, 0, 1000},
+                    Velocity{0, 0, 400},
                     EntityID{id},
                     PlayerHitbox,
                     EntityInfo{false, false},
                     EntityStats{100, 100, 20});
 
-                    networkHandler.broadcast(SpawnPacket(id, EntityType::PLAYER1, x, y, true));
+                    networkHandler.broadcast(SpawnPacket(id, EntityType::PLAYER1, x, y, playerID));
+                    networkHandler.send(*PERPacket->getNetworkClient(), InstanciatePlayerPacket(id));
+                    playerID += 1;
                 }
             }
             getDoubleQueue().closeRead();
         }
         update();
+        auto t2 = std::chrono::high_resolution_clock::now();
+        if (std::chrono::duration_cast<std::chrono::duration<double>>(t2 - networkHandler.getLastTRequestStatus()).count() > 0.1) {
+            networkHandler.broadcast(PingPacket());
+            networkHandler.getLastTRequestStatus() = std::chrono::high_resolution_clock::now();
+        }
+        if (std::chrono::duration_cast<std::chrono::duration<double>>(t2 - t1).count() > 10) {
+            networkHandler.checkClientsConnection();
+            t1 = std::chrono::high_resolution_clock::now();
+            if (canLogin) canLogin = false;
+        }
     }
     gameServer.join();
 }

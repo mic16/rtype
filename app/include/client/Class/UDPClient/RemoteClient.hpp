@@ -10,13 +10,15 @@
 
 #include <iostream>
 #include <boost/asio.hpp>
-#include "lib/Network/INetworkClient.hpp"
+#include "lib/Network/ANetworkClient.hpp"
 #include "lib/ByteBuffer/ByteBuffer.hpp"
 
-class RemoteClient : public INetworkClient {
+class RemoteClient : public ANetworkClient {
     public:
         RemoteClient(boost::asio::io_context &io_service, const std::string &host, const std::string &port);
         ~RemoteClient();
+
+        unsigned int getId() const { return m_id; }
 
         void write(const ByteBuffer &buffer);
         ByteBuffer &getBuffer();
@@ -27,6 +29,7 @@ class RemoteClient : public INetworkClient {
         boost::asio::ip::udp::endpoint endpoint;
 
     private:
+        const unsigned int m_id;
         ByteBuffer buff;
 };
 
