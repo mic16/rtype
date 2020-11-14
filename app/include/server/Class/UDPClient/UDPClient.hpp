@@ -19,6 +19,7 @@ class UDPClient : public ANetworkClient {
         UDPClient();
         ~UDPClient();
 
+        void resetId() { m_id = ANetworkClient::genId(); }
         unsigned int getId() const { return m_id; }
         const std::string &getIdStr() const { return idStr; }
 
@@ -33,7 +34,7 @@ class UDPClient : public ANetworkClient {
         ByteBuffer &getBuffer();
 
     private:
-        const unsigned int m_id;
+        unsigned int m_id;
         std::string idStr;
         std::string m_address;
         char *m_packet = nullptr;

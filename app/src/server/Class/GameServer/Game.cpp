@@ -308,6 +308,7 @@ void Game::startGame()
                     EntityStats{100, 100, 20});
 
                     networkHandler.broadcast(SpawnPacket(id, EntityType::PLAYER1, x, y, playerID));
+                    networkHandler.setPlayerEntityID(PERPacket->getNetworkClient()->getId(), id);
                     networkHandler.send(*PERPacket->getNetworkClient(), InstanciatePlayerPacket(id));
                     playerID += 1;
                 }
