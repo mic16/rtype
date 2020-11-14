@@ -23,7 +23,7 @@ void TCPClient::handleListPlayersInRoom()
 {
     int err = 0;
     unsigned int nbPlayers = buffer.readUInt(&err);
-    for (size_t i = 0; i < nbPlayers; i++) {
+    for (size_t i = 0; i < 4; i++) {
         char *username = nullptr;
         bool isReady = false;
         std::string userid = std::to_string(i + 1);
@@ -32,6 +32,7 @@ void TCPClient::handleListPlayersInRoom()
             isReady = buffer.readBool(&err);
             std::cout << username << " is in the lobby." << std::endl;
             menu->setDrawableTextStr(menu->getScene(), "users" + userid, username);
+            menu->setDrawableTextColor(menu->getScene(), "users" + userid, sf::Color::White);
             isReady \
                 ? menu->setDrawableSpriteTexture(menu->getScene(), "status" + userid, "ready")
                 : menu->setDrawableSpriteTexture(menu->getScene(), "status" + userid, "notready");
@@ -40,6 +41,7 @@ void TCPClient::handleListPlayersInRoom()
         } else {
             menu->setDrawableTextStr(menu->getScene(), "users" + userid, "Waiting players");
             menu->setDrawableSpriteTexture(menu->getScene(), "status" + userid, "waiting");
+            menu->setDrawableTextColor(menu->getScene(), "users" + userid, sf::Color::White);
         }
     }
     if (err) {

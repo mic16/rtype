@@ -6,12 +6,24 @@
 */
 
 #include "server/Class/GameServer/Game.hpp"
+#include "server/Class/MessageHandlers/ServerSpawnMessageHandler.hpp"
+#include "server/Class/MessageHandlers/ServerDeathMessageHandler.hpp"
+#include "server/Class/MessageHandlers/ServerDamageMessageHandler.hpp"
+#include "server/Class/MessageHandlers/ServerFireMessageHandler.hpp"
+#include "server/Class/MessageHandlers/ServerMoveMessageHandler.hpp"
+#include "server/Class/MessageHandlers/ServerPositionMessageHandler.hpp"
 
 Game::Game():
+    Synchronizer(),
     lobby(Ladder::genId()),
     gameServer(networkHandler)
 {
-
+    networkHandler.registerMessageHandler(new ServerSpawnMessageHandler(*this));
+    networkHandler.registerMessageHandler(new ServerDeathMessageHandler(*this));
+    networkHandler.registerMessageHandler(new ServerDamageMessageHandler(*this));
+    networkHandler.registerMessageHandler(new ServerFireMessageHandler(*this));
+    networkHandler.registerMessageHandler(new ServerMoveMessageHandler(*this));
+    networkHandler.registerMessageHandler(new ServerPositionMessageHandler(*this));
 }
 
 Game::~Game()
@@ -37,6 +49,47 @@ void Game::init() {
     ecs.newEntityModel<Position, Velocity, EntityID, Hitbox, EntityInfo, EntityStats>("DestructibleWall")
     .addTags({"DamageOnTouch", "Damageable"})
     .finish();
+
+    ecs.newSystem<Velocity, EntityID, EntityInfo>("UpdateEntities")
+    .each([this](float delta, EntityIterator<Velocity, EntityID, EntityInfo> &entity) {
+        if (this->getDoubleMap().isReadClose())
+            return;
+
+        auto &readMap = this->getDoubleMap().getReadMap();
+        while (entity.hasNext()) {
+            entity.next();
+
+            Velocity *velocity = entity.getComponent<Velocity>(0);
+            EntityID *entityID = entity.getComponent<EntityID>(1);
+            EntityInfo *entityInfo = entity.getComponent<EntityInfo>(2);
+
+            if (readMap->find(entityID->id) != readMap->end()) {
+                PacketData &data = readMap->at(entityID->id);
+
+                velocity->dirX = data.dirX;
+                velocity->dirY = data.dirY;
+
+                entityInfo->isFiring = data.isFiring;
+            }
+        }
+        this->getDoubleMap().closeRead();
+    }).finish();
+
+    ecs.newSystem<Position, EntityID, EntityInfo>("SpawnProjectile")
+    .each([this](float delta, EntityIterator<Position, EntityID, EntityInfo> &entity) {
+        auto projectileGenerator = this->getECS().getEntityGenerator("Projectile");
+        while (entity.hasNext()) {
+            entity.next();
+
+            Position *velocity = entity.getComponent<Position>(0);
+            EntityID *entityID = entity.getComponent<EntityID>(1);
+            EntityInfo *entityInfo = entity.getComponent<EntityInfo>(2);
+
+            if (entityInfo->isFiring) {
+
+            }
+        }
+    }).finish();
 
     ecs.newSystem<Position, Velocity, EntityID, EntityInfo, Hitbox>("MoveEntity")
     .each([this](float delta, EntityIterator<Position, Velocity, EntityID, EntityInfo, Hitbox> &entity) {
@@ -156,14 +209,14 @@ const server_info_t Game::setGameServer()
 
 void Game::startGame()
 {
-    // gameServer.run();
+    gameServer.run();
     lastTime = std::chrono::high_resolution_clock::now();
     init();
     compile();
-    std::cout << "Let's go" << std::endl;
     while (true) {
         update();
     }
+    gameServer.join();
 }
 
 Ladder &Game::getLobby()

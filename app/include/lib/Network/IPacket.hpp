@@ -14,6 +14,7 @@ class IPacket {
     public:
         virtual void fromBuffer(ByteBuffer &buffer) = 0;
         virtual void toBuffer(ByteBuffer &buffer) = 0;
+        virtual size_t getPacketID() const = 0;
 
     protected:
     private:

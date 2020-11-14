@@ -14,16 +14,17 @@ class DamagePacket : public ABasePacket {
     public:
         DamagePacket() : ABasePacket() {}
         DamagePacket(size_t id, int damage, int hp, int maxHP) : ABasePacket(id), damage(damage), hp(hp), maxHP(maxHP) {}
+        DamagePacket(DamagePacket &packet) : ABasePacket(packet), damage(packet.damage), hp(packet.hp), maxHP(packet.maxHP) {}
         ~DamagePacket() {}
 
-        void fromBuffer(ByteBuffer &buffer) {
+        virtual void fromBuffer(ByteBuffer &buffer) override {
             ABasePacket::fromBuffer(buffer);
             damage = buffer.readInt(nullptr);
             hp = buffer.readInt(nullptr);
             maxHP = buffer.readInt(nullptr);
         }
 
-        void toBuffer(ByteBuffer &buffer) {
+        virtual void toBuffer(ByteBuffer &buffer) override {
             ABasePacket::toBuffer(buffer);
             buffer.writeInt(damage);
             buffer.writeInt(hp);
@@ -40,6 +41,14 @@ class DamagePacket : public ABasePacket {
 
         int getMaxHP() const {
             return maxHP;
+        }
+
+        size_t getPacketID() const override {
+            return DamagePacket::PacketID();
+        }
+
+        static size_t PacketID() {
+            return 0;
         }
 
     protected:

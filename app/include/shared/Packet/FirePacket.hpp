@@ -16,20 +16,30 @@ class FirePacket : public ABasePacket {
 
         FirePacket() : ABasePacket() {}
 
+        FirePacket(FirePacket &packet) : ABasePacket(packet), holding(packet.holding) {}
+
         ~FirePacket() {}
 
-        void fromBuffer(ByteBuffer &buffer) {
+        void fromBuffer(ByteBuffer &buffer) override {
             ABasePacket::fromBuffer(buffer);
             holding = buffer.readBool(nullptr);
         }
 
-        void toBuffer(ByteBuffer &buffer) {
+        void toBuffer(ByteBuffer &buffer) override {
             ABasePacket::toBuffer(buffer);
             buffer.writeBool(holding);
         }
 
-        double isHolding() const {
+        bool isHolding() const {
             return holding;
+        }
+
+        size_t getPacketID() const override {
+            return FirePacket::PacketID();
+        }
+
+        static size_t PacketID() {
+            return 2;
         }
 
     protected:

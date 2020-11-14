@@ -22,7 +22,12 @@
 #include "client/Class/UDPClient/UDPClient.hpp"
 
 #include "shared/Packet/FirePacket.hpp"
+#include "lib/Network/NetworkHandler.hpp"
+#include "shared/Synchronizer/Synchronizer.hpp"
 #include "shared/Packet/MovePacket.hpp"
+
+#include "client/Class/GameEntities/EntitySpriteManager.hpp"
+#include "shared/Structs/EntityType.hpp"
 
 #define LAST_FIXED_SPRITE(sceneName) fixedDrawables.at(sceneName)[fixedDrawables.at(sceneName).size() - 1]
 
@@ -51,6 +56,7 @@ class GameMenu : public IGameMenu {
         void tryJoinRoom();
         void tryChangeUserStatus();
         void tryStartGame();
+        void disconnectRoom();
 
         const sceneName getScene();
         void setScene(const sceneName sc_name);
@@ -60,6 +66,10 @@ class GameMenu : public IGameMenu {
         void setDrawableSpriteTexture(sceneName scene, const std::string &key, const std::string &texture);
 
         GameEntities *getGameEntities() { return (&gameEntities); };
+
+        NetworkHandler &getNetworkHandler() {
+            return networkHandler;
+        }
 
     private:
         void initDrawables();
@@ -81,6 +91,11 @@ class GameMenu : public IGameMenu {
 
         void initFixedGameDrawables();
         void initModGameDrawables();
+
+        Synchronizer synchronizer;
+        NetworkHandler networkHandler = {1024};
+
+        EntitySpriteManager spriteManager;
 
         sceneName scene;
         std::unique_ptr<TCPClient> client;

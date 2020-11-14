@@ -16,15 +16,17 @@ class MovePacket : public ABasePacket {
 
         MovePacket() : ABasePacket() {}
 
+        MovePacket(MovePacket &packet) : ABasePacket(packet), dirX(packet.dirX), dirY(packet.dirY) {}
+
         ~MovePacket() {}
 
-        void fromBuffer(ByteBuffer &buffer) {
+        void fromBuffer(ByteBuffer &buffer) override {
             ABasePacket::fromBuffer(buffer);
             dirX = buffer.readInt(nullptr);
             dirY = buffer.readInt(nullptr);
         }
 
-        void toBuffer(ByteBuffer &buffer) {
+        void toBuffer(ByteBuffer &buffer) override {
             ABasePacket::toBuffer(buffer);
             buffer.writeInt(dirX);
             buffer.writeInt(dirY);
@@ -36,6 +38,14 @@ class MovePacket : public ABasePacket {
 
         int getDirectionY() const {
             return dirY;
+        }
+
+        size_t getPacketID() const override {
+            return MovePacket::PacketID();
+        }
+
+        static size_t PacketID() {
+            return 3;
         }
 
     protected:

@@ -45,12 +45,19 @@ void TCPClient::handleData()
             std::cout << "Data received : len : " << bytes_transferred << std::endl;
             buffer.clear();
             buffer.append(m_packet, bytes_transferred);
-            const unsigned int expectedDataLen = buffer.readUInt(nullptr);
-            if (expectedDataLen == bytes_transferred - 4) {
-                std::cout << "Data size is correct sized." << std::endl;
-                this->handleResponses();
-            } else {
-                std::cout << "Data size is not correct." << std::endl;
+            bool isMoreData = true;
+            int err = 0;
+            while (isMoreData) {
+                unsigned int expectedDataLen = buffer.readUInt(&err);
+                if (!err && expectedDataLen <= bytes_transferred - 4) {
+                    std::cout << "Data size is correct sized." << std::endl;
+                    this->handleResponses();
+                    bytes_transferred -= 4 - expectedDataLen;
+                } else {
+                    std::cout << "No More data to handle." << std::endl;
+                    isMoreData = false;
+                    break;
+                }
             }
             this->handleData();
         } else {

@@ -14,20 +14,29 @@ class SpawnPacket : public PositionPacket {
     public:
         SpawnPacket() : PositionPacket() {}
         SpawnPacket(size_t id, size_t entityType, double x, double y) : PositionPacket(id, x, y), entityType(entityType) {}
+        SpawnPacket(SpawnPacket &packet) : PositionPacket(packet), entityType(packet.entityType) {}
         ~SpawnPacket() {}
 
-        void fromBuffer(ByteBuffer &buffer) {
+        void fromBuffer(ByteBuffer &buffer) override {
             PositionPacket::fromBuffer(buffer);
             entityType = buffer.readUInt(nullptr);
         }
 
-        void toBuffer(ByteBuffer &buffer) {
+        void toBuffer(ByteBuffer &buffer) override {
             PositionPacket::toBuffer(buffer);
             buffer.writeUInt(entityType);
         }
 
         size_t getEntityType() const {
             return entityType;
+        }
+
+        size_t getPacketID() const override {
+            return SpawnPacket::PacketID();
+        }
+
+        static size_t PacketID() {
+            return 5;
         }
 
     protected:

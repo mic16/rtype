@@ -10,6 +10,7 @@
 
 #include "SFML/Graphics.hpp"
 #include "client/Class/GameEntities/GameEntities.hpp"
+#include "lib/Network/NetworkHandler.hpp"
 
 enum sceneName { LOGIN, MENU, CREATE, JOIN, ROOM, GAME };
 
@@ -43,6 +44,7 @@ class IGameMenu {
         virtual void setDrawableSpriteTexture(sceneName scene, const std::string &key, const std::string &texture) = 0;
 
         virtual GameEntities *getGameEntities() = 0;
+        virtual NetworkHandler &getNetworkHandler() = 0;
 };
 
 #endif /* !IGAMEMENU_HPP_ */

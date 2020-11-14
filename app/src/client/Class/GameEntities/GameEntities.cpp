@@ -6,9 +6,10 @@
 */
 
 #include "client/Class/GameEntities/GameEntities.hpp"
+#include "shared/Packet/SpawnPacket.hpp"
 #include <boost/algorithm/string.hpp>
 
-GameEntities::GameEntities(sf::RenderWindow &window) : window(window)
+GameEntities::GameEntities(sf::RenderWindow &window, Synchronizer &synchronizer, EntitySpriteManager &spriteManager) : window(window), synchronizer(synchronizer), spriteManager(spriteManager)
 {
     for (int i = 0; i != 4 ; i++)
         isDirectionMaintained[i] = false;
@@ -16,56 +17,44 @@ GameEntities::GameEntities(sf::RenderWindow &window) : window(window)
 
 void GameEntities::init()
 {
-    ecs.newEntityModel<Position, Velocity, Drawable>("Background")
-        .addTags({"Background", "Drawable"})
-        .finish();
 
-    ecs.newEntityModel<Position, Animation, Drawable, EntityId>("Player")
+    ecs.newEntityModel<Position, Animation, EntityID, Drawable>("Player")
         .addTags({ "PlayerControlled", "Drawable" })
         .finish();
+    
+    ecs.newEntityModel<Position, EntityID, Drawable>("Enemy")
+    .addTags({"Enemy"})
+    .finish();
 
-    ecs.newSystem<Position, Velocity, Drawable>("BackgroundScroll")
-        .withTags({ "Background" })
-        .each([](float delta, EntityIterator<Position, Velocity, Drawable> &entity) {
-            while (entity.hasNext()) {
-                Position* position = entity.getComponent<Position>(0);
-                Velocity* velocity = entity.getComponent<Velocity>(1);
-                Drawable* drawable = entity.getComponent<Drawable>(2);
+    ecs.newSystem<Position, EntityID>("UpdateEntities")
+    .each([this](float delta, EntityIterator<Position, EntityID> &entity) {
+        Synchronizer &synchronizer = this->getSynchronizer();
+        auto &readMap = synchronizer.getDoubleMap().getReadMap();
 
-                position->x += velocity->vx * velocity->speed * delta;
-                position->y += velocity->vy * velocity->speed * delta;
-                if (position->x <= -4904)
-                    position->x = position->x + 4904;
-                drawable->sprite.setPosition(position->x, position->y);
-                entity.next();
-            }
-        }).finish();
+        while (entity.hasNext()) {
+            entity.next();
 
-    ecs.newSystem<Position, Drawable>("Movement")
-        .withTags({ "PlayerControlled" })
-        .each([this](float delta, EntityIterator<Position, Drawable> &entity) {
-                while (entity.hasNext()) {
-                    entity.next();
+            Position *position = entity.getComponent<Position>(0);
+            EntityID *entityID = entity.getComponent<EntityID>(1);
 
-                    Position* position = entity.getComponent<Position>(0);
-                    Drawable* drawable = entity.getComponent<Drawable>(1);
+            if (readMap->find(entityID->id) != readMap->end()) {
+                PacketData &data = readMap->at(entityID->id);
 
-                    if (isDirectionMaintained[DIRECTION::UP])
-                        position->y -= 100 * delta;
-                    if (isDirectionMaintained[DIRECTION::DOWN])
-                        position->y += 100 * delta;
-                    if (isDirectionMaintained[DIRECTION::LEFT])
-                        position->x -= 100 * delta;
-                    if (isDirectionMaintained[DIRECTION::RIGHT]) {
-                        position->x += 100 * delta;
-                    }
-                    
-                    drawable->sprite.setPosition(position->x, position->y);
+                if (!data.isAlive) {
+                    entity.remove();
+                    continue;
                 }
-            })
-        .finish();
 
-        ecs.newSystem<Animation, Drawable>("AnimatePlayer")
+                position->x = data.x;
+                position->y = data.y;
+            }
+        }
+
+        synchronizer.getDoubleMap().closeRead();
+
+    }).finish();
+
+    ecs.newSystem<Animation, Drawable>("AnimatePlayer")
         .withTags({ "PlayerControlled" })
         .each([this](float delta, EntityIterator<Animation, Drawable> &entity){
                 while (entity.hasNext()) {
@@ -91,19 +80,26 @@ void GameEntities::init()
                     }
                     animation->uvRect.left = animation->currentImage.x * animation->uvRect.width;
                     animation->uvRect.top = animation->currentImage.y * animation->uvRect.height;
-                    drawable->sprite.setTextureRect(animation->uvRect);
+
+                    drawable->uvRect.left = animation->uvRect.left;
+                    drawable->uvRect.top = animation->uvRect.top;
+                    drawable->uvRect.width = animation->uvRect.width;
+                    drawable->uvRect.height = animation->uvRect.height;
                 }
             })
         .finish();
 
-        ecs.newSystem<Drawable>("Draw")
+    ecs.newSystem<Position, Drawable>("Draw")
         .withTags({ "Drawable" })
-        .each([this](float delta, EntityIterator<Drawable> &entity) {
+        .each([this](float delta, EntityIterator<Position, Drawable> &entity) {
             while (entity.hasNext()) {
                 entity.next();
 
-                Drawable *drawable = entity.getComponent<Drawable>(0);
-                this->window.draw(drawable->sprite);
+                Position *position = entity.getComponent<Position>(0);
+                Drawable *drawable = entity.getComponent<Drawable>(1);
+                drawable->sprite->setTextureRect(drawable->uvRect);
+                drawable->sprite->setPosition(sf::Vector2f(position->x, position->y));
+                this->getWindow().draw(*drawable->sprite);
             }
         })
         .finish();
@@ -116,7 +112,7 @@ GameEntities::~GameEntities()
 }
 
 void GameEntities::createPlayer(int nbOfPlayers, sf::Vector2f position, sf::Vector2u totalFrames, sf::Vector2u startingFrame,
-    float timeToSwitchFrames, sf::Vector2u textureSize, bool reverse, sf::Texture texture, sf::Sprite sprite, size_t id)
+    float timeToSwitchFrames, sf::Vector2u textureSize, bool reverse, sf::Sprite *sprite, size_t id)
 {
     auto playerGenerator = ecs.getEntityGenerator("Player");
     playerGenerator.reserve(nbOfPlayers);
@@ -124,14 +120,14 @@ void GameEntities::createPlayer(int nbOfPlayers, sf::Vector2f position, sf::Vect
         .instanciate(nbOfPlayers, Position{ position.x, position.y },
         Animation{ totalFrames, startingFrame, startingFrame, 0, timeToSwitchFrames,
         sf::IntRect(0, 0, textureSize.x / totalFrames.x, textureSize.y / totalFrames.y),
-        reverse }, Drawable{ true, texture, sprite }, EntityId{ id });
+        reverse }, Drawable{ true, sprite }, EntityID { id });
 }
 
-void GameEntities::createBackground(sf::Texture texture, sf::Sprite sprite)
+void GameEntities::createBackground(sf::Sprite *sprite)
 {
-    sprite.setScale(4, 4);
+    sprite->setScale(4, 4);
     ecs.getEntityGenerator("Background")
-        .instanciate(1, Position{0, 0}, Velocity{ -1, 0, 50}, Drawable{true, texture, sprite});
+        .instanciate(1, Position{0, 0}, Velocity{ -1, 0, 50}, Drawable{true, sprite});
 }
 
 void GameEntities::update(bool *isDirectionMaintained, float deltaTime)
@@ -139,5 +135,22 @@ void GameEntities::update(bool *isDirectionMaintained, float deltaTime)
     for (int i = 0; i != 4; i++)
         this->isDirectionMaintained[i] = isDirectionMaintained[i];
     this->deltaTime = deltaTime;
+
+    auto &vector = synchronizer.getDoubleQueue().getReadVector();
+
+    auto enemyGenerator = ecs.getEntityGenerator("Enemy");
+    for (std::unique_ptr<IPacket> &packet : *vector) {
+        if (packet->getPacketID() == SpawnPacket::PacketID()) {
+            SpawnPacket *spawnpacket = dynamic_cast<SpawnPacket *>(packet.get());
+
+            enemyGenerator.instanciate(1,
+            Position{spawnpacket->getX(), spawnpacket->getY()},
+            EntityID{spawnpacket->getEntityID()},
+            Drawable{true, spriteManager.getSprite(spawnpacket->getEntityType())});
+        }
+    }
+
+    synchronizer.getDoubleQueue().closeRead();
+
     ecs.update(deltaTime);
 }

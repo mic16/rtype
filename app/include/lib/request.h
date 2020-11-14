@@ -14,6 +14,7 @@ namespace req {
         CreateRoom,
         JoinRoom,
         ChangeUserStatus,
+        DisconnectRoom,
         StartGame
     };
 };

@@ -29,7 +29,7 @@ void GameMenu::handleKeyPressed()
     if (gameEntities.isGamePlaying()) {
         sf::Vector2i dir(0, 0);
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space))
-            client.get()->getGameClient()->getNetworkHandler().broadcast(FirePacket(playerId, true));
+            networkHandler.broadcast(FirePacket(playerId, true));
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Z))
             dir.y += -1;
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Q))
@@ -38,7 +38,7 @@ void GameMenu::handleKeyPressed()
             dir.y += 1;
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
             dir.x += 1;
-        client.get()->getGameClient()->getNetworkHandler().broadcast(MovePacket(playerId, dir.x, dir.y));
+        networkHandler.broadcast(MovePacket(playerId, dir.x, dir.y));
     }
 }
 
@@ -72,7 +72,7 @@ void GameMenu::handleKeyReleased()
     if (gameEntities.isGamePlaying()) {
         sf::Vector2i dir(0, 0);
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space))
-            client.get()->getGameClient()->getNetworkHandler().broadcast(FirePacket(playerId, false));
+            networkHandler.broadcast(FirePacket(playerId, false));
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Z))
             dir.y -= -1;
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Q))
@@ -81,7 +81,7 @@ void GameMenu::handleKeyReleased()
             dir.y -= 1;
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
             dir.x -= 1;
-        client.get()->getGameClient()->getNetworkHandler().broadcast(MovePacket(playerId, dir.x, dir.y));
+        networkHandler.broadcast(MovePacket(playerId, dir.x, dir.y));
     } else {
         if (event.key.code == sf::Keyboard::Backspace) {
             if (getScene() == sceneName::LOGIN) {
@@ -121,6 +121,11 @@ void GameMenu::handleKeyReleased()
                 actualButton = actualButton == menuButton::B_CREATE ? menuButton::B_JOIN : menuButton::B_CREATE;
                 dynamic_cast<sf::Text *>(modDrawables.at(sceneName::MENU)[menuButtons[actualButton]].get())->setFillColor(sf::Color::Yellow);
             }
+        } else if (event.key.code == sf::Keyboard::Escape) {
+            if (getScene() == sceneName::ROOM) {
+                disconnectRoom();
+            }
+            setScene(sceneName::MENU);
         }
     }
 }

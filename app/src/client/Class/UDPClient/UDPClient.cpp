@@ -7,8 +7,8 @@
 
 #include "client/Class/UDPClient/UDPClient.hpp"
 
-UDPClient::UDPClient(boost::asio::io_context &io_service, const std::string &host, const std::string &port):
-    networkHandler(1024),
+UDPClient::UDPClient(boost::asio::io_context &io_service, const std::string &host, const std::string &port, NetworkHandler &networkHandler):
+    networkHandler(networkHandler),
     client(new RemoteClient(io_service, host, port))
 {
 }
@@ -43,9 +43,4 @@ void UDPClient::connect()
     client->write(client->getBuffer());
     client->getBuffer().clear();
     networkHandler.addClient(client);
-}
-
-NetworkHandler &UDPClient::getNetworkHandler()
-{
-    return (networkHandler);
 }

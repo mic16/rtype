@@ -21,10 +21,12 @@ class UDPServer : public IServer {
         unsigned int getPort() const;
 
         bool run();
+        void join();
     protected:
         boost::asio::io_context ioService;
         std::shared_ptr<boost::asio::ip::udp::socket> acceptor;
         unsigned int port;
+        std::unique_ptr<boost::thread> m_thread;
 };
 
 #endif /* !UDPSERVER_HPP_ */

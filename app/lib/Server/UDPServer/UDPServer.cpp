@@ -41,9 +41,13 @@ bool UDPServer::run(void)
         std::cout << "Server is running on address:port : " << address << ':' << port << std::endl;
         work();
     }
-    boost::thread t(boost::bind(&boost::asio::io_context::run, &ioService));
-    t.join();
+    m_thread = std::make_unique<boost::thread>(boost::bind(&boost::asio::io_context::run, &ioService));
     return (true);
+}
+
+void UDPServer::join()
+{
+    m_thread->join();
 }
 
 unsigned int UDPServer::getPort() const { return (port); }
