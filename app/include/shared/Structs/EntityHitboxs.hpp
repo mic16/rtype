@@ -10,6 +10,6 @@
 
 #include "shared/Components/Components.hpp"
 
-#define PlayerHitbox Hitbox{20, 30}
+#define PlayerHitbox Hitbox{33, 17}
 
 #endif /* !ENTITYHITBOXS_HPP_ */

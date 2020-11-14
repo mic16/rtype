@@ -21,6 +21,7 @@
 #include "client/Class/GameEntities/GameEntities.hpp"
 #include "client/Class/UDPClient/UDPClient.hpp"
 
+#include "shared/Packet/FirePacket.hpp"
 #include "lib/Network/NetworkHandler.hpp"
 #include "shared/Synchronizer/Synchronizer.hpp"
 #include "shared/Packet/MovePacket.hpp"
