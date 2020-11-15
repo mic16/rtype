@@ -9,6 +9,7 @@
 
 #include "client/Class/MessageHandlers/ClientSpawnMessageHandler.hpp"
 #include "client/Class/MessageHandlers/ClientDeathMessageHandler.hpp"
+#include "client/Class/MessageHandlers/ClientEndGameMessageHandler.hpp"
 #include "client/Class/MessageHandlers/ClientPingMessageHandler.hpp"
 #include "client/Class/MessageHandlers/ClientDamageMessageHandler.hpp"
 #include "client/Class/MessageHandlers/ClientFireMessageHandler.hpp"
@@ -42,6 +43,7 @@ music("app/assets/musics", 7)
 
     networkHandler.registerMessageHandler(new ClientSpawnMessageHandler(synchronizer));
     networkHandler.registerMessageHandler(new ClientDeathMessageHandler(synchronizer));
+    networkHandler.registerMessageHandler(new ClientEndGameMessageHandler(synchronizer));
     networkHandler.registerMessageHandler(new ClientPingMessageHandler(synchronizer));
     networkHandler.registerMessageHandler(new ClientDamageMessageHandler(synchronizer));
     networkHandler.registerMessageHandler(new ClientFireMessageHandler(synchronizer));

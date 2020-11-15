@@ -1,0 +1,39 @@
+/*
+** EPITECH PROJECT, 2020
+** B-CPP-501-MPL-5-1-rtype-antoine.maillard
+** File description:
+** ClientEndGameMessageHandler
+*/
+
+#ifndef CLIENTENDGAMEMESSAGEHANDLER_HPP_
+#define CLIENTENDGAMEMESSAGEHANDLER_HPP_
+
+#include "lib/Network/AMessageHandler.hpp"
+#include "shared/Packet/EndGamePacket.hpp"
+
+#include "shared/Synchronizer/Synchronizer.hpp"
+
+class ClientEndGameMessageHandler : public AMessageHandler<EndGamePacket> {
+    public:
+        ClientEndGameMessageHandler(Synchronizer &synchronizer) : synchronizer(synchronizer) {}
+        ~ClientEndGameMessageHandler() {}
+
+        void onMessage(NetworkHandler &handler, INetworkClient &client, EndGamePacket &packet) {
+            auto &writeMap = synchronizer.getDoubleMap().getWriteMap();
+
+            if (writeMap->find(packet.getEntityID()) == writeMap->end()) {
+                writeMap->insert({packet.getEntityID(), PacketData()});
+            }
+            auto &packetData = writeMap->at(packet.getEntityID());
+
+            packetData.isAlive = false;
+
+            synchronizer.update();
+        }
+
+    protected:
+    private:
+        Synchronizer &synchronizer;
+};
+
+#endif /* !CLIENTENDGAMEMESSAGEHANDLER_HPP_ */
