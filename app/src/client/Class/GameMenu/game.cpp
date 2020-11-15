@@ -58,6 +58,10 @@ void GameMenu::initModGameDrawables()
     player1Sprite->setTexture(*loadedTextures["players"]);
     spriteManager.pushSprite(EntityType::PLAYER4, player4Sprite);
 
+    sf::Sprite *wallSprite = new sf::Sprite();
+    wallSprite->setTexture(*loadedTextures["wall"]);
+    spriteManager.pushSprite(EntityType::WALL, wallSprite);
+
     sf::Sprite *enemy1Sprite = new sf::Sprite();
     enemy1Sprite->setTexture(*loadedTextures["enemy1"]);
     spriteManager.pushSprite(EntityType::ENEMY1, enemy1Sprite);
@@ -98,6 +102,10 @@ void GameMenu::initModGameDrawables()
         sf::IntRect(0, 0, loadedTextures["players"].get()->getSize().x / 5, loadedTextures["players"].get()->getSize().y / 5), false};
     animationManager.pushAnimation(EntityType::PLAYER1, player1Animation);
 
+    Animation *wallAnimation = new Animation{sf::Vector2u(0, 0), sf::Vector2u(0, 0), sf::Vector2u(0, 0), 0, 0.05f, 
+        sf::IntRect(0, 0, loadedTextures["wall"].get()->getSize().x, loadedTextures["wall"].get()->getSize().y), false};
+    animationManager.pushAnimation(EntityType::WALL, wallAnimation);
+
     Animation *enemy1Animation = new Animation{sf::Vector2u(7, 1), sf::Vector2u(0, 0), sf::Vector2u(0, 0), 0, 0.05f, 
         sf::IntRect(0, 0, loadedTextures["enemy1"].get()->getSize().x / 7, loadedTextures["enemy1"].get()->getSize().y / 1), false};
     animationManager.pushAnimation(EntityType::ENEMY1, enemy1Animation);
@@ -133,8 +141,4 @@ void GameMenu::initModGameDrawables()
     Animation *projectile3Animation = new Animation{sf::Vector2u(4, 1), sf::Vector2u(0, 0), sf::Vector2u(0, 0), 0, 0.05f, 
         sf::IntRect(0, 0, loadedTextures["projectile3"].get()->getSize().x / 4, loadedTextures["projectile3"].get()->getSize().y / 1), false};
     animationManager.pushAnimation(EntityType::PROJECTILE3, projectile3Animation);
-
-    sf::Sprite *wallSprite = new sf::Sprite();
-    wallSprite->setTexture(*loadedTextures["wall"]);
-    spriteManager.pushSprite(EntityType::WALL, wallSprite);
 }
