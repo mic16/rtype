@@ -54,6 +54,7 @@ class NetworkHandler {
             clients.clear();
             relatedEntityID.clear();
             lastClientRes.clear();
+            playerStatus.clear();
         }
 
         template<typename T>
@@ -164,6 +165,33 @@ class NetworkHandler {
 
         void setPlayerEntityID(unsigned int playerID, unsigned int id) {
             relatedEntityID.insert(std::pair<unsigned int, unsigned int>(playerID, id));
+            playerStatus.insert(std::pair<unsigned int, bool>(playerID, true));
+        }
+
+        bool isPlayer(unsigned int id) {
+            for (auto it = relatedEntityID.begin(); it != relatedEntityID.end(); ++it) {
+                if (it->second == id) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        void stopPlay(unsigned int id) {
+            for (auto it = relatedEntityID.begin(); it != relatedEntityID.end(); ++it) {
+                if (it->second == id) {
+                    playerStatus[it->first] = false;
+                }
+            }
+        }
+
+        bool havePlayerPlaying() {
+            for (auto it = playerStatus.begin(); it != playerStatus.end(); ++it) {
+                if (it->second) {
+                    return true;
+                }
+            }
+            return false;
         }
 
         void checkClientsConnection() {
@@ -187,6 +215,7 @@ class NetworkHandler {
         std::vector<std::unique_ptr<INetworkClient>> clients;
         std::map<unsigned int, std::chrono::high_resolution_clock::time_point> lastClientRes;
         std::map<unsigned int, unsigned int> relatedEntityID;
+        std::map<unsigned int, bool> playerStatus;
         std::chrono::high_resolution_clock::time_point lastTRequestStatus;
         std::size_t m_packetMaxSize;
         std::unordered_map<std::size_t, std::unique_ptr<IMessageHandler>> packetHandlers;
