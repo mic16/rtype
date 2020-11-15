@@ -21,6 +21,11 @@ class UDPClient {
 
         void connect();
 
+        void close() {
+            client->socket.close();
+            client->ioService.stop();
+        }
+
     private:
         RemoteClient *client;
         NetworkHandler &networkHandler;
