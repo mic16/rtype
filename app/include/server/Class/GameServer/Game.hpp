@@ -55,7 +55,12 @@ class Game : public Synchronizer {
         NetworkHandler networkHandler = {512};
         Ladder lobby;
         GameServer gameServer;
+
+        unsigned short playerID = 1;
         size_t entityId = 0;
+        bool canLogin = true;
+        std::chrono::high_resolution_clock::time_point start;
+        std::chrono::high_resolution_clock::time_point t1;
 };
 
 #endif /* !GAME_HPP_ */

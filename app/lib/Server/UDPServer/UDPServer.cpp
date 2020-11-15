@@ -64,4 +64,9 @@ void UDPServer::join()
     m_thread->join();
 }
 
+void UDPServer::detach()
+{
+    m_thread->detach();
+}
+
 unsigned int UDPServer::getPort() const { return (port); }
