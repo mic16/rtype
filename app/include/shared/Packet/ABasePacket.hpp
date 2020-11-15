@@ -37,7 +37,7 @@ class ABasePacket : public IPacket {
             buffer.writeULong(m_id);
         }
 
-        size_t getEntityID() const {
+        size_t getEntityID() {
             return m_id;
         }
 
@@ -54,6 +54,8 @@ class ABasePacket : public IPacket {
         void setErrored() {
             errored = true;
         }
+
+        virtual bool Acknowledge() { return false; }
 
     protected:
     private:

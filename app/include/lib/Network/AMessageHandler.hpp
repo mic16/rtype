@@ -31,6 +31,8 @@ class AMessageHandler : IMessageHandler {
             packet.fromBuffer(buffer);
             if (!packet.isErrored()) {
                 onMessage(handler, client, packet);
+            } else {
+                std::cout << "Error:" << packet.getPacketID() << std::endl;
             }
         }
 

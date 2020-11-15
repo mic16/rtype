@@ -12,6 +12,10 @@ UDPClient::UDPClient(): m_id(UDPClient::genId()), buffer(1024)
     m_packet = new char[1024];
 }
 
+UDPClient::UDPClient(const UDPClient &copy) : m_id(copy.m_id), idStr(copy.idStr), m_address(copy.m_address), m_port(copy.m_port), m_endpoint(copy.m_endpoint), acceptor(copy.acceptor), buffer(1024) {
+
+}
+
 UDPClient::~UDPClient()
 {
     if (m_packet) delete m_packet;

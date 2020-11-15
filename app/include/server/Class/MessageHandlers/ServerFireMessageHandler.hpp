@@ -21,11 +21,12 @@ class ServerFireMessageHandler : public AMessageHandler<FirePacket> {
         void onMessage(NetworkHandler &handler, INetworkClient &client, FirePacket &packet) {
             auto &writeMap = synchronizer.getDoubleMap().getWriteMap();
 
-            if (writeMap->find(packet.getEntityID()) == writeMap->end()) {
-                writeMap->insert({packet.getEntityID(), PacketData()});
+            size_t entityID = handler.getEntityIDFromNetworkClient(client);
+            if (writeMap->find(entityID) == writeMap->end()) {
+                writeMap->insert({entityID, PacketData()});
             }
 
-            PacketData &data = writeMap->at(packet.getEntityID());
+            PacketData &data = writeMap->at(entityID);
 
             data.isFiring = packet.isHolding();
             data.fireChanged = true;

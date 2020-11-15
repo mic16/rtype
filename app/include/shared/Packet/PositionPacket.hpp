@@ -58,6 +58,10 @@ class PositionPacket : public ABasePacket {
             return 4;
         }
 
+        virtual bool Acknowledge() {
+            return false;
+        }
+
     protected:
     private:
         size_t entityType = 0;

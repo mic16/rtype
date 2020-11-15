@@ -7,6 +7,10 @@
 
 #include "lib/ByteBuffer/ByteBuffer.hpp"
 
+ByteBuffer::ByteBuffer(ByteBuffer &&buffer) : capacity(buffer.capacity), offset(buffer.offset), buf(buffer.buf), size(buffer.size), prependSize(buffer.prependSize) {
+    buffer.buf = nullptr;
+}
+
 ByteBuffer::ByteBuffer(size_t _capacity) : capacity(_capacity)
 {
     this->capacity = _capacity;
@@ -329,14 +333,14 @@ unsigned long ByteBuffer::readULong(int *err) {
             *err = 1;
         return 0;
     }
-    long value = buf[offset];
-    value |= static_cast<long>(buf[offset + 1]) << 8;
-    value |= static_cast<long>(buf[offset + 2]) << 16;
-    value |= static_cast<long>(buf[offset + 3]) << 24;
-    value |= static_cast<long>(buf[offset + 4]) << 32;
-    value |= static_cast<long>(buf[offset + 5]) << 40;
-    value |= static_cast<long>(buf[offset + 6]) << 48;
-    value |= static_cast<long>(buf[offset + 7]) << 56;
+    unsigned long value = buf[offset];
+    value |= static_cast<unsigned long>(buf[offset + 1]) << 8;
+    value |= static_cast<unsigned long>(buf[offset + 2]) << 16;
+    value |= static_cast<unsigned long>(buf[offset + 3]) << 24;
+    value |= static_cast<unsigned long>(buf[offset + 4]) << 32;
+    value |= static_cast<unsigned long>(buf[offset + 5]) << 40;
+    value |= static_cast<unsigned long>(buf[offset + 6]) << 48;
+    value |= static_cast<unsigned long>(buf[offset + 7]) << 56;
     offset += 8;
     return value;
 }

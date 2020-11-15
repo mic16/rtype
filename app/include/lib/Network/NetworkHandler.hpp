@@ -14,6 +14,7 @@
 #include <exception>
 
 #include "shared/Packet/DeathPacket.hpp"
+#include "shared/Packet/SpawnPacket.hpp"
 
 #include "AMessageHandler.hpp"
 #include "INetworkClient.hpp"
@@ -21,10 +22,28 @@
 #include "boost/iostreams/filter/zlib.hpp"
 #include "lib/Compression/Compression.hpp"
 
+class PacketBuff {
+public:
+    PacketBuff(size_t count) : count(count), buffer(128) {}
+    PacketBuff(PacketBuff &&old) : count(old.count), buffer(std::move(old.buffer)) {}
+    ~PacketBuff() {}
+    size_t count = 0;
+    ByteBuffer buffer;
+};
+
+class PacketInfo {
+public:
+    PacketInfo(size_t id) : id(id), timestamp(0), client(nullptr) {}
+    ~PacketInfo() {}
+    size_t id;
+    long timestamp;
+    INetworkClient *client;
+};
+
 class NetworkHandler {
     public:
         NetworkHandler(std::size_t packetMaxSize) : m_packetMaxSize(packetMaxSize) {
-            
+
         }
 
         ~NetworkHandler() {
@@ -68,19 +87,27 @@ class NetworkHandler {
 
             buffer.clear();
 
-            std::size_t hashcode;
+            size_t hashcode;
+            size_t entityID;
+            bool acknowledge = false;
             if constexpr(std::is_pointer<T>::value) {
                 static_assert(std::is_base_of<IPacket, typename std::remove_pointer<T>::type>::value, "Cannot broadcast something that is not a child of IPacket");
                 packet->toBuffer(buffer);
                 hashcode = typeid(typename std::remove_pointer<T>::type).hash_code();
+                entityID = packet->getEntityID();
+                acknowledge = packet->Acknowledge();
             } else if constexpr(std::is_reference<T>::value) {
                 static_assert(std::is_base_of<IPacket, typename std::remove_reference<T>::type>::value, "Cannot broadcast something that is not a child of IPacket");
                 packet.toBuffer(buffer);
                 hashcode = typeid(typename std::remove_reference<T>::type).hash_code();
+                entityID = packet.getEntityID();
+                acknowledge = packet.Acknowledge();
             } else if constexpr(std::is_object<T>::value) {
                 static_assert(std::is_base_of<IPacket, T>::value, "Cannot broadcast something that is not a child of IPacket");
                 packet.toBuffer(buffer);
                 hashcode = typeid(T).hash_code();
+                entityID = packet.getEntityID();
+                acknowledge = packet.Acknowledge();
             }
 
             if (packetsID.find(hashcode) == packetsID.end()) {
@@ -89,25 +116,83 @@ class NetworkHandler {
 
             std::size_t id = packetsID[hashcode];
 
-            // if (broadcastBuffer.getSize() + buffer.getSize() + 12 >= m_packetMaxSize) {
-            //     // prepend.clear();
-            //     // prepend.writeULong(id);
-            //     // prepend.writeCharBuffer(reinterpret_cast<const char *>(buffer.flush()), buffer.getSize());
-            //     Compression::compress(broadcastBuffer);
-            //     flushBroadcast();
-            // } else {
-                broadcastBuffer.writeULong(id);
-                broadcastBuffer.writeCharBuffer(reinterpret_cast<const char *>(buffer.flush()), buffer.getSize());
-                // flushBroadcast();
-            // }
-        }
+            if (id == SpawnPacket::PacketID()) {
+                std::cout << "Ack Spawn: " << acknowledge << std::endl;
+            }
 
-        void flushBroadcast() {
-            if (broadcastBuffer.getSize() > 0) {
+            if (id == DeathPacket::PacketID()) {
+                auto it = packetsID.begin();
+                while (it != packetsID.end()) {
+                    size_t id = it->second;
+                    size_t fingerprint = ((id & 0xFF) << 48) | (entityID & 0xFFFFFFFFFFFF);
+                    for (auto &client : clients) {
+                        size_t subfingerprint = ((static_cast<size_t>(client->getId()) & 0xFF) << 56) | fingerprint;
+                        packetstatus.erase(subfingerprint);
+                    }
+                    packetsbuffer.erase(fingerprint);
+                    it++;
+                }
+            }
+
+            if (acknowledge) {
+                size_t fingerprint = ((id & 0xFF) << 48) | (entityID & 0xFFFFFFFFFFFF);
+
+                auto it = packetsbuffer.find(fingerprint);
+                if (it == packetsbuffer.end()) {
+                    it = packetsbuffer.emplace(std::make_pair(fingerprint, PacketBuff(clients.size()))).first;
+                }
+
+                PacketBuff &pbuff = it->second;
+
+                pbuff.buffer.clear();
+                pbuff.buffer.writeBool(true);
+                pbuff.buffer.writeULong(id+1);
+                pbuff.buffer.writeULong(fingerprint);
+                pbuff.buffer.writeCharBuffer(reinterpret_cast<const char *>(buffer.flush()), buffer.getSize());
+                for (auto &client : clients) {
+                    size_t subfingerprint = ((static_cast<size_t>(client->getId()) & 0xFF) << 56) | fingerprint;
+                    client->write(pbuff.buffer);
+                    auto itpstatus = packetstatus.find(subfingerprint);
+                    if (itpstatus == packetstatus.end()) {
+                        itpstatus = packetstatus.emplace(std::make_pair(subfingerprint, PacketInfo(fingerprint))).first;
+                        itpstatus->second.client = client.get();
+                    }
+                    PacketInfo &info = itpstatus->second;
+                    info.timestamp = 0;
+                }
+            } else {
+                broadcastBuffer.clear();
+                broadcastBuffer.writeBool(false);
+                broadcastBuffer.writeULong(id+1);
+                broadcastBuffer.writeULong(0);
+                broadcastBuffer.writeCharBuffer(reinterpret_cast<const char *>(buffer.flush()), buffer.getSize());
                 for (auto &client : clients) {
                     client->write(broadcastBuffer);
                 }
-                broadcastBuffer.clear();
+            }
+        }
+
+        void flushBroadcast() {
+            auto it = packetstatus.begin();
+            long now = std::chrono::high_resolution_clock::now().time_since_epoch().count();
+            while (it != packetstatus.end()) {
+                if (it->second.timestamp == 0) {
+                    it->second.timestamp = now;
+                } else {
+                    long elapsed = now - it->second.timestamp;
+                    if (elapsed > 100'000'000L) {
+                        std::cout << "Timeout: [" << elapsed << "] " << (it->second.id >> 6) << std::endl;
+                        auto buff = packetsbuffer.find(it->second.id);
+                        if (buff != packetsbuffer.end()) {
+                            it->second.client->write(buff->second.buffer);
+                            it->second.timestamp = now;
+                        } else {
+                            it = packetstatus.erase(it);
+                            continue;
+                        }
+                    }
+                }
+                it++;
             }
         }
 
@@ -118,19 +203,27 @@ class NetworkHandler {
 
             buffer.clear();
 
-            std::size_t hashcode;
+            size_t hashcode;
+            size_t entityID;
+            bool acknowledge = false;
             if constexpr(std::is_pointer<T>::value) {
                 static_assert(std::is_base_of<IPacket, typename std::remove_pointer<T>::type>::value, "Cannot broadcast something that is not a child of IPacket");
                 packet->toBuffer(buffer);
                 hashcode = typeid(typename std::remove_pointer<T>::type).hash_code();
+                entityID = packet->getEntityID();
+                acknowledge = packet->Acknowledge();
             } else if constexpr(std::is_reference<T>::value) {
                 static_assert(std::is_base_of<IPacket, typename std::remove_reference<T>::type>::value, "Cannot broadcast something that is not a child of IPacket");
                 packet.toBuffer(buffer);
                 hashcode = typeid(typename std::remove_reference<T>::type).hash_code();
+                entityID = packet.getEntityID();
+                acknowledge = packet.Acknowledge();
             } else if constexpr(std::is_object<T>::value) {
                 static_assert(std::is_base_of<IPacket, T>::value, "Cannot broadcast something that is not a child of IPacket");
                 packet.toBuffer(buffer);
                 hashcode = typeid(T).hash_code();
+                entityID = packet.getEntityID();
+                acknowledge = packet.Acknowledge();
             }
 
             if (packetsID.find(hashcode) == packetsID.end()) {
@@ -139,20 +232,84 @@ class NetworkHandler {
 
             std::size_t id = packetsID[hashcode];
 
-            prepend.clear();
-            prepend.writeULong(id);
-            prepend.writeCharBuffer(reinterpret_cast<const char *>(buffer.flush()), buffer.getSize());
-            client.write(prepend);
+            if (acknowledge) {
+                size_t fingerprint = ((static_cast<size_t>(client.getId()) & 0xFF) << 56) | ((id & 0xFF) << 48) | (entityID & 0xFFFFFFFFFFFF);
+
+                auto it = packetsbuffer.find(fingerprint);
+                if (packetsbuffer.find(fingerprint) == packetsbuffer.end()) {
+                    it = packetsbuffer.emplace(std::make_pair(fingerprint, PacketBuff(1))).first;
+                }
+
+                PacketBuff &pbuff = it->second;
+
+                pbuff.buffer.clear();
+                pbuff.buffer.writeBool(true);
+                pbuff.buffer.writeULong(id+1);
+                pbuff.buffer.writeULong(fingerprint);
+                pbuff.buffer.writeCharBuffer(reinterpret_cast<const char *>(buffer.flush()), buffer.getSize());
+
+                auto itpstatus = packetstatus.find(fingerprint);
+                if (itpstatus == packetstatus.end()) {
+                    itpstatus = packetstatus.emplace(std::make_pair(fingerprint, PacketInfo(fingerprint))).first;
+                    itpstatus->second.client = &client;
+                }
+
+                PacketInfo &info = itpstatus->second;
+                info.id = fingerprint;
+                info.timestamp = 0;
+
+
+                client.write(pbuff.buffer);
+            } else {
+                writeBuffer.clear();
+                writeBuffer.writeBool(false);
+                writeBuffer.writeULong(id+1);
+                writeBuffer.writeULong(0);
+                writeBuffer.writeCharBuffer(reinterpret_cast<const char *>(buffer.flush()), buffer.getSize());
+                for (auto &client : clients) {
+                    client->write(writeBuffer);
+                }
+            }
         }
 
         void processMessage(INetworkClient &client) {
             ByteBuffer &buffer = client.getBuffer();
             int err = 0;
             while (buffer.getSize() > 0) {
-                size_t packedType = buffer.readULong(&err);
+                bool acknowledge = buffer.readBool(&err);
+
                 if (err) {
                     buffer.clear();
                     return;
+                }
+
+                size_t packetType = buffer.readULong(&err);
+                if (err) {
+                    buffer.clear();
+                    return;
+                }
+
+                size_t fingerprint = buffer.readULong(&err);
+                if (err) {
+                    buffer.clear();
+                    return;
+                }
+
+                if (acknowledge) {
+
+                    if (packetType == 0) {
+                        size_t subfingerprint = ((static_cast<size_t>(client.getId()) & 0xFF) << 56) | fingerprint;
+                        if (packetstatus.erase(subfingerprint) == 1) {
+                            auto it = packetsbuffer.find(fingerprint);
+                            if (it != packetsbuffer.end()) {
+                                it->second.count -= 1;
+                                if (it->second.count == 0) {
+                                    packetsbuffer.erase(it);
+                                }
+                            }
+                        }
+                        continue;
+                    }
                 }
 
                 size_t buffSize = buffer.readUInt(&err);
@@ -161,12 +318,20 @@ class NetworkHandler {
                     return;
                 }
 
-                if (packetHandlers.find(packedType) == packetHandlers.end()) {
+                if (packetHandlers.find(packetType - 1) == packetHandlers.end()) {
                     buffer.move(buffSize);
                     return;
                 }
 
-                auto &messageHandler = packetHandlers[packedType];
+                auto &messageHandler = packetHandlers[packetType - 1];
+
+                if (acknowledge) {
+                    resbuffer.clear();
+                    resbuffer.writeBool(true);
+                    resbuffer.writeULong(0);
+                    resbuffer.writeULong(fingerprint);
+                    client.write(resbuffer);
+                }
 
                 messageHandler->processMessage(*this, client, buffer);
             }
@@ -210,12 +375,16 @@ class NetworkHandler {
             return isClose;
         }
 
+        size_t getEntityIDFromNetworkClient(INetworkClient &client) {
+            return relatedEntityID[client.getId()];
+        }
     protected:
     private:
         bool isClose = false;
-        ByteBuffer prepend = {1024};
-        ByteBuffer broadcastBuffer = {1024};
         ByteBuffer buffer = {1024};
+        ByteBuffer writeBuffer = {1024};
+        ByteBuffer broadcastBuffer = {1024};
+        ByteBuffer resbuffer = {1024};
         std::vector<std::unique_ptr<INetworkClient>> clients;
         std::map<unsigned int, std::chrono::high_resolution_clock::time_point> lastClientRes;
         std::map<unsigned int, unsigned int> relatedEntityID;
@@ -223,6 +392,8 @@ class NetworkHandler {
         std::size_t m_packetMaxSize;
         std::unordered_map<std::size_t, std::unique_ptr<IMessageHandler>> packetHandlers;
         std::unordered_map<std::size_t, std::size_t> packetsID;
+        std::unordered_map<size_t, PacketInfo> packetstatus;
+        std::unordered_map<size_t, PacketBuff> packetsbuffer;
 };
 
 #endif /* !NETWORKHANDLER_HPP_ */

@@ -17,6 +17,8 @@ class IPacket {
         virtual size_t getPacketID() const = 0;
         virtual void setErrored() = 0;
         virtual bool isErrored() = 0;
+        virtual size_t getEntityID() = 0;
+        virtual bool Acknowledge() = 0;
 
     protected:
     private:

@@ -17,6 +17,7 @@
 class UDPClient : public ANetworkClient {
     public:
         UDPClient();
+        UDPClient(const UDPClient &copy);
         ~UDPClient();
 
         void resetId() { m_id = ANetworkClient::genId(); }
@@ -28,10 +29,11 @@ class UDPClient : public ANetworkClient {
         const std::string &getAddress() const;
         const unsigned int getPort() const;
 
-        boost::asio::ip::udp::endpoint m_endpoint;
         char *getPacket() const;
         void write(const ByteBuffer &buffer);
         ByteBuffer &getBuffer();
+
+        boost::asio::ip::udp::endpoint m_endpoint;
 
     private:
         unsigned int m_id;

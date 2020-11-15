@@ -44,6 +44,8 @@ class FirePacket : public ABasePacket {
             return 2;
         }
 
+        bool Acknowledge() { return true; }
+
     protected:
     private:
         bool holding = false;

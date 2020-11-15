@@ -36,6 +36,8 @@ class InstanciatePlayerPacket : public ABasePacket {
             return 6;
         }
 
+        bool Acknowledge() { return false; }
+
     protected:
     private:
 };

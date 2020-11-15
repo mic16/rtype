@@ -33,6 +33,8 @@ class DeathPacket : public ABasePacket {
             return 1;
         }
 
+        bool Acknowledge() { return true; }
+
     protected:
     private:
 };

@@ -45,6 +45,8 @@ class SpawnPacket : public PositionPacket {
             return player;
         }
 
+        bool Acknowledge() { return true; }
+
     protected:
     private:
         size_t player = false;

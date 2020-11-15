@@ -25,6 +25,8 @@ typedef union DoubleValue {
 
 class ByteBuffer {
     public:
+        ByteBuffer(const ByteBuffer &buffer) = delete;
+        ByteBuffer(ByteBuffer &&buffer);
         ByteBuffer(size_t capacity);
         ByteBuffer(const char *buf);
         ~ByteBuffer();

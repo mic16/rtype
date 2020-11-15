@@ -34,15 +34,19 @@ class PlayerEnterRoomPacket : public IPacket {
         }
 
         static size_t PacketID() {
-            return 1000;
+            return 8;
         }
 
         INetworkClient *getNetworkClient() {
             return client;
         }
 
+        size_t getEntityID() { return 0; }
+
         void setErrored() {}
         bool isErrored() {return false; }
+
+        bool Acknowledge() { return false; }
 
     protected:
     private:
