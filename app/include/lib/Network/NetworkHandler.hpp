@@ -18,10 +18,13 @@
 #include "AMessageHandler.hpp"
 #include "INetworkClient.hpp"
 
+#include "boost/iostreams/filter/zlib.hpp"
+#include "lib/Compression/Compression.hpp"
+
 class NetworkHandler {
     public:
         NetworkHandler(std::size_t packetMaxSize) : m_packetMaxSize(packetMaxSize) {
-
+            
         }
 
         ~NetworkHandler() {
@@ -86,16 +89,17 @@ class NetworkHandler {
 
             std::size_t id = packetsID[hashcode];
 
-            if (broadcastBuffer.getSize() + buffer.getSize() >= m_packetMaxSize) {
-                // prepend.clear();
-                // prepend.writeULong(id);
-                // prepend.writeCharBuffer(reinterpret_cast<const char *>(buffer.flush()), buffer.getSize());
-                // flushBroadcast();
-            } else {
+            // if (broadcastBuffer.getSize() + buffer.getSize() + 12 >= m_packetMaxSize) {
+            //     // prepend.clear();
+            //     // prepend.writeULong(id);
+            //     // prepend.writeCharBuffer(reinterpret_cast<const char *>(buffer.flush()), buffer.getSize());
+            //     Compression::compress(broadcastBuffer);
+            //     flushBroadcast();
+            // } else {
                 broadcastBuffer.writeULong(id);
                 broadcastBuffer.writeCharBuffer(reinterpret_cast<const char *>(buffer.flush()), buffer.getSize());
-                flushBroadcast();
-            }
+                // flushBroadcast();
+            // }
         }
 
         void flushBroadcast() {

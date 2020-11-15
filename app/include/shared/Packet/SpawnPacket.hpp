@@ -19,7 +19,9 @@ class SpawnPacket : public PositionPacket {
 
         void fromBuffer(ByteBuffer &buffer) override {
             PositionPacket::fromBuffer(buffer);
-            player = buffer.readULong(nullptr);
+            int err = 0;
+            player = buffer.readULong(&err);
+            if (err) setErrored();
         }
 
         void toBuffer(ByteBuffer &buffer) override {

@@ -22,8 +22,11 @@ class MovePacket : public ABasePacket {
 
         void fromBuffer(ByteBuffer &buffer) override {
             ABasePacket::fromBuffer(buffer);
-            dirX = buffer.readInt(nullptr);
-            dirY = buffer.readInt(nullptr);
+            int err = 0;
+            dirX = buffer.readInt(&err);
+            if (err) setErrored();
+            dirY = buffer.readInt(&err);
+            if (err) setErrored();
         }
 
         void toBuffer(ByteBuffer &buffer) override {

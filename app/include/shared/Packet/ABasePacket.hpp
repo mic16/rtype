@@ -25,8 +25,11 @@ class ABasePacket : public IPacket {
         ~ABasePacket() {}
 
         virtual void fromBuffer(ByteBuffer &buffer) override {
-            m_time = buffer.readULong(nullptr);
-            m_id = buffer.readULong(nullptr);
+            int err = 0;
+            m_time = buffer.readULong(&err);
+            if (err) setErrored();
+            m_id = buffer.readULong(&err);
+            if (err) setErrored();
         }
 
         virtual void toBuffer(ByteBuffer &buffer) override {
@@ -44,10 +47,19 @@ class ABasePacket : public IPacket {
 
         virtual size_t getPacketID() const = 0;
 
+        bool isErrored() {
+            return errored;
+        }
+
+        void setErrored() {
+            errored = true;
+        }
+
     protected:
     private:
         size_t m_id;
         size_t m_time;
+        bool errored = false;
 
 };
 

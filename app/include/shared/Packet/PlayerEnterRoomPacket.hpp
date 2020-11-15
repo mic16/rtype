@@ -41,6 +41,9 @@ class PlayerEnterRoomPacket : public IPacket {
             return client;
         }
 
+        void setErrored() {}
+        bool isErrored() {return false; }
+
     protected:
     private:
         INetworkClient *client;
