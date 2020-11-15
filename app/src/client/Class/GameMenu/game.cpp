@@ -91,8 +91,7 @@ void GameMenu::initModGameDrawables()
     spriteManager.pushSprite(EntityType::PROJECTILE1, projectile1Sprite);
 
     sf::Sprite *projectile2Sprite = new sf::Sprite();
-    projectile2Sprite->setTexture(*loadedTextures["projectile1"]);
-    projectile2Sprite->setColor(sf::Color::Red);
+    projectile2Sprite->setTexture(*loadedTextures["projectile2"]);
     spriteManager.pushSprite(EntityType::PROJECTILE2, projectile2Sprite);
 
     sf::Sprite *projectile3Sprite = new sf::Sprite();
