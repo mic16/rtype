@@ -40,6 +40,8 @@ class TCPClient {
         void handleListPlayersInRoom();
         void handleInfoServer();
 
+        void closeClientServer() { gameClient->close(); };
+
         std::unique_ptr<UDPClient> &getGameClient();
     private:
         boost::asio::io_context ioService;
