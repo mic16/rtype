@@ -14,6 +14,7 @@ GameEntities::GameEntities(IGame *gameMenu, sf::RenderWindow &window, Synchroniz
 {
     for (int i = 0; i != 4 ; i++)
         isDirectionMaintained[i] = false;
+    this->getExplosionSound().load("app/assets/sounds/explosion.wav");
 }
 
 void GameEntities::init()
@@ -49,8 +50,10 @@ void GameEntities::init()
 
                 if (!data.isAlive) {
                     entity.remove();
-                    if (entityID->id == getGameMenu()->getPlayerID())
+                    if (entityID->id == getGameMenu()->getPlayerID()) {
+                        this->getExplosionSound().play(10.0f);
                         this->setDead();
+                    }
                     continue;
                 }
 

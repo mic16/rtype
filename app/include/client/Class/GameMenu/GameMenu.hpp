@@ -32,8 +32,6 @@
 #include "client/Class/GameEntities/EntityAnimationManager.hpp"
 #include "shared/Structs/EntityType.hpp"
 
-#include "client/Class/Sound/Sound.hpp"
-
 #define LAST_FIXED_SPRITE(sceneName) fixedDrawables.at(sceneName)[fixedDrawables.at(sceneName).size() - 1]
 
 class GameMenu : public IGameMenu {
@@ -139,7 +137,7 @@ class GameMenu : public IGameMenu {
         bool isDirectionMaintained[4];
 
         size_t playerId;
-        Sound sound;
+        Sound movementSound;
         Sound laserSound;
 };
 

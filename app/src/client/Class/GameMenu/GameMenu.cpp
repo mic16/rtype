@@ -49,6 +49,9 @@ background(window, 250)
     networkHandler.registerMessageHandler(new ClientInstanciatePlayerMessageHandler(synchronizer));
 
     displayThread = std::make_unique<std::thread>(&GameMenu::handleDisplay, this);
+
+    movementSound.load("app/assets/sounds/robotsound.wav");
+    laserSound.load("app/assets/sounds/lazer.wav");
 }
 
 GameMenu::~GameMenu()
@@ -108,7 +111,8 @@ void GameMenu::handleDisplay()
         deltaTime = clock.restart().asSeconds();
         handleEvents();
         laserSound.update();
-        sound.update();
+        movementSound.update();
+        this->gameEntities.getExplosionSound().update();
         if (getScene() == sceneName::GAME) {
             draw(deltaTime);
         } else {
