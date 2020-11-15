@@ -90,17 +90,9 @@ class NetworkHandler {
 
             std::size_t id = packetsID[hashcode];
 
-            // if (broadcastBuffer.getSize() + buffer.getSize() + 12 >= m_packetMaxSize) {
-            //     // prepend.clear();
-            //     // prepend.writeULong(id);
-            //     // prepend.writeCharBuffer(reinterpret_cast<const char *>(buffer.flush()), buffer.getSize());
-            //     Compression::compress(broadcastBuffer);
-            //     flushBroadcast();
-            // } else {
-                broadcastBuffer.writeULong(id);
-                broadcastBuffer.writeCharBuffer(reinterpret_cast<const char *>(buffer.flush()), buffer.getSize());
-                flushBroadcast();
-            // }
+            broadcastBuffer.writeULong(id);
+            broadcastBuffer.writeCharBuffer(reinterpret_cast<const char *>(buffer.flush()), buffer.getSize());
+            flushBroadcast();
         }
 
         void flushBroadcast() {

@@ -51,9 +51,6 @@ void Game::init() {
     .addTags({"Enemy", "DamageOnTouch", "Damageable"})
     .finish();
 
-    ecs.newEntityModel<Position, Velocity, EntityID, Hitbox>("Wall")
-    .finish();
-
     ecs.newEntityModel<Position, Velocity, EntityID, Hitbox, EntityInfo, EntityStats>("DestructibleWall")
     .addTags({"DamageOnTouch", "Damageable"})
     .finish();
@@ -95,13 +92,14 @@ void Game::init() {
     .each([this](float delta, EntityIterator<EntityID> &entity) {
         auto enemyGenerator = this->getECS().getEntityGenerator("Enemy");
         if (entity.getSize() == 0) {
-            size_t spawnType = rand() % 4;
-            if (spawnType == 0) {
-                for (int i = 0; i < 5; i++) {
-                    double x = this->getMapWidth();
-                    double y = this->getMapHeight()/5.0*i;
-                    size_t id = this->getNextEntityID();
-
+            int crowd = rand() % 7 + 3;
+            for (int i = 0; i < crowd; i++) {
+                size_t spawnType = rand() % 5;
+                double x = this->getMapWidth();
+                double y = this->getMapHeight()/crowd*i;
+                size_t id = this->getNextEntityID();
+    
+                if (spawnType == 0) {
                     enemyGenerator.instanciate(1,
                         Position{x, y},
                         Velocity{-1, 0, 400, false},
@@ -112,11 +110,29 @@ void Game::init() {
                     );
                     this->getNetworkHandler().broadcast(SpawnPacket(id, EntityType::ENEMY1, x, y, 0));
                 }
-            } else if (spawnType == 1) {
-                for (int i = 0; i < 5; i++) {
-                    double x = this->getMapWidth();
-                    double y = this->getMapHeight()/4.0*i+100;
-                    size_t id = this->getNextEntityID();
+                if (spawnType == 1) {
+                    enemyGenerator.instanciate(1,
+                        Position{x, y},
+                        Velocity{-1, 0, 350},
+                        EntityID{id},
+                        Enemy4Hitbox,
+                        EntityInfo{true, true, EntityType::ENEMY4},
+                        EntityStats{70, 70, 40, 60}
+                    );
+                    this->getNetworkHandler().broadcast(SpawnPacket(id, EntityType::ENEMY4, x, y, 0));
+                }
+                if (spawnType == 2) {
+                    enemyGenerator.instanciate(1,
+                        Position{x, y},
+                        Velocity{-1, 0, 200},
+                        EntityID{id},
+                        WallHitbox,
+                        EntityInfo{true, false, EntityType::WALL},
+                        EntityStats{500, 500, 500, 0}
+                    );
+                    this->getNetworkHandler().broadcast(SpawnPacket(id, EntityType::WALL, x, y, 0));
+                }
+                if (spawnType == 3) {
 
                     enemyGenerator.instanciate(1,
                         Position{x, y},
@@ -128,11 +144,7 @@ void Game::init() {
                     );
                     this->getNetworkHandler().broadcast(SpawnPacket(id, EntityType::ENEMY2, x, y, 0));
                 }
-            } else if (spawnType == 2) {
-                for (int i = 0; i < 2; i++) {
-                    double x = this->getMapWidth();
-                    double y = this->getMapHeight()/2.0*i+200;
-                    size_t id = this->getNextEntityID();
+                if (spawnType == 4) {
 
                     enemyGenerator.instanciate(1,
                         Position{x, y},
@@ -144,12 +156,7 @@ void Game::init() {
                     );
                     this->getNetworkHandler().broadcast(SpawnPacket(id, EntityType::ENEMY3, x, y, 0));
                 }
-            } else if (spawnType == 3) {
-                for (int i = 0; i < 1; i++) {
-                    double x = this->getMapWidth();
-                    double y = this->getMapHeight() / 2;
-                    size_t id = this->getNextEntityID();
-
+                if (spawnType == 3) {
                     enemyGenerator.instanciate(1,
                         Position{x, y},
                         Velocity{-0.5, -2, 400, true},
@@ -333,6 +340,54 @@ void Game::init() {
             }
         }
     }).finish();
+
+    ecs.newSystem<Position, Hitbox, EntityInfo, EntityID, EntityStats>("ApplyContactDamage")
+        .withTags({"DamageOnTouch"})
+        .each([this](float delta, EntityIterator<Position, Hitbox, EntityInfo, EntityID, EntityStats> &entity) {
+            auto playerIterator = this->getECS().lookup<Position, Velocity, EntityID, Hitbox, EntityInfo, EntityStats>("Player");
+            while (entity.hasNext()) {
+                entity.next();
+
+                Position *entityPosition = entity.getComponent<Position>(0);
+                Hitbox *entityHitbox = entity.getComponent<Hitbox>(1);
+                EntityInfo *entityInfo = entity.getComponent<EntityInfo>(2);
+                EntityID *entityID = entity.getComponent<EntityID>(3);
+                EntityStats *entityStats = entity.getComponent<EntityStats>(4);
+
+                playerIterator.reset();
+                while (playerIterator.hasNext()) {
+                    playerIterator.next();
+
+                    EntityInfo *playerEntityInfo = playerIterator.getComponent<EntityInfo>(4);
+                    Position *playerPosition = playerIterator.getComponent<Position>(0);
+                    EntityID *playerID = playerIterator.getComponent<EntityID>(2);
+                    Hitbox *playerHitbox = playerIterator.getComponent<Hitbox>(3);
+                    EntityStats *playerStats = playerIterator.getComponent<EntityStats>(5);
+                
+                    if (entityPosition->x < playerPosition->x + playerHitbox->w &&
+                        entityPosition->x + entityHitbox->w > playerPosition->x &&
+                        entityPosition->y < playerPosition->y + playerHitbox->h &&
+                        entityPosition->y + entityHitbox->h > playerPosition->y)
+                    {
+                        playerStats->hp -= entityStats->damage;
+                        this->getNetworkHandler().broadcast(DamagePacket(playerID->id, entityStats->damage, playerStats->hp, playerStats->maxHP));
+                        this->getNetworkHandler().broadcast(DeathPacket(entityID->id));
+
+                        if (playerStats->hp <= 0) {
+                            this->getNetworkHandler().broadcast(DeathPacket(playerID->id));
+                            if (this->getNetworkHandler().isPlayer(playerID->id)) {
+                                this->getNetworkHandler().stopPlay(playerID->id);
+                                if (!this->getNetworkHandler().havePlayerPlaying()) {
+                                    this->getNetworkHandler().broadcast(EndGamePacket());
+                                }
+                            }
+                            break;
+                        }
+                        entity.remove();
+                    }
+                }
+            }
+    }).finish();
 }
 
 void Game::loadExtensions(std::vector<std::unique_ptr<IExtension>> &extensions) {
@@ -356,7 +411,7 @@ const server_info_t Game::setGameServer()
 {
     server_info_t info;
 
-    gameServer.configure();
+    gameServer.configure(3334);
     info.address = "127.0.0.1";
     info.port = gameServer.getPort();
     return (info);

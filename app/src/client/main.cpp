@@ -8,11 +8,15 @@
 #include "SFML/Graphics.hpp"
 #include "client/Class/GameMenu/GameMenu.hpp"
 
-int main(int argc, char **argv)
+int main(int ac, char *av[])
 {
     // boost::asio::io_service ioservice;
     GameMenu menu;
     // UDPClient menu(ioservice, "127.0.0.1", "3000");
 
-    return menu.run();
+    if (ac == 2) {
+        return menu.run(av[1]);
+    } else {
+        return menu.run("127.0.0.1");
+    }
 }

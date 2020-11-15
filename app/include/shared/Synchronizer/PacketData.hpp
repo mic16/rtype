@@ -14,6 +14,7 @@ struct PacketData {
     double x, y;
     int dirX, dirY;
     size_t entityType;
+    size_t lastPosUpdate = 0;
     bool isAlive = true;
     bool isFiring = false;
     bool fireChanged = false;
