@@ -20,9 +20,7 @@ class ServerPingMessageHandler : public AMessageHandler<PingPacket> {
         ~ServerPingMessageHandler() {}
 
         void onMessage(NetworkHandler &handler, INetworkClient &client, PingPacket &packet) {
-            if (handler.getClientConnection(client.getId())) {
-                handler.getLastClientRes(client.getId()) = std::chrono::high_resolution_clock::now();
-            }
+            handler.getLastClientRes(client.getId()) = std::chrono::high_resolution_clock::now();
             synchronizer.update();
         }
 

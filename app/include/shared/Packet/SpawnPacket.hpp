@@ -13,24 +13,18 @@
 class SpawnPacket : public PositionPacket {
     public:
         SpawnPacket() : PositionPacket() {}
-        SpawnPacket(size_t id, size_t entityType, double x, double y, size_t player) : PositionPacket(id, x, y), entityType(entityType), player(player) {}
-        SpawnPacket(SpawnPacket &packet) : PositionPacket(packet), entityType(packet.entityType), player(packet.player) {}
+        SpawnPacket(size_t id, size_t entityType, double x, double y, size_t player) : PositionPacket(id, x, y, entityType), player(player) {}
+        SpawnPacket(SpawnPacket &packet) : PositionPacket(packet), player(packet.player) {}
         ~SpawnPacket() {}
 
         void fromBuffer(ByteBuffer &buffer) override {
             PositionPacket::fromBuffer(buffer);
             player = buffer.readULong(nullptr);
-            entityType = buffer.readUInt(nullptr);
         }
 
         void toBuffer(ByteBuffer &buffer) override {
             PositionPacket::toBuffer(buffer);
             buffer.writeULong(player);
-            buffer.writeUInt(entityType);
-        }
-
-        size_t getEntityType() const {
-            return entityType;
         }
 
         size_t getPacketID() const override {
@@ -51,7 +45,6 @@ class SpawnPacket : public PositionPacket {
 
     protected:
     private:
-        size_t entityType = 0;
         size_t player = false;
 };
 

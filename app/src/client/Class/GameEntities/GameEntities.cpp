@@ -9,6 +9,7 @@
 #include "shared/Packet/SpawnPacket.hpp"
 #include "shared/Packet/InstanciatePlayerPacket.hpp"
 #include <boost/algorithm/string.hpp>
+#include "shared/Structs/EntityType.hpp"
 
 GameEntities::GameEntities(IGame *gameMenu, sf::RenderWindow &window, Synchronizer &synchronizer, EntitySpriteManager &spriteManager, EntityAnimationManager &animationManager) : gameMenu(gameMenu), window(window), synchronizer(synchronizer), spriteManager(spriteManager), animationManager(animationManager)
 {
@@ -59,40 +60,73 @@ void GameEntities::init()
 
                 position->x = data.x;
                 position->y = data.y;
+                readMap->erase(entityID->id);
             }
         }
-
-
     })
     .whenDone([this](void){
+        auto entityGenerator = ecs.getEntityGenerator("Entity");
+        auto playerGenerator = ecs.getEntityGenerator("Player");
+
+        auto &readMap = synchronizer.getDoubleMap().getReadMap();
+        auto it = readMap->begin();
+        while (it != readMap->end()) {
+            size_t id = it->first;
+            PacketData &data = it->second;
+
+            if (data.isAlive && data.moveChanged) {
+                if (data.entityType == EntityType::PLAYER1
+                || data.entityType == EntityType::PLAYER2
+                || data.entityType == EntityType::PLAYER3
+                || data.entityType == EntityType::PLAYER4
+                ) {
+                    playerGenerator.instanciate(1,
+                    Position{data.x, data.y},
+                    EntityID{id},
+                    animationManager.getAnimation(data.entityType),
+                    Drawable{true, spriteManager.getSprite(data.entityType)});
+                } else {
+                    entityGenerator.instanciate(1,
+                    Position{data.x, data.y},
+                    EntityID{id},
+                    animationManager.getAnimation(data.entityType),
+                    Drawable{true, spriteManager.getSprite(data.entityType)});
+                }
+            }
+            it++;
+        }
         Synchronizer &synchronizer = this->getSynchronizer();
         synchronizer.getDoubleMap().closeRead();
     }).finish();
 
-    ecs.newSystem<Animation, Drawable>("AnimatePlayer")
+    ecs.newSystem<Animation, Drawable, EntityID>("AnimatePlayer")
         .withTags({ "PlayerControlled" })
-        .each([this](float delta, EntityIterator<Animation, Drawable> &entity){
+        .each([this](float delta, EntityIterator<Animation, Drawable, EntityID> &entity){
                 while (entity.hasNext()) {
                     entity.next();
 
                     Animation *animation = entity.getComponent<Animation>(0);
                     Drawable *drawable = entity.getComponent<Drawable>(1);
+                    EntityID *entityID = entity.getComponent<EntityID>(2);
 
-                    animation->currentImage.y = row;
-                    animation->totalTime += delta;
-                    if (animation->totalTime >= animation->switchTime) {
-                        animation->totalTime -= animation->switchTime;
-                        if (isDirectionMaintained[DIRECTION::UP] && animation->currentImage.x < animation->imageCount.x - 1)
-                            animation->currentImage.x++;
-                        else if (isDirectionMaintained[DIRECTION::DOWN] && animation->currentImage.x > 0)
-                            animation->currentImage.x--;
-                        else if (!isDirectionMaintained[DIRECTION::UP] && !isDirectionMaintained[DIRECTION::DOWN]) {
-                            if (animation->currentImage.x > animation->startingImage.x)
-                                animation->currentImage.x--;
-                            else if (animation->currentImage.x < animation->startingImage.x)
+                    if (entityID->id == this->getGameMenu()->getPlayerID()) {
+                        animation->currentImage.y = row;
+                        animation->totalTime += delta;
+                        if (animation->totalTime >= animation->switchTime) {
+                            animation->totalTime -= animation->switchTime;
+                            if (isDirectionMaintained[DIRECTION::UP] && animation->currentImage.x < animation->imageCount.x - 1)
                                 animation->currentImage.x++;
+                            else if (isDirectionMaintained[DIRECTION::DOWN] && animation->currentImage.x > 0)
+                                animation->currentImage.x--;
+                            else if (!isDirectionMaintained[DIRECTION::UP] && !isDirectionMaintained[DIRECTION::DOWN]) {
+                                if (animation->currentImage.x > animation->startingImage.x)
+                                    animation->currentImage.x--;
+                                else if (animation->currentImage.x < animation->startingImage.x)
+                                    animation->currentImage.x++;
+                            }
                         }
                     }
+
                     animation->uvRect.left = animation->currentImage.x * animation->uvRect.width;
                     animation->uvRect.top = animation->currentImage.y * animation->uvRect.height;
 

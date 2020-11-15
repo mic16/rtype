@@ -32,9 +32,11 @@ bool GameServer::handleConnection()
             // std::cout << "Client " << client.getAddress() << ':'
                 // << client.getPort() << std::endl;
             if (players.find(client.getIdStr()) == players.end()) {
+                UDPClient *newClient = new UDPClient(client);
+                newClient->resetId();
                 players.insert(std::pair<std::string, UDPClient *>(
                     client.getIdStr(),
-                    new UDPClient(client)
+                    newClient
                 ));
                 networkHandler.addClient(players.at(client.getIdStr()));
                 synchronizer.getDoubleQueue().getWriteVector()->emplace_back(new PlayerEnterRoomPacket(players.at(client.getIdStr())));

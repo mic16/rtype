@@ -33,6 +33,7 @@ struct EntityStats {
 struct EntityInfo {
     bool isEnemy;
     bool isFiring;
+    size_t entityType;
 };
 
 struct Hitbox {
