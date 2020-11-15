@@ -48,6 +48,11 @@ class Game : public Synchronizer {
         static double getMapHeight() {return 800; }
         size_t getNextEntityID();
 
+        static unsigned int GenPortValue() {
+            static unsigned int port = 3333;
+            port += 1;
+            return port;
+        };
     private:
         std::chrono::high_resolution_clock::time_point lastTime;
         std::chrono::high_resolution_clock::time_point lastRequestStatus;
@@ -61,7 +66,6 @@ class Game : public Synchronizer {
         bool canLogin = true;
         std::chrono::high_resolution_clock::time_point start;
         std::chrono::high_resolution_clock::time_point t1;
-        static unsigned int port = 3334;
 };
 
 #endif /* !GAME_HPP_ */
