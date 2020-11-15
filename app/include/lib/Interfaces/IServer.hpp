@@ -12,15 +12,19 @@
 #include <boost/thread/thread.hpp>
 #include <boost/bind.hpp>
 
+#include <regex>
+
 #include <iostream>
 #include <memory>
 #include <string>
 #include <vector>
 #include <map>
 
+#include "client/Class/Exceptions/EConnection.hpp"
+
 class IServer {
     public:
-        virtual bool configure(const unsigned int port) = 0;
+        virtual bool configure(const std::string &addr, const unsigned int port) = 0;
         virtual void work() = 0;
         virtual bool run() = 0;
 

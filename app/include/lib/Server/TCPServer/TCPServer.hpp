@@ -15,7 +15,8 @@ class TCPServer : public IServer {
         TCPServer();
         ~TCPServer();
 
-        bool configure(const unsigned int port);
+        bool configure(const std::string &addr = "127.0.0.1", const unsigned int port = 4000);
+        bool configure(const unsigned int port = 4000);
         virtual void work();
 
         unsigned int getPort() const;

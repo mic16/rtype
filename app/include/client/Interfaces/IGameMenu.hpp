@@ -22,7 +22,7 @@ enum menuButton { B_CREATE, B_JOIN };
 
 class IGameMenu : public IGame {
     public:
-        virtual int run() = 0;
+        virtual int run(const std::string &addr) = 0;
 
         virtual void draw() = 0;
         virtual void draw(float deltaTime) = 0;
@@ -35,6 +35,7 @@ class IGameMenu : public IGame {
         virtual void handleTextEntered() = 0;
         virtual void handleKeyReleased() = 0;
 
+        virtual const std::string &getAddress() const = 0;
         virtual void handleDisplay() = 0;
         virtual void tryLogIn() = 0;
         virtual void tryCreateRoom() = 0;

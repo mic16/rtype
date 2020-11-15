@@ -15,7 +15,8 @@ class UDPServer : public IServer {
         UDPServer();
         ~UDPServer();
 
-        bool configure(const unsigned int port = 0);
+        bool configure(const std::string &addr = "127.0.0.1", const unsigned int port = 3334);
+        bool configure(const unsigned int port = 3334);
         virtual void work();
 
         unsigned int getPort() const;

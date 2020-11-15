@@ -40,7 +40,7 @@ class GameMenu : public IGameMenu {
         GameMenu();
         ~GameMenu();
 
-        int run();
+        int run(const std::string &addr);
 
         void draw();
         void draw(float deltaTime);
@@ -85,6 +85,10 @@ class GameMenu : public IGameMenu {
             return playerId;
         }
 
+        const std::string &getAddress() const {
+            return addr;
+        }
+
         void updateSound();
 
     private:
@@ -118,6 +122,7 @@ class GameMenu : public IGameMenu {
         EntityAnimationManager animationManager;
 
         sceneName scene;
+        std::string addr;
         std::unique_ptr<TCPClient> client;
         std::string username;
         std::string roomname;
@@ -148,6 +153,8 @@ class GameMenu : public IGameMenu {
         Sound laserSound;
         long beginingTime;
         long endingTime;
+
+        bool startCounting = true;
 };
 
 static const std::string menuButtons[] = {

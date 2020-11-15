@@ -28,8 +28,8 @@ void TCPClient::handleInfoServer()
     if (err) {
         std::cout << "Cannot get Info Server" << std::endl;
     }
-    std::cout << "Server info: " << address << ':' << port << std::endl;
-    gameClient = std::make_unique<UDPClient>(ioService, address, std::to_string(port), menu->getNetworkHandler());
+    std::cout << "Server info: " << menu->getAddress() << ':' << port << std::endl;
+    gameClient = std::make_unique<UDPClient>(ioService, menu->getAddress(), std::to_string(port), menu->getNetworkHandler());
 
     menu->getGameEntities()->setGamePlaying(true);
     menu->setScene(sceneName::GAME);

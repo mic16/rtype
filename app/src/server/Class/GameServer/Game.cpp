@@ -94,7 +94,7 @@ void Game::init() {
         if (entity.getSize() == 0) {
             int crowd = rand() % 7 + 3;
             for (int i = 0; i < crowd; i++) {
-                size_t spawnType = rand() % 3;
+                size_t spawnType = rand() % 5;
                 double x = this->getMapWidth();
                 double y = this->getMapHeight()/crowd*i;
                 size_t id = this->getNextEntityID();
@@ -102,7 +102,7 @@ void Game::init() {
                 if (spawnType == 0) {
                     enemyGenerator.instanciate(1,
                         Position{x, y},
-                        Velocity{-1, 0, 400},
+                        Velocity{-1, 0, 400, false},
                         EntityID{id},
                         Enemy1Hitbox,
                         EntityInfo{true, true, EntityType::ENEMY1},
@@ -115,11 +115,11 @@ void Game::init() {
                         Position{x, y},
                         Velocity{-1, 0, 350},
                         EntityID{id},
-                        Enemy2Hitbox,
-                        EntityInfo{true, true, EntityType::ENEMY2},
+                        Enemy4Hitbox,
+                        EntityInfo{true, true, EntityType::ENEMY4},
                         EntityStats{70, 70, 40, 60}
                     );
-                    this->getNetworkHandler().broadcast(SpawnPacket(id, EntityType::ENEMY2, x, y, 0));
+                    this->getNetworkHandler().broadcast(SpawnPacket(id, EntityType::ENEMY4, x, y, 0));
                 }
                 if (spawnType == 2) {
                     enemyGenerator.instanciate(1,
@@ -131,6 +131,32 @@ void Game::init() {
                         EntityStats{500, 500, 500, 0}
                     );
                     this->getNetworkHandler().broadcast(SpawnPacket(id, EntityType::WALL, x, y, 0));
+                }
+                if (spawnType == 3) {
+                    y = this->getMapHeight()/4.0*i+100;
+
+                    enemyGenerator.instanciate(1,
+                        Position{x, y},
+                        Velocity{-1, 1, 400, true},
+                        EntityID{id},
+                        Enemy2Hitbox,
+                        EntityInfo{true, true, EntityType::ENEMY2},
+                        EntityStats{100, 100, 20, 0}
+                    );
+                    this->getNetworkHandler().broadcast(SpawnPacket(id, EntityType::ENEMY2, x, y, 0));
+                }
+                if (spawnType == 4) {
+                    y = this->getMapHeight()/2.0*i+200;
+
+                    enemyGenerator.instanciate(1,
+                        Position{x, y},
+                        Velocity{-1, 1, 400, true},
+                        EntityID{id},
+                        Enemy3Hitbox,
+                        EntityInfo{true, true, EntityType::ENEMY3},
+                        EntityStats{150, 150, 30, 0.5}
+                    );
+                    this->getNetworkHandler().broadcast(SpawnPacket(id, EntityType::ENEMY3, x, y, 0));
                 }
             }
         }
@@ -161,7 +187,7 @@ void Game::init() {
 
                     projectileGenerator.instanciate(1,
                         Position{x, y},
-                        Velocity{isEnemy?-1.0:1.0, 0, 1000},
+                        Velocity{isEnemy?-1.0:1.0, 0, 1000, false},
                         EntityID{id},
                         ProjectileHitbox,
                         EntityInfo{isEnemy, false, EntityType::PROJECTILE1},
@@ -186,6 +212,27 @@ void Game::init() {
             EntityID *entityID = entity.getComponent<EntityID>(2);
             EntityInfo *entityInfo = entity.getComponent<EntityInfo>(3);
             Hitbox *hitbox = entity.getComponent<Hitbox>(4);
+
+            if (entityInfo->entityType == EntityType::ENEMY2 || entityInfo->entityType == EntityType::ENEMY3) {
+                if (velocity->directionUp)
+                    velocity->dirY -= 0.1;
+                else
+                    velocity->dirY += 0.1;
+                if (velocity->dirY < -1)
+                    velocity->directionUp = false;
+                else if (velocity->dirY > 1)
+                    velocity->directionUp = true;
+                if (entityInfo->entityType == EntityType::ENEMY3) {
+                    if (velocity->directionLeft)
+                        velocity->dirX -= 0.1;
+                    else
+                        velocity->dirX += 0.05;
+                    if (velocity->dirX < -2)
+                        velocity->directionLeft = false;
+                    else if (velocity->dirX > 1)
+                        velocity->directionLeft = true;
+                }
+            }
 
             double moveX = velocity->dirX * velocity->speed * delta;
             double moveY = velocity->dirY * velocity->speed * delta;
@@ -344,7 +391,7 @@ const server_info_t Game::setGameServer()
 {
     server_info_t info;
 
-    gameServer.configure();
+    gameServer.configure(3334);
     info.address = "127.0.0.1";
     info.port = gameServer.getPort();
     return (info);

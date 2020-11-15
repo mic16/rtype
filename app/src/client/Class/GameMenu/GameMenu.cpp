@@ -60,10 +60,13 @@ GameMenu::~GameMenu()
 {
 }
 
-int GameMenu::run()
+int GameMenu::run(const std::string &p_addr)
 {
     try {
-        client->connectTo(boost::asio::ip::tcp::endpoint(boost::asio::ip::address::from_string("127.0.0.1"), 4000));
+        if (!std::regex_match(p_addr, std::regex("^([0-9]{1,3}(\\.|$)){4}")))
+            throw EConnection("Address has invalid pattern. Please test with 127.0.0.1");
+        this->addr = p_addr;
+        client->connectTo(boost::asio::ip::tcp::endpoint(boost::asio::ip::address::from_string(p_addr), 4000));
         client->run();
         handleDisplay();
         client->join();
@@ -92,6 +95,14 @@ void GameMenu::draw()
 void GameMenu::draw(float deltaTime)
 {
     if (gameEntities.isGamePlaying()) {
+        if (startCounting) {
+            auto now = std::chrono::system_clock::now();
+            auto now_s = std::chrono::time_point_cast<std::chrono::seconds>(now);
+            auto epoch = now_s.time_since_epoch();
+            auto value = std::chrono::duration_cast<std::chrono::seconds>(epoch);
+            beginingTime = value.count();
+            startCounting = false;
+        }
         window.clear(sf::Color::White);
         background.update(deltaTime);
         background.draw();
@@ -123,11 +134,6 @@ void GameMenu::handleDisplay()
 {
     float deltaTime = 0.0f;
     sf::Clock clock;
-    auto now = std::chrono::system_clock::now();
-    auto now_ms = std::chrono::time_point_cast<std::chrono::milliseconds>(now);
-    auto epoch = now_ms.time_since_epoch();
-    auto value = std::chrono::duration_cast<std::chrono::milliseconds>(epoch);
-    beginingTime = value.count();
 
     while (isOpen()) {
         deltaTime = clock.restart().asSeconds();
@@ -139,12 +145,13 @@ void GameMenu::handleDisplay()
             updateSound();
             if (gameEntities.getEnd()) {
                 setScene(sceneName::END);
-                now = std::chrono::system_clock::now();
-                now_ms = std::chrono::time_point_cast<std::chrono::milliseconds>(now);
-                epoch = now_ms.time_since_epoch();
-                value = std::chrono::duration_cast<std::chrono::milliseconds>(epoch);
+                auto now = std::chrono::system_clock::now();
+                auto now_s = std::chrono::time_point_cast<std::chrono::seconds>(now);
+                auto epoch = now_s.time_since_epoch();
+                auto value = std::chrono::duration_cast<std::chrono::seconds>(epoch);
                 endingTime = value.count() - beginingTime;
-                setDrawableTextStr(getScene(), "score", std::to_string(static_cast<float>(endingTime) / 1000));
+                std::cout << value.count() << " - " << beginingTime << " = " << endingTime << std::endl;
+                setDrawableTextStr(getScene(), "score", std::to_string(endingTime));
             }
             if (getScene() == sceneName::GAME) {
                 if (music.getisMenu())

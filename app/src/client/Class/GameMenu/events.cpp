@@ -139,9 +139,11 @@ void GameMenu::handleKeyReleased()
                     setScene(sceneName::JOIN);
                 }
             } else if (getScene() == sceneName::CREATE) {
-                tryCreateRoom();
+                if (roomname.length() >= 3)
+                    tryCreateRoom();
             } else if (getScene() == sceneName::JOIN) {
-                tryJoinRoom();
+                if (roomname.length() >= 3)
+                    tryJoinRoom();
             } else if (getScene() == sceneName::ROOM) {
                 tryChangeUserStatus();
             }
