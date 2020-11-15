@@ -476,8 +476,11 @@ void Game::update() {
 const server_info_t Game::setGameServer()
 {
     server_info_t info;
+    bool isReady = false;
 
-    gameServer.configure(GenPortValue());
+    for (int i = 0; i < 8; i++)
+        if (isReady = gameServer.configure(GenPortValue()))
+            break;
     info.address = "127.0.0.1";
     info.port = gameServer.getPort();
     return (info);
