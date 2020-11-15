@@ -302,6 +302,17 @@ public:
         m_size -= 1;
     }
 
+    void clear()
+    {
+        for (size_t i = 0; i < m_entity->countComponents(); i++) {
+            size_t componentSize = m_entity->getComponentSize(i) + m_entity->getComponentAlign(i);
+
+            ::memset(m_componentMemory[i], 0, componentSize * m_size);
+        }
+
+        m_size = 0;
+    }
+
     void reserve(std::size_t size)
     {
         if (m_size + size > m_reserved)
@@ -730,6 +741,16 @@ public:
         }
         throw ECSException("Cannot lookup unexisting entity");
     }
+
+    void clearEntities() {
+        auto it = map_entities.begin();
+
+        while (it != map_entities.end()) {
+            it->second->clear();
+            it++;
+        }
+    }
+
     void compile() {
         for (EntitySystem *system : systems) {
             system->models.clear();
