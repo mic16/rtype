@@ -115,30 +115,30 @@ RFC 69420                   R-Type Protocol                November 2020
 
 3. TCP Protocol
 
+    The TCP protocol is used to put in contact the server and the 
+    client.
 
+    The data format of the TCP protocol is:
 
+        Int size;
+        Enum type;
+        char *data;
 
+    Where the size and type of the data are given before the data
+    buffer itself.
+    The type enumeration corresponds to what request is being made :
 
+    enum Type {
+        LogIn,
+        CreateRoom,
+        JoinRoom,
+        listPlayersInRoom,
+        StartGame,
+        SendInfoServer
+    };
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    For each type different information are send through the 
+    data buffer.
 
 
 
