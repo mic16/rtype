@@ -90,6 +90,7 @@ void GameMenu::draw(float deltaTime)
             background.update(deltaTime);
             background.draw();
             gameEntities.update(isDirectionMaintained, deltaTime);
+            networkHandler.flushBroadcast();
             window.display();
     }
 }

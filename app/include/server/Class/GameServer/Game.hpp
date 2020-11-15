@@ -52,7 +52,7 @@ class Game : public Synchronizer {
         std::chrono::high_resolution_clock::time_point lastTime;
         std::chrono::high_resolution_clock::time_point lastRequestStatus;
         ECS ecs;
-        NetworkHandler networkHandler = {1024};
+        NetworkHandler networkHandler = {512};
         Ladder lobby;
         GameServer gameServer;
         size_t entityId = 0;
