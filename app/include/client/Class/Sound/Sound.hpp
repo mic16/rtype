@@ -9,14 +9,12 @@
 #include <iostream>
 #include <deque>
 
+
 class Sound
 {
 public:
-    ~Sound() {
-        for (auto &sound: soundInstances) {
-            sound.~Sound();
-        }
-    }
+    Sound() {}
+    ~Sound() {}
 
     bool load(std::string filename)
     {
@@ -25,24 +23,26 @@ public:
 
     void update()
     {
-        for (int i = 0; i < soundInstances.size(); i++) {
-            if (soundInstances[i].getStatus() == sf::Sound::Stopped) {
-                soundInstances.erase(soundInstances.begin() + i);
-                i--;
+        auto it = soundInstances.begin();
+
+        while (it != soundInstances.end()) {
+            if ((*it)->getStatus() == sf::Sound::Stopped) {
+                soundInstances.erase(it);
+                continue;
             }
+            it++;
         }
     }
 
     void play(float volume)
     {
-        sf::Sound sound = sf::Sound(soundBuffer);
-
-        sound.setVolume(volume);
-        soundInstances.push_back(sound);
-        soundInstances.back().play();
+        soundInstances.emplace_back(new sf::Sound(soundBuffer));
+        std::unique_ptr<sf::Sound> &sound = soundInstances.back();
+        sound->setVolume(volume);
+        sound->play();
     }
 
 private:
     sf::SoundBuffer soundBuffer;
-    std::deque<sf::Sound> soundInstances;
+    std::vector<std::unique_ptr<sf::Sound>> soundInstances;
 };
