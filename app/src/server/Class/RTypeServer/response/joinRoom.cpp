@@ -52,7 +52,6 @@ void RTypeServer::responseChangeUserStatus(const unsigned int client_id)
         buff.writeUInt(info.port);
         sendData(buff, players_id);
         boost::thread t(boost::bind(&Game::startGame, &*games.at(roomname)));
-        // games.at(roomname)->startGame();
         t.detach();
     }
 }
