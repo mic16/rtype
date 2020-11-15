@@ -43,4 +43,5 @@ void UDPClient::connect()
     client->getBuffer().writeInt(666);
     client->write(client->getBuffer());
     client->getBuffer().clear();
+    isPlaying = true;
 }
