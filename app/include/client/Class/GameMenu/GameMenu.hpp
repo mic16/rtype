@@ -62,6 +62,7 @@ class GameMenu : public IGameMenu {
         void tryChangeUserStatus();
         void tryStartGame();
         void disconnectRoom();
+        void tryQuit();
 
         const sceneName getScene();
         void setScene(const sceneName sc_name);
@@ -131,8 +132,6 @@ class GameMenu : public IGameMenu {
 
         Background background;
         Music music;
-
-        std::unique_ptr<std::thread> displayThread;
 
         ByteBuffer buffer;
         menuButton actualButton;

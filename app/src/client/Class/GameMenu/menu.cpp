@@ -7,6 +7,17 @@
 
 #include "client/Class/GameMenu/GameMenu.hpp"
 
+void GameMenu::tryQuit()
+{
+    buffer.clear();
+
+    buffer.writeUInt(sizeof(int));
+    buffer.writeInt(req::Type::Quit);
+
+    std::cout << "TryQuit: sending " << buffer.getSize() << " bytes." << std::endl;
+    client->sendData(buffer.flush(), buffer.getSize());
+}
+
 void GameMenu::initFixedMenuDrawables()
 {
     fixedDrawables.at(sceneName::MENU).push_back(std::make_unique<sf::Sprite>());

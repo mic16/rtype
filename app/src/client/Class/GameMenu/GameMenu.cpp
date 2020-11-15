@@ -51,8 +51,6 @@ music("app/assets/musics", 7)
     networkHandler.registerMessageHandler(new ClientPositionMessageHandler(synchronizer));
     networkHandler.registerMessageHandler(new ClientInstanciatePlayerMessageHandler(synchronizer));
 
-    displayThread = std::make_unique<std::thread>(&GameMenu::handleDisplay, this);
-
     movementSound.load("app/assets/sounds/robotsound.wav");
     laserSound.load("app/assets/sounds/lazer.wav");
     music.playMenu();
@@ -67,12 +65,12 @@ int GameMenu::run()
     try {
         client->connectTo(boost::asio::ip::tcp::endpoint(boost::asio::ip::address::from_string("127.0.0.1"), 3000));
         client->run();
+        handleDisplay();
+        client->join();
     } catch (std::exception &ec) {
         std::cout << ec.what() << std::endl;
         return (1);
     }
-    displayThread->join();
-    music.play();
     return (0);
 }
 
@@ -135,6 +133,7 @@ void GameMenu::handleDisplay()
     while (isOpen()) {
         deltaTime = clock.restart().asSeconds();
         handleEvents();
+        if (!window.isOpen()) continue;
         if (getScene() == sceneName::END) {
             draw();
         } else {

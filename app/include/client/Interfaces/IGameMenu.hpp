@@ -9,6 +9,9 @@
 #define IGAMEMENU_HPP_
 
 #include "SFML/Graphics.hpp"
+#include <boost/thread/thread.hpp>
+#include <boost/bind.hpp>
+
 #include "client/Class/GameEntities/GameEntities.hpp"
 #include "lib/Network/NetworkHandler.hpp"
 #include "client/Interfaces/IGame.hpp"
@@ -36,6 +39,7 @@ class IGameMenu : public IGame {
         virtual void tryLogIn() = 0;
         virtual void tryCreateRoom() = 0;
         virtual void tryJoinRoom() = 0;
+        virtual void tryQuit() = 0;
 
         virtual const sceneName getScene() = 0;
         virtual void setScene(const sceneName sc_name) = 0;
