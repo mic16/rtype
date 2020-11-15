@@ -42,5 +42,5 @@ void GameMenu::initModEndDrawables()
     dynamic_cast<sf::Text *>(modDrawables.at(sceneName::END)["score"].get())->setCharacterSize(20);
     dynamic_cast<sf::Text *>(modDrawables.at(sceneName::END)["score"].get())->setFillColor(sf::Color::Black);
     dynamic_cast<sf::Text *>(modDrawables.at(sceneName::END)["score"].get())->setStyle(sf::Text::Bold);
-    dynamic_cast<sf::Text *>(modDrawables.at(sceneName::END)["score"].get())->setPosition(sf::Vector2f(735, 475));
+    dynamic_cast<sf::Text *>(modDrawables.at(sceneName::END)["score"].get())->setPosition(sf::Vector2f(775, 475));
 }

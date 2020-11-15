@@ -99,7 +99,7 @@ class NetworkHandler {
             // } else {
                 broadcastBuffer.writeULong(id);
                 broadcastBuffer.writeCharBuffer(reinterpret_cast<const char *>(buffer.flush()), buffer.getSize());
-                // flushBroadcast();
+                flushBroadcast();
             // }
         }
 

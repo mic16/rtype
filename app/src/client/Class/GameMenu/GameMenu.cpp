@@ -94,9 +94,9 @@ void GameMenu::draw(float deltaTime)
     if (gameEntities.isGamePlaying()) {
         if (startCounting) {
             auto now = std::chrono::system_clock::now();
-            auto now_ms = std::chrono::time_point_cast<std::chrono::milliseconds>(now);
-            auto epoch = now_ms.time_since_epoch();
-            auto value = std::chrono::duration_cast<std::chrono::milliseconds>(epoch);
+            auto now_s = std::chrono::time_point_cast<std::chrono::seconds>(now);
+            auto epoch = now_s.time_since_epoch();
+            auto value = std::chrono::duration_cast<std::chrono::seconds>(epoch);
             beginingTime = value.count();
             startCounting = false;
         }
@@ -143,11 +143,12 @@ void GameMenu::handleDisplay()
             if (gameEntities.getEnd()) {
                 setScene(sceneName::END);
                 auto now = std::chrono::system_clock::now();
-                auto now_ms = std::chrono::time_point_cast<std::chrono::milliseconds>(now);
-                auto epoch = now_ms.time_since_epoch();
-                auto value = std::chrono::duration_cast<std::chrono::milliseconds>(epoch);
+                auto now_s = std::chrono::time_point_cast<std::chrono::seconds>(now);
+                auto epoch = now_s.time_since_epoch();
+                auto value = std::chrono::duration_cast<std::chrono::seconds>(epoch);
                 endingTime = value.count() - beginingTime;
-                setDrawableTextStr(getScene(), "score", std::to_string(static_cast<float>(endingTime) / 1000));
+                std::cout << value.count() << " - " << beginingTime << " = " << endingTime << std::endl;
+                setDrawableTextStr(getScene(), "score", std::to_string(endingTime));
             }
             if (getScene() == sceneName::GAME) {
                 draw(deltaTime);
