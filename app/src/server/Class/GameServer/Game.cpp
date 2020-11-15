@@ -98,7 +98,7 @@ void Game::init() {
                 double x = this->getMapWidth();
                 double y = this->getMapHeight()/crowd*i;
                 size_t id = this->getNextEntityID();
-    
+
                 if (spawnType == 0) {
                     enemyGenerator.instanciate(1,
                         Position{x, y},
@@ -305,13 +305,25 @@ void Game::init() {
                 projectileIterator.next();
 
                 EntityInfo *projectileEntityInfo = projectileIterator.getComponent<EntityInfo>(2);
+                EntityID *projectileID = projectileIterator.getComponent<EntityID>(3);
+                Position *projectilePosition = projectileIterator.getComponent<Position>(0);
+                Hitbox *projectileHitbox = projectileIterator.getComponent<Hitbox>(1);
+                ProjectileInfo *projectileInfo = projectileIterator.getComponent<ProjectileInfo>(4);
+
+                if (entityInfo->isEnemy && projectileEntityInfo->isEnemy) {
+                    if (entityPosition->x < projectilePosition->x + projectileHitbox->w &&
+                        entityPosition->x + entityHitbox->w > projectilePosition->x &&
+                        entityPosition->y < projectilePosition->y + projectileHitbox->h &&
+                        entityPosition->y + entityHitbox->h > projectilePosition->y)
+                    {
+                        this->getNetworkHandler().broadcast(DeathPacket(projectileID->id));
+                        projectileIterator.remove();
+                        continue;
+                    }
+                }
                 if ((!entityInfo->isEnemy && projectileEntityInfo->isEnemy) ||
                     (entityInfo->isEnemy && !projectileEntityInfo->isEnemy))
                 {
-                    Position *projectilePosition = projectileIterator.getComponent<Position>(0);
-                    Hitbox *projectileHitbox = projectileIterator.getComponent<Hitbox>(1);
-                    EntityID *projectileID = projectileIterator.getComponent<EntityID>(3);
-                    ProjectileInfo *projectileInfo = projectileIterator.getComponent<ProjectileInfo>(4);
 
                     if (entityPosition->x < projectilePosition->x + projectileHitbox->w &&
                         entityPosition->x + entityHitbox->w > projectilePosition->x &&
@@ -319,7 +331,7 @@ void Game::init() {
                         entityPosition->y + entityHitbox->h > projectilePosition->y)
                     {
                         entityStats->hp -= projectileInfo->damage;
-                        this->getNetworkHandler().broadcast(DamagePacket(entityID->id, projectileInfo->damage, entityStats->hp, entityStats->maxHP));
+                        // this->getNetworkHandler().broadcast(DamagePacket(entityID->id, projectileInfo->damage, entityStats->hp, entityStats->maxHP));
                         this->getNetworkHandler().broadcast(DeathPacket(projectileID->id)); // Kill projectile
                         projectileIterator.remove();
 
