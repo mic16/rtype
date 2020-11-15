@@ -27,6 +27,9 @@
 #include "shared/Structs/EntityHitboxs.hpp"
 #include "shared/Structs/EntityType.hpp"
 
+#define AVAILABLE_PORTS 8
+#define BEGIN_PORT 3333
+
 class Game : public Synchronizer {
     public:
         Game(const std::string &name);
@@ -52,10 +55,10 @@ class Game : public Synchronizer {
         const bool isGaming() const { return m_isGaming; }
 
         static unsigned int GenPortValue() {
-            static unsigned int port = 3333;
+            static unsigned int port = BEGIN_PORT;
             port += 1;
 
-            port = port == 3342 ? 3334 : port;
+            port = port == BEGIN_PORT + AVAILABLE_PORTS + 1 ? BEGIN_PORT + 1 : port;
             return port;
         };
 

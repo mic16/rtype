@@ -478,7 +478,7 @@ const server_info_t Game::setGameServer()
     server_info_t info;
     bool isReady = false;
 
-    for (int i = 0; i < 8; i++)
+    for (int i = 0; i < AVAILABLE_PORTS; i++)
         if (isReady = gameServer.configure(GenPortValue()))
             break;
     info.address = "127.0.0.1";
