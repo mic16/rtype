@@ -58,7 +58,6 @@ class Game : public Synchronizer {
             static unsigned int port = BEGIN_PORT;
             port += 1;
 
-            port = port == BEGIN_PORT + AVAILABLE_PORTS + 1 ? BEGIN_PORT + 1 : port;
             return port;
         };
 
