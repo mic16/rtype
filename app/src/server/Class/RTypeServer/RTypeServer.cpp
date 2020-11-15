@@ -7,12 +7,25 @@
 
 #include "server/Class/RTypeServer/RTypeServer.hpp"
 
-RTypeServer::RTypeServer() : TCPServer()
+RTypeServer::RTypeServer() : TCPServer(), gamesInProgress(32)
 {
+    for (int i = 0; i < 8; i++) {
+        pool.create_thread([this]() {
+            Game *value;
+            while (!this->done) {
+                while (this->gamesInProgress.pop(value)) {
+                    value->update();
+                    this->gamesInProgress.push(value);
+                }
+            }
+        });
+    }
 }
 
 RTypeServer::~RTypeServer()
 {
+    done = true;
+    pool.join_all();
 }
 
 void RTypeServer::work()

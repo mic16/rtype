@@ -399,12 +399,59 @@ void Game::compile() {
 }
 
 void Game::update() {
+    if (std::chrono::duration_cast<std::chrono::duration<double>>(std::chrono::high_resolution_clock::now() - start).count() < 1/40.0) {
+        return;
+    }
+    // networkHandler.open();
+    start = std::chrono::high_resolution_clock::now();
+    if (canLogin && getDoubleQueue().isReadOpen()) {
+        auto &vector = getDoubleQueue().getReadVector();
+        for (std::unique_ptr<IPacket> &packet : *vector) {
+            if (packet->getPacketID() == PlayerEnterRoomPacket::PacketID()) {
+                PlayerEnterRoomPacket *PERPacket = dynamic_cast<PlayerEnterRoomPacket *>(packet.get());
+
+                auto playerGenerator = ecs.getEntityGenerator("Player");
+                double x = 0;
+                double y = getMapHeight() / 2;
+                size_t id = getNextEntityID();
+                size_t type = 0;
+
+
+                playerGenerator.instanciate(1,
+                Position{x, y},
+                Velocity{0, 0, 400},
+                EntityID{id},
+                PlayerHitbox,
+                EntityInfo{false, false, EntityType::PLAYER1},
+                EntityStats{100, 100, 20});
+
+                networkHandler.broadcast(SpawnPacket(id, EntityType::PLAYER1, x, y, playerID));
+                networkHandler.setPlayerEntityID(PERPacket->getNetworkClient()->getId(), id);
+                networkHandler.send(*PERPacket->getNetworkClient(), InstanciatePlayerPacket(id));
+
+                playerID += 1;
+            }
+        }
+        getDoubleQueue().closeRead();
+    }
     auto now = std::chrono::high_resolution_clock::now();
     auto nanos = std::chrono::duration_cast<std::chrono::nanoseconds>(now - lastTime);
     double delta = nanos.count() / 1000000000.0;
 
     lastTime = now;
     ecs.update(delta);
+
+    networkHandler.flushBroadcast();
+    auto t2 = std::chrono::high_resolution_clock::now();
+    if (std::chrono::duration_cast<std::chrono::duration<double>>(t2 - networkHandler.getLastTRequestStatus()).count() > 0.1) {
+        networkHandler.broadcast(PingPacket());
+        networkHandler.getLastTRequestStatus() = std::chrono::high_resolution_clock::now();
+    }
+    if (std::chrono::duration_cast<std::chrono::duration<double>>(t2 - t1).count() > 10) {
+        networkHandler.checkClientsConnection();
+        t1 = std::chrono::high_resolution_clock::now();
+        if (canLogin) canLogin = false;
+    }
 }
 
 const server_info_t Game::setGameServer()
@@ -419,66 +466,15 @@ const server_info_t Game::setGameServer()
 
 void Game::startGame()
 {
-    static unsigned short playerID = 1;
-    bool canLogin = true;
     gameServer.run();
     lastTime = std::chrono::high_resolution_clock::now();
     init();
     compile();
-    auto start = std::chrono::high_resolution_clock::now();
-    auto t1 = std::chrono::high_resolution_clock::now();
+    start = std::chrono::high_resolution_clock::now();
+    t1 = std::chrono::high_resolution_clock::now();
     networkHandler.getLastTRequestStatus() = std::chrono::high_resolution_clock::now();
-    while (true) {
-        // networkHandler.close();
-        if (std::chrono::duration_cast<std::chrono::duration<double>>(std::chrono::high_resolution_clock::now() - start).count() < 1/40.0) {
-            continue;
-        }
-        // networkHandler.open();
-        start = std::chrono::high_resolution_clock::now();
-        if (canLogin && getDoubleQueue().isReadOpen()) {
-            auto &vector = getDoubleQueue().getReadVector();
-            for (std::unique_ptr<IPacket> &packet : *vector) {
-                if (packet->getPacketID() == PlayerEnterRoomPacket::PacketID()) {
-                    PlayerEnterRoomPacket *PERPacket = dynamic_cast<PlayerEnterRoomPacket *>(packet.get());
 
-                    auto playerGenerator = ecs.getEntityGenerator("Player");
-                    double x = 0;
-                    double y = getMapHeight() / 2;
-                    size_t id = getNextEntityID();
-                    size_t type = 0;
-
-
-                    playerGenerator.instanciate(1,
-                    Position{x, y},
-                    Velocity{0, 0, 400},
-                    EntityID{id},
-                    PlayerHitbox,
-                    EntityInfo{false, false, EntityType::PLAYER1},
-                    EntityStats{100, 100, 20});
-
-                    networkHandler.broadcast(SpawnPacket(id, EntityType::PLAYER1, x, y, playerID));
-                    networkHandler.setPlayerEntityID(PERPacket->getNetworkClient()->getId(), id);
-                    networkHandler.send(*PERPacket->getNetworkClient(), InstanciatePlayerPacket(id));
-
-                    playerID += 1;
-                }
-            }
-            getDoubleQueue().closeRead();
-        }
-        update();
-        networkHandler.flushBroadcast();
-        auto t2 = std::chrono::high_resolution_clock::now();
-        if (std::chrono::duration_cast<std::chrono::duration<double>>(t2 - networkHandler.getLastTRequestStatus()).count() > 0.1) {
-            networkHandler.broadcast(PingPacket());
-            networkHandler.getLastTRequestStatus() = std::chrono::high_resolution_clock::now();
-        }
-        if (std::chrono::duration_cast<std::chrono::duration<double>>(t2 - t1).count() > 10) {
-            networkHandler.checkClientsConnection();
-            t1 = std::chrono::high_resolution_clock::now();
-            if (canLogin) canLogin = false;
-        }
-    }
-    gameServer.join();
+    gameServer.detach();
 }
 
 Ladder &Game::getLobby()

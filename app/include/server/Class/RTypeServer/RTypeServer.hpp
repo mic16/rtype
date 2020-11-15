@@ -11,6 +11,10 @@
 #include "lib/Server/TCPServer/TCPServer.hpp"
 #include "server/Class/TCPClient/TCPClient.hpp"
 #include "server/Class/GameServer/Game.hpp"
+#include <boost/thread/thread.hpp>
+#include <boost/lockfree/queue.hpp>
+#include <boost/atomic.hpp>
+#include <iostream>
 
 class RTypeServer : public TCPServer {
     public:
@@ -43,9 +47,14 @@ class RTypeServer : public TCPServer {
         void responseDisconnectRoom(const unsigned int client_id);
         void responseStartGame(const std::string &roomname);
         void quitClient(const unsigned int client_id);
+
+
+        boost::lockfree::queue<Game *> gamesInProgress;
+        boost::atomic<bool> done = false;
     private:
         std::map<unsigned int, std::unique_ptr<TCPClient>> clients;
         std::map<std::string, std::unique_ptr<Game>> games;
+        boost::thread_group pool;
 };
 
 #endif /* !RTYPESERVER_HPP_ */
