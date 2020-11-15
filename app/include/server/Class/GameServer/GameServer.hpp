@@ -25,6 +25,10 @@ class GameServer : public UDPServer {
         GameServer(Synchronizer &synchronizer, NetworkHandler &netwHandler);
         ~GameServer();
 
+        void close() {
+            ioService.stop();
+        }
+
         void work() override;
 
         bool isClientConnected(const unsigned int client_id);

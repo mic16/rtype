@@ -29,7 +29,7 @@
 
 class Game : public Synchronizer {
     public:
-        Game();
+        Game(const std::string &name);
         ~Game();
 
         void init();
@@ -56,7 +56,14 @@ class Game : public Synchronizer {
             port += 1;
             return port;
         };
+
+        void close() {
+            gameServer.close();
+        }
+
+        const std::string &getRoomName() const { return roomname; }
     private:
+        std::string roomname;
         std::chrono::high_resolution_clock::time_point lastTime;
         std::chrono::high_resolution_clock::time_point lastRequestStatus;
         ECS ecs;

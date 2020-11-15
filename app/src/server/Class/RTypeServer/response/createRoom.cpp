@@ -23,7 +23,7 @@ void RTypeServer::responseCreateRoom(const unsigned int client_id)
     }
     std::cout << "CreateRoom success." << std::endl;
     clients[client_id]->getBuffer().writeBool(true);
-    games.insert(std::pair<std::string, std::unique_ptr<Game>>(roomname, std::make_unique<Game>()));
+    games.insert(std::pair<std::string, std::unique_ptr<Game>>(roomname, std::make_unique<Game>(roomname)));
     games.at(roomname)->getLobby().join(client_id);
     sendData(client_id);
     responseListPlayersInRoom(roomname);

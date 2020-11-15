@@ -17,6 +17,9 @@ RTypeServer::RTypeServer() : TCPServer(), gamesInProgress(32)
                     value->update();
                     if (value->isGaming()) {
                         this->gamesInProgress.push(value);
+                    } else {
+                        value->close();
+                        this->getGames().erase(value->getRoomName());
                     }
                 }
             }

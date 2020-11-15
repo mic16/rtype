@@ -33,7 +33,7 @@ class RTypeServer : public TCPServer {
         bool sendData(const ByteBuffer &buff, const std::vector<unsigned int> &clients_id);
 
         const std::map<unsigned int, std::unique_ptr<TCPClient>> &getClients() const;
-
+        std::map<std::string, std::unique_ptr<Game>> &getGames() { return games; }
         bool handleConnection();
         bool handleClient(const unsigned int client_id);
 

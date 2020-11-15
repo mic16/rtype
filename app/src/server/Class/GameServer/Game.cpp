@@ -18,7 +18,8 @@
 
 #include "shared/Packet/PlayerEnterRoomPacket.hpp"
 
-Game::Game():
+Game::Game(const std::string &name):
+    roomname(name),
     Synchronizer(),
     lobby(Ladder::genId()),
     gameServer(*this, networkHandler)
@@ -36,6 +37,8 @@ Game::Game():
 
 Game::~Game()
 {
+    gameServer.join();
+    std::cout << "CLOSED SERVER" << std::endl;
 }
 
 void Game::init() {
@@ -489,8 +492,6 @@ void Game::startGame()
     start = std::chrono::high_resolution_clock::now();
     t1 = std::chrono::high_resolution_clock::now();
     networkHandler.getLastTRequestStatus() = std::chrono::high_resolution_clock::now();
-
-    gameServer.detach();
 }
 
 Ladder &Game::getLobby()
