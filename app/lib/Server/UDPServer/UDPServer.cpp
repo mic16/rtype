@@ -16,6 +16,20 @@ UDPServer::~UDPServer(void)
     if (acceptor->is_open()) acceptor->close();
 }
 
+bool UDPServer::configure(const std::string &addr, const unsigned int port)
+{
+    if (!std::regex_match(addr, std::regex("^([0-9]{1,3}(\\.|$)){4}")))
+        throw EConnection("Address has invalid pattern. Please test with 127.0.0.1");
+    acceptor = std::make_shared<boost::asio::ip::udp::socket>(
+        ioService,
+        boost::asio::ip::udp::endpoint(boost::asio::ip::address::from_string(addr), port)
+    );
+
+    if (!acceptor->is_open()) { return (false); }
+    this->port = acceptor->local_endpoint().port();
+    return (true);
+}
+
 bool UDPServer::configure(const unsigned int port)
 {
     acceptor = std::make_shared<boost::asio::ip::udp::socket>(

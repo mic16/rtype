@@ -60,10 +60,13 @@ GameMenu::~GameMenu()
 {
 }
 
-int GameMenu::run()
+int GameMenu::run(const std::string &p_addr)
 {
     try {
-        client->connectTo(boost::asio::ip::tcp::endpoint(boost::asio::ip::address::from_string("127.0.0.1"), 4000));
+        if (!std::regex_match(p_addr, std::regex("^([0-9]{1,3}(\\.|$)){4}")))
+            throw EConnection("Address has invalid pattern. Please test with 127.0.0.1");
+        this->addr = p_addr;
+        client->connectTo(boost::asio::ip::tcp::endpoint(boost::asio::ip::address::from_string(p_addr), 4000));
         client->run();
         handleDisplay();
         client->join();
