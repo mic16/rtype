@@ -36,22 +36,22 @@ void GameMenu::handleKeyPressed()
             networkHandler.broadcast(FirePacket(playerId, true));
             laserSound.play(10.0f);
         }
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Z)) {
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Z) || (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))) {
             dir.y += -1;
             isDirectionMaintained[GameEntities::UP] = true;
             movementSound.play(5.0f);
         }
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Q)) {
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Q) || (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))) {
             dir.x += -1;
             isDirectionMaintained[GameEntities::LEFT] = true;
             movementSound.play(5.0f);
         }
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)) {
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::S) || (sf::Keyboard::isKeyPressed(sf::Keyboard::Down))) {
             dir.y += 1;
             isDirectionMaintained[GameEntities::DOWN] = true;
             movementSound.play(5.0f);
         }
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)) {
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::D) || (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))) {
             dir.x += 1;
             isDirectionMaintained[GameEntities::RIGHT] = true;
             movementSound.play(5.0f);
@@ -91,22 +91,22 @@ void GameMenu::handleKeyReleased()
         sf::Vector2i dir(0, 0);
         if (!sf::Keyboard::isKeyPressed(sf::Keyboard::Space))
             networkHandler.broadcast(FirePacket(playerId, false));
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Z)) {
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Z) || (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))) {
             dir.y += -1;
         } else {
             isDirectionMaintained[GameEntities::UP] = false;
         }
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Q)) {
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Q) || (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))) {
             dir.x += -1;
         } else {
             isDirectionMaintained[GameEntities::LEFT] = false;
         }
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)) {
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::S) || (sf::Keyboard::isKeyPressed(sf::Keyboard::Down))) {
             dir.y += 1;
         } else {
             isDirectionMaintained[GameEntities::DOWN] = false;
         }
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)) {
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::D) || (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))) {
             dir.x += 1;
         } else {
             isDirectionMaintained[GameEntities::RIGHT] = false;
