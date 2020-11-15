@@ -47,15 +47,15 @@ void GameMenu::initModGameDrawables()
     spriteManager.pushSprite(EntityType::PLAYER1, player1Sprite);
 
     sf::Sprite *player2Sprite = new sf::Sprite();
-    player1Sprite->setTexture(*loadedTextures["players"]);
+    player2Sprite->setTexture(*loadedTextures["players"]);
     spriteManager.pushSprite(EntityType::PLAYER2, player2Sprite);
 
     sf::Sprite *player3Sprite = new sf::Sprite();
-    player1Sprite->setTexture(*loadedTextures["players"]);
+    player3Sprite->setTexture(*loadedTextures["players"]);
     spriteManager.pushSprite(EntityType::PLAYER3, player3Sprite);
 
     sf::Sprite *player4Sprite = new sf::Sprite();
-    player1Sprite->setTexture(*loadedTextures["players"]);
+    player4Sprite->setTexture(*loadedTextures["players"]);
     spriteManager.pushSprite(EntityType::PLAYER4, player4Sprite);
 
     sf::Sprite *wallSprite = new sf::Sprite();
@@ -91,7 +91,8 @@ void GameMenu::initModGameDrawables()
     spriteManager.pushSprite(EntityType::PROJECTILE1, projectile1Sprite);
 
     sf::Sprite *projectile2Sprite = new sf::Sprite();
-    projectile2Sprite->setTexture(*loadedTextures["projectile2"]);
+    projectile2Sprite->setTexture(*loadedTextures["projectile1"]);
+    projectile2Sprite->setColor(sf::Color::Red);
     spriteManager.pushSprite(EntityType::PROJECTILE2, projectile2Sprite);
 
     sf::Sprite *projectile3Sprite = new sf::Sprite();

@@ -109,7 +109,7 @@ void GameEntities::init()
                     EntityID *entityID = entity.getComponent<EntityID>(2);
 
                     if (entityID->id == this->getGameMenu()->getPlayerID()) {
-                        animation->currentImage.y = row;
+                        animation->currentImage.y = animation->currentImage.y;
                         animation->totalTime += delta;
                         if (animation->totalTime >= animation->switchTime) {
                             animation->totalTime -= animation->switchTime;

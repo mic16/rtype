@@ -70,7 +70,6 @@ class GameEntities {
         std::vector<Drawable> resources;
         ECS ecs;
         bool isDirectionMaintained[4];
-        int row = 0;
         bool gamePlaying = false;
         Synchronizer &synchronizer;
         EntitySpriteManager &spriteManager;
