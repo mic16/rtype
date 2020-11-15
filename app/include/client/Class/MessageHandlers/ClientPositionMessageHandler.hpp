@@ -26,27 +26,13 @@ class ClientPositionMessageHandler : public AMessageHandler<PositionPacket> {
             }
             auto &packetData = writeMap->at(packet.getEntityID());
 
-            packetData.x = packet.getX();
-            packetData.y = packet.getY();
-            packetData.moveChanged = true;
-            packetData.entityType = packet.getEntityType();
-
-            // if (readMap->find(entityID->id) == readMap->end()) {
-            //     if (spawnpacket->isPlayer()) {
-            //         playerGenerator.instanciate(1,
-            //         Position{spawnpacket->getX(), spawnpacket->getY()},
-            //         EntityID{spawnpacket->getEntityID()},
-            //         animationManager.getAnimation(spawnpacket->getEntityType()),
-            //         Drawable{true, spriteManager.getSprite(spawnpacket->getEntityType())});
-            //     } else {
-            //         entityGenerator.instanciate(1,
-            //         Position{spawnpacket->getX(), spawnpacket->getY()},
-            //         EntityID{spawnpacket->getEntityID()},
-            //         animationManager.getAnimation(spawnpacket->getEntityType()),
-            //         Drawable{true, spriteManager.getSprite(spawnpacket->getEntityType())}
-            //         );
-            //     }
-            // }
+            if (packetData.lastPosUpdate < packet.getTime()) {
+                packetData.x = packet.getX();
+                packetData.y = packet.getY();
+                packetData.moveChanged = true;
+                packetData.entityType = packet.getEntityType();
+                packetData.lastPosUpdate = packet.getTime();
+            }
 
             synchronizer.update();
         }

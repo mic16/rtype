@@ -19,7 +19,6 @@ class ServerMoveMessageHandler : public AMessageHandler<MovePacket> {
         ~ServerMoveMessageHandler() {}
 
         void onMessage(NetworkHandler &handler, INetworkClient &client, MovePacket &packet) {
-            std::cout << packet.getDirectionX() << " " << packet.getDirectionY() << std::endl;
             auto &writeMap = synchronizer.getDoubleMap().getWriteMap();
 
             if (writeMap->find(packet.getEntityID()) == writeMap->end()) {
