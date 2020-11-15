@@ -113,9 +113,9 @@ void Game::init() {
                     this->getNetworkHandler().broadcast(SpawnPacket(id, EntityType::ENEMY1, x, y, 0));
                 }
             } else if (spawnType == 1) {
-                for (int i = 0; i < 3; i++) {
+                for (int i = 0; i < 5; i++) {
                     double x = this->getMapWidth();
-                    double y = this->getMapHeight()/3.0*i;
+                    double y = this->getMapHeight()/4.0*i+100;
                     size_t id = this->getNextEntityID();
 
                     enemyGenerator.instanciate(1,
@@ -188,9 +188,9 @@ void Game::init() {
                     velocity->dirY -= 0.1;
                 else
                     velocity->dirY += 0.1;
-                if (velocity->dirY == -1)
+                if (velocity->dirY < -1)
                     velocity->directionUp = false;
-                else if (velocity->dirY == 1)
+                else if (velocity->dirY > 1)
                     velocity->directionUp = true;
             }
 
