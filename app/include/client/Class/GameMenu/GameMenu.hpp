@@ -148,6 +148,8 @@ class GameMenu : public IGameMenu {
         Sound laserSound;
         long beginingTime;
         long endingTime;
+
+        bool startCounting = true;
 };
 
 static const std::string menuButtons[] = {

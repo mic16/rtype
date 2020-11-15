@@ -21,6 +21,7 @@ struct Velocity {
     double dirX;
     double dirY;
     double speed;
+    bool directionUp;
 };
 
 struct EntityStats {
