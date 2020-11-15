@@ -48,6 +48,9 @@ class Game : public Synchronizer {
         static double getMapHeight() {return 800; }
         size_t getNextEntityID();
 
+        void stopRunning() { m_isGaming = false; }
+        const bool isGaming() const { return m_isGaming; }
+
         static unsigned int GenPortValue() {
             static unsigned int port = 3333;
             port += 1;
@@ -60,6 +63,7 @@ class Game : public Synchronizer {
         NetworkHandler networkHandler = {512};
         Ladder lobby;
         GameServer gameServer;
+        bool m_isGaming = true;
 
         unsigned short playerID = 1;
         size_t entityId = 0;

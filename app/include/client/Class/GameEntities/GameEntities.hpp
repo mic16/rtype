@@ -61,7 +61,7 @@ class GameEntities {
 
         Sound &getExplosionSound() { return (explosionSound); }
 
-        bool getEnd() { return end; }
+        bool getEnd() { return synchronizer.isFinished(); }
 
     protected:
     private:
@@ -78,7 +78,6 @@ class GameEntities {
 
         bool dead = false;
         Sound explosionSound;
-        bool end = false;
 };
 
 #endif /* !GAMEENTITIES_HPP_ */

@@ -224,8 +224,6 @@ void GameEntities::update(bool *isDirectionMaintained, float deltaTime)
             } else if (packet->getPacketID() == InstanciatePlayerPacket::PacketID()) {
                 InstanciatePlayerPacket *ipacket = dynamic_cast<InstanciatePlayerPacket *>(packet.get());
                 gameMenu->setPlayerID(ipacket->getEntityID());
-            } else if (packet->getPacketID() == EndGamePacket::PacketID()) {
-                end = true;
             }
         }
     }

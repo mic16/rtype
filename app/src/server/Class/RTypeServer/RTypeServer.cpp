@@ -15,7 +15,9 @@ RTypeServer::RTypeServer() : TCPServer(), gamesInProgress(32)
             while (!this->done) {
                 while (this->gamesInProgress.pop(value)) {
                     value->update();
-                    this->gamesInProgress.push(value);
+                    if (value->isGaming()) {
+                        this->gamesInProgress.push(value);
+                    }
                 }
             }
         });

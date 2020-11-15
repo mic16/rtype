@@ -328,7 +328,9 @@ void Game::init() {
                             if (this->getNetworkHandler().isPlayer(entityID->id)) {
                                 this->getNetworkHandler().stopPlay(entityID->id);
                                 if (!this->getNetworkHandler().havePlayerPlaying()) {
+                                    std::cout << "No more players" << std::endl;
                                     this->getNetworkHandler().broadcast(EndGamePacket());
+                                    this->stopRunning();
                                 }
                             }
                             entity.remove();
@@ -378,7 +380,9 @@ void Game::init() {
                             if (this->getNetworkHandler().isPlayer(playerID->id)) {
                                 this->getNetworkHandler().stopPlay(playerID->id);
                                 if (!this->getNetworkHandler().havePlayerPlaying()) {
+                                    std::cout << "No more players" << std::endl;
                                     this->getNetworkHandler().broadcast(EndGamePacket());
+                                    this->stopRunning();
                                 }
                             }
                             break;

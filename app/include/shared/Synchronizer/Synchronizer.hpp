@@ -15,6 +15,8 @@
 #include "lib/Network/IPacket.hpp"
 #include "PacketData.hpp"
 
+#include <atomic>
+
 class Synchronizer {
     public:
         Synchronizer() {}
@@ -33,7 +35,16 @@ class Synchronizer {
             doubleMap.update();
         }
 
+        void finish() {
+            end.store(true, std::memory_order::memory_order_relaxed);
+        }
+
+        bool isFinished() const {
+            return end.load(std::memory_order::memory_order_relaxed);
+        }
+
     protected:
+        std::atomic<bool> end = false;
         DoubleHashmap<size_t, PacketData> doubleMap;
         DoubleQueue<std::unique_ptr<IPacket>> doubleQueue;
     private:

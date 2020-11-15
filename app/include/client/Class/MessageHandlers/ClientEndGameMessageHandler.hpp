@@ -19,8 +19,7 @@ class ClientEndGameMessageHandler : public AMessageHandler<EndGamePacket> {
         ~ClientEndGameMessageHandler() {}
 
         void onMessage(NetworkHandler &handler, INetworkClient &client, EndGamePacket &packet) {
-            auto &vector = synchronizer.getDoubleQueue().getWriteVector();
-            vector->emplace_back(new EndGamePacket(packet));
+            synchronizer.finish();
             synchronizer.update();
         }
 
