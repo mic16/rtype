@@ -44,6 +44,7 @@ class GameMenu : public IGameMenu {
 
         void draw();
         void draw(float deltaTime);
+        void drawEnd();
         bool isOpen();
 
         bool isNameValid(const std::string &name);
@@ -83,6 +84,8 @@ class GameMenu : public IGameMenu {
             return playerId;
         }
 
+        void updateSound();
+
     private:
         void initDrawables();
 
@@ -103,6 +106,9 @@ class GameMenu : public IGameMenu {
 
         void initFixedGameDrawables();
         void initModGameDrawables();
+
+        void initFixedEndDrawables();
+        void initModEndDrawables();
 
         Synchronizer synchronizer;
         NetworkHandler networkHandler = {1024};

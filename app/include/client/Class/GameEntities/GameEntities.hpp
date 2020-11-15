@@ -61,6 +61,8 @@ class GameEntities {
 
         Sound &getExplosionSound() { return (explosionSound); }
 
+        bool getEnd() { return end; }
+
     protected:
     private:
         IGame *gameMenu;
@@ -76,6 +78,7 @@ class GameEntities {
 
         bool dead = false;
         Sound explosionSound;
+        bool end = false;
 };
 
 #endif /* !GAMEENTITIES_HPP_ */

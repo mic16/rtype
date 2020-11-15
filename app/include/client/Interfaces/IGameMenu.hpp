@@ -13,7 +13,7 @@
 #include "lib/Network/NetworkHandler.hpp"
 #include "client/Interfaces/IGame.hpp"
 
-enum sceneName { LOGIN, MENU, CREATE, JOIN, ROOM, GAME };
+enum sceneName { LOGIN, MENU, CREATE, JOIN, ROOM, GAME, END };
 
 enum menuButton { B_CREATE, B_JOIN };
 

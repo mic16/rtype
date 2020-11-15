@@ -109,6 +109,19 @@ bool GameMenu::isOpen()
     return (window.isOpen());
 }
 
+void GameMenu::updateSound()
+{
+    laserSound.update();
+    movementSound.update();
+    this->gameEntities.getExplosionSound().update();
+}
+
+void GameMenu::drawEnd()
+{
+    window.clear(sf::Color::White);
+    window.display();
+}
+
 void GameMenu::handleDisplay()
 {
     float deltaTime = 0.0f;
@@ -117,13 +130,18 @@ void GameMenu::handleDisplay()
     while (isOpen()) {
         deltaTime = clock.restart().asSeconds();
         handleEvents();
-        laserSound.update();
-        movementSound.update();
-        this->gameEntities.getExplosionSound().update();
-        if (getScene() == sceneName::GAME) {
-            draw(deltaTime);
-        } else {
+        if (getScene() == sceneName::END) {
             draw();
+        } else {
+            updateSound();
+            if (gameEntities.getEnd()) {
+                setScene(sceneName::END);
+            }
+            if (getScene() == sceneName::GAME) {
+                draw(deltaTime);
+            } else {
+                draw();
+            }
         }
     }
 }
