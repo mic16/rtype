@@ -46,7 +46,6 @@ void TCPClient::handleData()
     [this](const boost::system::error_code& error, std::size_t bytes_transferred)
     {
         if (!error) {
-            std::cout << "Data received : len : " << bytes_transferred << std::endl;
             buffer.clear();
             buffer.append(m_packet, bytes_transferred);
             bool isMoreData = true;
@@ -54,11 +53,9 @@ void TCPClient::handleData()
             while (isMoreData) {
                 unsigned int expectedDataLen = buffer.readUInt(&err);
                 if (!err && expectedDataLen <= bytes_transferred - 4) {
-                    std::cout << "Data size is correct sized." << std::endl;
                     this->handleResponses();
                     bytes_transferred -= 4 - expectedDataLen;
                 } else {
-                    std::cout << "No More data to handle." << std::endl;
                     isMoreData = false;
                     break;
                 }
@@ -75,7 +72,6 @@ void TCPClient::sendData(const unsigned char *buff, const size_t buffLen)
     socket.async_write_some(boost::asio::buffer(buff, buffLen),
     [this](const boost::system::error_code &ec, std::size_t bytes_transferred) {
         if (!ec) {
-            std::cout << "Data is wrote : " << bytes_transferred << std::endl;
         } else {
             std::cout << "Data isn't sent" << std::endl;
         }

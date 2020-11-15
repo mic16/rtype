@@ -78,11 +78,11 @@ class GameMenu : public IGameMenu {
         }
 
         void setPlayerID(size_t id) {
-            playerId = id;
+            synchronizer.setPlayerId(id);
         }
 
         size_t getPlayerID() {
-            return playerId;
+            return synchronizer.getPlayerId();
         }
 
         const std::string &getAddress() const {

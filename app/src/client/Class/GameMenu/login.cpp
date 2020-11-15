@@ -15,7 +15,6 @@ void GameMenu::tryLogIn()
     buffer.writeInt(req::Type::LogIn);
     buffer.writeCharBuffer(username.c_str());
 
-    std::cout << "TryLogIn: sending " << buffer.getSize() << " bytes." << std::endl;
     client->sendData(buffer.flush(), buffer.getSize());
 }
 

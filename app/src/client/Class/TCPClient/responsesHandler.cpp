@@ -11,23 +11,18 @@ void TCPClient::handleResponses()
 {
     switch (static_cast<res::Type>(buffer.readInt(nullptr))) {
         case res::Type::LogIn:
-            std::cout << "Handle LogIn response." << std::endl;
             handleLogIn();
             break;
         case res::Type::CreateRoom:
-            std::cout << "Handle CreateRoom response." << std::endl;
             handleCreateRoom();
             break;
         case res::Type::JoinRoom:
-            std::cout << "Handle JoinRoom response." << std::endl;
             handleJoinRoom();
             break;
         case res::Type::listPlayersInRoom:
-            std::cout << "Handler listing players response." << std::endl;
             handleListPlayersInRoom();
             break;
         case res::Type::SendInfoServer:
-            std::cout << "Handler SendInfoServer response." << std::endl;
             handleInfoServer();
             break;
         default:

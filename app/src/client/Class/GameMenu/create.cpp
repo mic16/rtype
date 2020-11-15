@@ -15,7 +15,6 @@ void GameMenu::tryCreateRoom()
     buffer.writeInt(req::Type::CreateRoom);
     buffer.writeCharBuffer(roomname.c_str());
 
-    std::cout << "TryCreateRoom: sending " << buffer.getSize() << " bytes." << std::endl;
     client->sendData(buffer.flush(), buffer.getSize());
 }
 

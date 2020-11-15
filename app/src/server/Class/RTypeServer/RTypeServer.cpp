@@ -74,11 +74,9 @@ bool RTypeServer::handleClient(const unsigned int client_id)
     clients[client_id]->m_socket.async_read_some(boost::asio::buffer(clients[client_id]->getPacket(), 1024),
     [this, client_id](const boost::system::error_code &errc, std::size_t bytes_transferred) {
         if (!errc) {
-            std::cout << "Server just received " << bytes_transferred << " bytes." << std::endl;
             clients[client_id]->getBuffer().clear();
             clients[client_id]->getBuffer().append(clients[client_id]->getPacket(), bytes_transferred);
             unsigned int expectedDataLen = clients[client_id]->getBuffer().readUInt(nullptr);
-            std::cout << expectedDataLen << std::endl;
             if (expectedDataLen == bytes_transferred - 4) {
                 handleRequests(client_id);
             } else {
@@ -103,7 +101,6 @@ bool RTypeServer::sendData(const unsigned int client_id)
     [this, client_id](const boost::system::error_code &ec, std::size_t bytes_transferred)
     {
         if (!ec) {
-            std::cout << "Server send " << bytes_transferred << " bytes to " << clients[client_id]->getUsername() << '.' << std::endl;
         } else {
             std::cout << "Data failed to be sent." << std::endl;
         }
@@ -120,7 +117,6 @@ bool RTypeServer::sendData(const ByteBuffer &buff, const std::vector<unsigned in
         [this, clients_id, i](const boost::system::error_code &ec, std::size_t bytes_transferred)
         {
             if (!ec) {
-                std::cout << "Server send " << bytes_transferred << " bytes to " << clients[clients_id[i]]->getUsername() << '.' << std::endl;
             } else {
                 std::cout << "Data failed to be sent." << std::endl;
             }

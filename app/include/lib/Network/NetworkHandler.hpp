@@ -175,8 +175,12 @@ class NetworkHandler {
         }
 
         void setPlayerEntityID(unsigned int playerID, unsigned int id) {
-            relatedEntityID.insert(std::pair<unsigned int, unsigned int>(playerID, id));
-            playerStatus.insert(std::pair<unsigned int, bool>(playerID, true));
+            relatedEntityID[playerID] = id;
+            playerStatus[playerID] = true;
+        }
+
+        bool isEntityRelExist(unsigned int clientid) {
+            return relatedEntityID.find(clientid) != relatedEntityID.end();
         }
 
         bool isPlayer(unsigned int id) {
@@ -207,7 +211,7 @@ class NetworkHandler {
 
         void checkClientsConnection() {
             for (auto it = clients.begin(); it != clients.end();) {
-                if (std::chrono::duration_cast<std::chrono::duration<double>>(std::chrono::high_resolution_clock::now() - lastClientRes[(*it)->getId()]).count() >= 25) {
+                if (std::chrono::duration_cast<std::chrono::duration<double>>(std::chrono::high_resolution_clock::now() - lastClientRes[(*it)->getId()]).count() >= 10) {
                     broadcast(DeathPacket(relatedEntityID[(*it)->getId()]));
                     lastClientRes.erase((*it)->getId());
                     relatedEntityID.erase((*it)->getId());
@@ -231,7 +235,9 @@ class NetworkHandler {
         }
 
         size_t getRelatedEntityFromNetwork(INetworkClient &client) {
-            return relatedEntityID[client.getId()];
+            if (isEntityRelExist(client.getId()))
+                return relatedEntityID[client.getId()];
+            return INT64_MAX;
         }
 
     protected:

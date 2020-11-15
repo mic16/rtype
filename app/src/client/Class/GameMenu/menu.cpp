@@ -15,7 +15,6 @@ void GameMenu::tryQuit()
     buffer.writeInt(req::Type::Quit);
     client->closeClientServer();
 
-    std::cout << "TryQuit: sending " << buffer.getSize() << " bytes." << std::endl;
     client->sendData(buffer.flush(), buffer.getSize());
 }
 

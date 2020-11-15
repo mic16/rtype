@@ -20,6 +20,10 @@ class ClientPingMessageHandler : public AMessageHandler<PingPacket> {
 
         void onMessage(NetworkHandler &handler, INetworkClient &client, PingPacket &packet) {
             handler.broadcast(packet);
+            if (packet.isExists()) {
+                synchronizer.setPlayerId(packet.getEntityID());
+            }
+
             synchronizer.update();
         }
 

@@ -11,27 +11,21 @@ void RTypeServer::handleRequests(const unsigned int client_id)
 {
     switch (static_cast<req::Type>(clients[client_id]->getBuffer().readInt(nullptr))) {
         case req::Type::LogIn:
-            std::cout << "LogIn request." << std::endl;
             responseLogin(client_id);
             break;
         case req::Type::CreateRoom:
-            std::cout << "CreateRoom request." << std::endl;
             responseCreateRoom(client_id);
             break;
         case req::Type::JoinRoom:
-            std::cout << "JoinRoom request." << std::endl;
             responseJoinRoom(client_id);
             break;
         case req::Type::ChangeUserStatus:
-            std::cout << "ChangeUserStatus request." << std::endl;
             responseChangeUserStatus(client_id);
             break;
         case req::Type::DisconnectRoom:
-            std::cout << "DisconnectRoom request." << std::endl;
             responseDisconnectRoom(client_id);
             break;
         case req::Type::Quit:
-            std::cout << "Quit request." << std::endl;
             quitClient(client_id);
             break;
         default:

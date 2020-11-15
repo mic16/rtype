@@ -43,8 +43,25 @@ class Synchronizer {
             return end.load(std::memory_order::memory_order_relaxed);
         }
 
+        void setPlayerId(size_t newId) {
+            if (!isPlayerIdSet()) {
+                m_isPlayerIdSet.store(true, std::memory_order::memory_order_relaxed);
+                id.store(newId, std::memory_order::memory_order_relaxed);
+            }
+        }
+
+        size_t getPlayerId() const {
+            return id.load(std::memory_order::memory_order_relaxed);
+        }
+
+        bool isPlayerIdSet() const {
+            return m_isPlayerIdSet.load(std::memory_order::memory_order_relaxed);
+        }
+
     protected:
         std::atomic<bool> end = false;
+        std::atomic<size_t> id = 0;
+        std::atomic<bool> m_isPlayerIdSet = false;
         DoubleHashmap<size_t, PacketData> doubleMap;
         DoubleQueue<std::unique_ptr<IPacket>> doubleQueue;
     private:

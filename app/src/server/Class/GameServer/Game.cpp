@@ -343,7 +343,6 @@ void Game::init() {
                             if (this->getNetworkHandler().isPlayer(entityID->id)) {
                                 this->getNetworkHandler().stopPlay(entityID->id);
                                 if (!this->getNetworkHandler().havePlayerPlaying()) {
-                                    std::cout << "No more players" << std::endl;
                                     this->getNetworkHandler().broadcast(EndGamePacket());
                                     this->stopRunning();
                                 }
@@ -395,7 +394,6 @@ void Game::init() {
                             if (this->getNetworkHandler().isPlayer(playerID->id)) {
                                 this->getNetworkHandler().stopPlay(playerID->id);
                                 if (!this->getNetworkHandler().havePlayerPlaying()) {
-                                    std::cout << "No more players" << std::endl;
                                     this->getNetworkHandler().broadcast(EndGamePacket());
                                     this->stopRunning();
                                 }
@@ -463,11 +461,21 @@ void Game::update() {
     networkHandler.flushBroadcast();
     auto t2 = std::chrono::high_resolution_clock::now();
     if (std::chrono::duration_cast<std::chrono::duration<double>>(t2 - networkHandler.getLastTRequestStatus()).count() > 0.1) {
-        networkHandler.broadcast(PingPacket());
+        for (auto &client: networkHandler.getClients()) {
+            size_t player_id = 0;
+            bool is_exists;
+            if (is_exists = networkHandler.isEntityRelExist(client->getId())) {
+                player_id = networkHandler.getRelatedEntityFromNetwork(*client);
+            }
+            networkHandler.send(*client, PingPacket(player_id, is_exists));
+        }
         networkHandler.getLastTRequestStatus() = std::chrono::high_resolution_clock::now();
     }
-    if (std::chrono::duration_cast<std::chrono::duration<double>>(t2 - t1).count() > 10) {
+    if (std::chrono::duration_cast<std::chrono::duration<double>>(t2 - t1).count() > 5) {
         networkHandler.checkClientsConnection();
+        if (networkHandler.getClients().size() == 0) {
+            stopRunning();
+        }
         t1 = std::chrono::high_resolution_clock::now();
         if (canLogin) canLogin = false;
     }

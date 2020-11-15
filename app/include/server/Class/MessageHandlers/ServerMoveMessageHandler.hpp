@@ -19,32 +19,34 @@ class ServerMoveMessageHandler : public AMessageHandler<MovePacket> {
         ~ServerMoveMessageHandler() {}
 
         void onMessage(NetworkHandler &handler, INetworkClient &client, MovePacket &packet) {
-            size_t entityID = handler.getRelatedEntityFromNetwork(client);
+            if (handler.isEntityRelExist(client.getId())) {
+                size_t entityID = handler.getRelatedEntityFromNetwork(client);
 
-            auto &writeMap = synchronizer.getDoubleMap().getWriteMap();
+                auto &writeMap = synchronizer.getDoubleMap().getWriteMap();
 
-            if (writeMap->find(entityID) == writeMap->end()) {
-                writeMap->insert({entityID, PacketData()});
+                if (writeMap->find(entityID) == writeMap->end()) {
+                    writeMap->insert({entityID, PacketData()});
+                }
+
+                PacketData &data = writeMap->at(entityID);
+                if (packet.getDirectionX() < 0) {
+                    data.dirX = -1;
+                } else if (packet.getDirectionX() > 0) {
+                    data.dirX = 1;
+                } else {
+                    data.dirX = 0;
+                }
+
+                if (packet.getDirectionY() < 0) {
+                    data.dirY = -1;
+                } else if (packet.getDirectionY() > 0) {
+                    data.dirY = 1;
+                } else {
+                    data.dirY = 0;
+                }
+
+                data.moveChanged = true;
             }
-
-            PacketData &data = writeMap->at(entityID);
-            if (packet.getDirectionX() < 0) {
-                data.dirX = -1;
-            } else if (packet.getDirectionX() > 0) {
-                data.dirX = 1;
-            } else {
-                data.dirX = 0;
-            }
-
-            if (packet.getDirectionY() < 0) {
-                data.dirY = -1;
-            } else if (packet.getDirectionY() > 0) {
-                data.dirY = 1;
-            } else {
-                data.dirY = 0;
-            }
-
-            data.moveChanged = true;
 
             synchronizer.update();
         }

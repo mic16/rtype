@@ -15,7 +15,6 @@ void GameMenu::tryChangeUserStatus()
     buffer.writeInt(req::Type::ChangeUserStatus);
     buffer.writeCharBuffer(roomname.c_str());
 
-    std::cout << "TryChangeUserStatus: sending " << buffer.getSize() << " bytes." << std::endl;
     client->sendData(buffer.flush(), buffer.getSize());
 }
 
@@ -27,7 +26,6 @@ void GameMenu::disconnectRoom()
     buffer.writeInt(req::Type::DisconnectRoom);
     buffer.writeCharBuffer(roomname.c_str());
 
-    std::cout << "TryDisconnectRoom: sending " << buffer.getSize() << " bytes." << std::endl;
     client->sendData(buffer.flush(), buffer.getSize());
 }
 

@@ -56,7 +56,6 @@ void Client::handleData()
     boost::asio::async_read(this->socket, boost::asio::buffer(this->msg, 17), [this](const boost::system::error_code& error, std::size_t bytes_transferred)
     {
         if (!error) {
-            std::cout << "Data received : len : " << bytes_transferred << std::endl;
             for (int i = 0; i < 17; i++)
                 std::cout << this->msg[i] << std::endl;
             this->handleData();
@@ -77,7 +76,6 @@ void Client::writeData(std::string data)
     boost::asio::async_write(this->socket, boost::asio::buffer(size, 8), [this](const boost::system::error_code& error, std::size_t bytes_transferred)
     {
         if (!error) {
-            std::cout << "Data size send : len : " << bytes_transferred << std::endl;
             this->handleData();
         } else {
             std::cout << "write size failed." << std::endl;
@@ -87,7 +85,6 @@ void Client::writeData(std::string data)
     boost::asio::async_write(this->socket, boost::asio::buffer(data, data.length()), [this](const boost::system::error_code& error, std::size_t bytes_transferred)
     {
         if (!error) {
-            std::cout << "Data send : len : " << bytes_transferred << std::endl;
             this->handleData();
         } else {
             std::cout << "write data failed." << std::endl;

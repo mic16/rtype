@@ -51,8 +51,9 @@ void GameEntities::init()
                 PacketData &data = readMap->at(entityID->id);
 
                 if (!data.isAlive) {
-                    if (entityID->id == getGameMenu()->getPlayerID())
+                    if (entityID->id == getGameMenu()->getPlayerID() && this->getSynchronizer().isPlayerIdSet()) {
                         this->setDead();
+                    }
                     entity.remove();
                     continue;
                 }
