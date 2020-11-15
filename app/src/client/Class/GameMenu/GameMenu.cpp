@@ -150,7 +150,6 @@ void GameMenu::handleDisplay()
                 auto epoch = now_s.time_since_epoch();
                 auto value = std::chrono::duration_cast<std::chrono::seconds>(epoch);
                 endingTime = value.count() - beginingTime;
-                std::cout << value.count() << " - " << beginingTime << " = " << endingTime << std::endl;
                 setDrawableTextStr(getScene(), "score", std::to_string(endingTime));
             }
             if (getScene() == sceneName::GAME) {
