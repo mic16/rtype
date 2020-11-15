@@ -61,6 +61,7 @@ class Game : public Synchronizer {
         bool canLogin = true;
         std::chrono::high_resolution_clock::time_point start;
         std::chrono::high_resolution_clock::time_point t1;
+        static unsigned int port = 3334;
 };
 
 #endif /* !GAME_HPP_ */
