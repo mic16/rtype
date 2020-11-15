@@ -95,7 +95,7 @@ void Game::init() {
     .each([this](float delta, EntityIterator<EntityID> &entity) {
         auto enemyGenerator = this->getECS().getEntityGenerator("Enemy");
         if (entity.getSize() == 0) {
-            size_t spawnType = rand() % 3;
+            size_t spawnType = rand() % 4;
             if (spawnType == 0) {
                 for (int i = 0; i < 5; i++) {
                     double x = this->getMapWidth();
@@ -143,6 +143,22 @@ void Game::init() {
                         EntityStats{150, 150, 30, 0.5}
                     );
                     this->getNetworkHandler().broadcast(SpawnPacket(id, EntityType::ENEMY3, x, y, 0));
+                }
+            } else if (spawnType == 3) {
+                for (int i = 0; i < 1; i++) {
+                    double x = this->getMapWidth();
+                    double y = this->getMapHeight() / 2;
+                    size_t id = this->getNextEntityID();
+
+                    enemyGenerator.instanciate(1,
+                        Position{x, y},
+                        Velocity{-0.5, -2, 400, true},
+                        EntityID{id},
+                        Enemy6Hitbox,
+                        EntityInfo{true, true, EntityType::ENEMY6},
+                        EntityStats{300, 300, 50, 0.1}
+                    );
+                    this->getNetworkHandler().broadcast(SpawnPacket(id, EntityType::ENEMY6, x, y, 0));
                 }
             }
         }
@@ -218,6 +234,17 @@ void Game::init() {
                     else if (velocity->dirX > 1)
                         velocity->directionLeft = true;
                 }
+            }
+
+            if (entityInfo->entityType == EntityType::ENEMY6) {
+                if (velocity->directionUp)
+                    velocity->dirY -= 0.1;
+                else
+                    velocity->dirY += 0.1;
+                if (velocity->dirY < -2)
+                    velocity->directionUp = false;
+                else if (velocity->dirY > 2)
+                    velocity->directionUp = true;
             }
 
             double moveX = velocity->dirX * velocity->speed * delta;
