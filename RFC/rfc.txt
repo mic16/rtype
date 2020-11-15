@@ -1,5 +1,5 @@
 Network Working Group                                          M. Fabrie
-Request for Comments: ????                                   A. Maillard
+Request for Comments: 69420                                  A. Maillard
 Category: Informational                                       H. Pouteau
                                                                Y. Combes
                                                                   R-Type
@@ -21,18 +21,22 @@ Copyright Notice
 Table of Contents
 
     1. Introduction . . . . . . . . . . . . . . . . . . . . . . . . . 2
-    . Security Considerations  . . . . . . . . . . . . . . . . . . . 4
-    . References . . . . . . . . . . . . . . . . . . . . . . . . . . 4
-    . Full Copyright Statement . . . . . . . . . . . . . . . . . . . 0
-
-
-
-
-
-
-
-
-
+    2. Project Architecture . . . . . . . . . . . . . . . . . . . . . 2
+    3. TCP Protocol . . . . . . . . . . . . . . . . . . . . . . . . . 3
+    3a.   part1
+    3b.   etc..
+    4. UDP Protocol . . . . . . . . . . . . . . . . . . . . . . . . . 4
+    4a. Position Packet . . . . . . . . . . . . . . . . . . . . . . . 4
+    4b. Move Packet . . . . . . . . . . . . . . . . . . . . . . . . . 4
+    4c. Player Instanciate Packet . . . . . . . . . . . . . . . . . . 4
+    4d. Spawn Packet. . . . . . . . . . . . . . . . . . . . . . . . . 5
+    4e. Fire Packet . . . . . . . . . . . . . . . . . . . . . . . . . 5
+    4f. Damage Packet . . . . . . . . . . . . . . . . . . . . . . . . 5
+    4g. Death Packet. . . . . . . . . . . . . . . . . . . . . . . . . 5
+    4h. Ping Packet . . . . . . . . . . . . . . . . . . . . . . . . . 5
+    5. Security Considerations. . . . . . . . . . . . . . . . . . . . 6
+    6. References . . . . . . . . . . . . . . . . . . . . . . . . . . 6
+    7. Full Copyright Statement . . . . . . . . . . . . . . . . . . . 6
 
 
 
@@ -51,7 +55,7 @@ Table of Contents
 
 Fabrie, Maillard, Pouteau & Combes Informational                [Page 1]
 
-RFC ????                    R-Type Protocol                November 2020
+RFC 69420                   R-Type Protocol                November 2020
 
 1. Introduction
 
@@ -103,15 +107,185 @@ RFC ????                    R-Type Protocol                November 2020
 
 
 
+
+
 Fabrie, Maillard, Pouteau & Combes Informational                [Page 2]
 
-RFC ????                    R-Type Protocol                November 2020
+RFC 69420                   R-Type Protocol                November 2020
 
-. Security Considerations
+3. TCP Protocol
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Fabrie, Maillard, Pouteau & Combes Informational                [Page 3]
+
+RFC 69420                   R-Type Protocol                November 2020
+
+
+4. UDP Protocol
+
+    All the comunication between the server and the clients once the 
+    game has started are done via UDP Protocol.
+
+    All the different packet type exchanged are separated in 9 classes
+    that inherit the base packet class.
+
+    4a. Position Packet
+
+        The Position Packet is used to send the position of all entity
+        to the clients.
+
+        The packet written in the buffer looks like this:
+
+            Double x;
+            Double y;
+            Unsigned int type;
+
+        This corresponds to the position x, y and the type of entity for 
+        the client to draw.
+
+    4b. Move Packet 
+
+        The Move Packet class is use by the clients to signal a player
+        movement input.
+
+        The packet written in the buffer looks like this:
+
+            Int vx;
+            Int vy;
+
+        In which vx and vy is the vector that define the movement of
+        the player of this client.
+
+    4c. Player Instanciate Packet
+
+        This packet is used to create each player entity in the ECS.
+
+        For this this packet take an EntityId which permit to 
+        differentiate all player from another.
+
+    4d. Spawn Packet
+
+        The Spawn Packet is used to spawn an entity (player, enemy ...)
+
+        This packet is made using a Position packet, and create a 
+        new entity of the type and the position of the Position Packet
+
+
+
+Fabrie, Maillard, Pouteau & Combes Informational                [Page 4]
+
+RFC 69420                   R-Type Protocol                November 2020
+    
+    4e. Fire Packet
+
+        The Fire packet signal the server if a player is holding the
+        fire button from each clients.
+
+        The packet written in the buffer looks like this:
+
+            Bool holding;
+
+        The boolean is true if the client is holding the fire button
+        and false when not pressed.
+
+    4f. Damage Packet
+
+        This package is sent whenever damage is dealt to an entity
+        having health point.
+
+        The packet written in the buffer looks like this:
+
+            Int damage;
+            Int hp;
+            Int MaxHp;
+
+        Damage corresponds to the damage taken, hp to the remaining
+        health point and MaxHp to the maximum health point of the
+        entity given.
+
+    4g. Death Packet
+
+        This packet is used to destroy the entity who have run out
+        of health point.
+
+        For this this packet take an EntityId which permit to 
+        differentiate all entity who can be destroyed.
+
+    4h. Ping Packet
+
+        The Ping Packet is used by the server to ping the clients
+        every 0.1 seconds to make sure the information of all
+        the client are up to date.
+
+
+
+
+
+
+
+
+
+
+
+
+Fabrie, Maillard, Pouteau & Combes Informational                [Page 5]
+
+RFC 69420                   R-Type Protocol                November 2020
+
+5. Security Considerations
 
     This RFC raises no security issues
 
-. References
+6. References
 
 . Full Copyright Statement
 
@@ -157,4 +331,4 @@ RFC ????                    R-Type Protocol                November 2020
 
 
 
-Fabrie, Maillard, Pouteau & Combes Informational                [Page 3]
+Fabrie, Maillard, Pouteau & Combes Informational                [Page 6]
