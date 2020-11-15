@@ -239,6 +239,12 @@ void Game::init() {
 
                         if (entityStats->hp <= 0) {
                             this->getNetworkHandler().broadcast(DeathPacket(entityID->id)); // Kill Entity
+                            if (this->getNetworkHandler().isPlayer(entityID->id)) {
+                                this->getNetworkHandler().stopPlay(entityID->id);
+                                if (!this->getNetworkHandler().havePlayerPlaying()) {
+                                    this->getNetworkHandler().broadcast(EndGamePacket());
+                                }
+                            }
                             entity.remove();
                             break;
                         }
