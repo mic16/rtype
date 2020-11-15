@@ -24,7 +24,7 @@
 class NetworkHandler {
     public:
         NetworkHandler(std::size_t packetMaxSize) : m_packetMaxSize(packetMaxSize) {
-            
+
         }
 
         ~NetworkHandler() {
@@ -228,6 +228,10 @@ class NetworkHandler {
 
         bool isClosed() {
             return isClose;
+        }
+
+        size_t getRelatedEntityFromNetwork(INetworkClient &client) {
+            return relatedEntityID[client.getId()];
         }
 
     protected:
