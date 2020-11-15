@@ -11,7 +11,9 @@ void GameMenu::handleEvents()
 {
     while (window.pollEvent(event)) {
         if (event.type == sf::Event::Closed) {
+            tryQuit();
             window.close();
+            return;
         } else if (event.type == sf::Event::TextEntered) {
             if (event.text.unicode < 128) {
                 handleTextEntered();

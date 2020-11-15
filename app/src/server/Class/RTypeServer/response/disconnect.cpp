@@ -21,3 +21,10 @@ void RTypeServer::responseDisconnectRoom(const unsigned int client_id)
         std::cout << "DisconnectRoom success." << std::endl;
     responseListPlayersInRoom(roomname);
 }
+
+void RTypeServer::quitClient(const unsigned int client_id)
+{
+    std::cout << "trying to close socket" << std::endl;
+    clients[client_id]->m_socket.shutdown(boost::asio::ip::tcp::socket::shutdown_both);
+    clients[client_id]->m_socket.close();
+}

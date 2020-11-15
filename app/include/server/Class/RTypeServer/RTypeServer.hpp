@@ -42,6 +42,7 @@ class RTypeServer : public TCPServer {
         void responseChangeUserStatus(const unsigned int client_id);
         void responseDisconnectRoom(const unsigned int client_id);
         void responseStartGame(const std::string &roomname);
+        void quitClient(const unsigned int client_id);
     private:
         std::map<unsigned int, std::unique_ptr<TCPClient>> clients;
         std::map<std::string, std::unique_ptr<Game>> games;

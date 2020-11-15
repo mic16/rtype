@@ -26,6 +26,7 @@ class TCPClient {
         ~TCPClient();
 
         void run();
+        void join();
         void connectTo(const boost::asio::ip::tcp::endpoint &endpoint);
 
         void handleData();
@@ -45,10 +46,11 @@ class TCPClient {
         boost::asio::ip::tcp::socket socket;
         boost::asio::ip::tcp::endpoint endpoint;
         char *m_packet = nullptr;
-        std::shared_ptr<IGameMenu> menu;
+        IGameMenu *menu;
         ByteBuffer buffer;
-        std::shared_ptr<sf::RenderWindow> window;
         std::unique_ptr<UDPClient> gameClient;
+
+        std::unique_ptr<boost::thread> t;
 };
 
 #endif /* !TCPCLIENT_HPP_ */

@@ -12,6 +12,12 @@
 class Sound
 {
 public:
+    ~Sound() {
+        for (auto &sound: soundInstances) {
+            sound.~Sound();
+        }
+    }
+
     bool load(std::string filename)
     {
         return (soundBuffer.loadFromFile(filename));

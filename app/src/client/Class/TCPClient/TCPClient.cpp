@@ -13,13 +13,17 @@ TCPClient::TCPClient(IGameMenu *gameMenu): socket(ioService), m_packet(new char[
 
 TCPClient::~TCPClient()
 {
-    if (m_packet) delete m_packet;
+    // if (m_packet) delete m_packet;
 }
 
 void TCPClient::run()
 {
     std::cout << "Client Running." << std::endl;
-    ioService.run();
+    t = std::make_unique<boost::thread>(boost::bind(&boost::asio::io_context::run, &ioService));
+}
+
+void TCPClient::join() {
+    t->join();
 }
 
 void TCPClient::connectTo(const boost::asio::ip::tcp::endpoint &endpoint)
