@@ -95,14 +95,14 @@ void Game::init() {
     .each([this](float delta, EntityIterator<EntityID> &entity) {
         auto enemyGenerator = this->getECS().getEntityGenerator("Enemy");
         if (entity.getSize() == 0) {
-            size_t spawnType = rand() % 1;
-            if (spawnType == 0) {
-
-                for (int i = 0; i < 5; i++) {
-                    double x = this->getMapWidth();
-                    double y = this->getMapHeight()/5.0*i;
-                    size_t id = this->getNextEntityID();
-
+            int crowd = rand() % 7 + 3;
+            for (int i = 0; i < crowd; i++) {
+                size_t spawnType = rand() % 2;
+                double x = this->getMapWidth();
+                double y = this->getMapHeight()/crowd*i;
+                size_t id = this->getNextEntityID();
+    
+                if (spawnType == 0) {
                     enemyGenerator.instanciate(1,
                         Position{x, y},
                         Velocity{-1, 0, 400},
@@ -112,6 +112,17 @@ void Game::init() {
                         EntityStats{100, 100, 20, 0}
                     );
                     this->getNetworkHandler().broadcast(SpawnPacket(id, EntityType::ENEMY1, x, y, 0));
+                }
+                if (spawnType == 1) {
+                    enemyGenerator.instanciate(1,
+                        Position{x, y},
+                        Velocity{-1, 0, 350},
+                        EntityID{id},
+                        Enemy2Hitbox,
+                        EntityInfo{true, true, EntityType::ENEMY2},
+                        EntityStats{70, 70, 40, 60}
+                    );
+                    this->getNetworkHandler().broadcast(SpawnPacket(id, EntityType::ENEMY2, x, y, 0));
                 }
             }
         }

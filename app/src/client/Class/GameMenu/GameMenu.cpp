@@ -147,6 +147,8 @@ void GameMenu::handleDisplay()
                 setDrawableTextStr(getScene(), "score", std::to_string(static_cast<float>(endingTime) / 1000));
             }
             if (getScene() == sceneName::GAME) {
+                if (music.getisMenu())
+                    music.play();
                 draw(deltaTime);
             } else {
                 draw();
