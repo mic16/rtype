@@ -102,6 +102,18 @@ void GameMenu::initModGameDrawables()
         sf::IntRect(0, 0, loadedTextures["players"].get()->getSize().x / 5, loadedTextures["players"].get()->getSize().y / 5), false};
     animationManager.pushAnimation(EntityType::PLAYER1, player1Animation);
 
+    Animation *player2Animation = new Animation{sf::Vector2u(5, 5), sf::Vector2u(2, 1), sf::Vector2u(2, 1), 0, 0.05f, 
+        sf::IntRect(0, 0, loadedTextures["players"].get()->getSize().x / 5, loadedTextures["players"].get()->getSize().y / 5), false};
+    animationManager.pushAnimation(EntityType::PLAYER2, player2Animation);
+
+    Animation *player3Animation = new Animation{sf::Vector2u(5, 5), sf::Vector2u(2, 2), sf::Vector2u(2, 2), 0, 0.05f, 
+        sf::IntRect(0, 0, loadedTextures["players"].get()->getSize().x / 5, loadedTextures["players"].get()->getSize().y / 5), false};
+    animationManager.pushAnimation(EntityType::PLAYER3, player3Animation);
+
+    Animation *player4Animation = new Animation{sf::Vector2u(5, 5), sf::Vector2u(2, 3), sf::Vector2u(2, 3), 0, 0.05f, 
+        sf::IntRect(0, 0, loadedTextures["players"].get()->getSize().x / 5, loadedTextures["players"].get()->getSize().y / 5), false};
+    animationManager.pushAnimation(EntityType::PLAYER4, player4Animation);
+
     Animation *wallAnimation = new Animation{sf::Vector2u(0, 0), sf::Vector2u(0, 0), sf::Vector2u(0, 0), 0, 0.05f, 
         sf::IntRect(0, 0, loadedTextures["wall"].get()->getSize().x, loadedTextures["wall"].get()->getSize().y), false};
     animationManager.pushAnimation(EntityType::WALL, wallAnimation);
