@@ -47,15 +47,15 @@ void GameMenu::initModGameDrawables()
     spriteManager.pushSprite(EntityType::PLAYER1, player1Sprite);
 
     sf::Sprite *player2Sprite = new sf::Sprite();
-    player1Sprite->setTexture(*loadedTextures["players"]);
+    player2Sprite->setTexture(*loadedTextures["players"]);
     spriteManager.pushSprite(EntityType::PLAYER2, player2Sprite);
 
     sf::Sprite *player3Sprite = new sf::Sprite();
-    player1Sprite->setTexture(*loadedTextures["players"]);
+    player3Sprite->setTexture(*loadedTextures["players"]);
     spriteManager.pushSprite(EntityType::PLAYER3, player3Sprite);
 
     sf::Sprite *player4Sprite = new sf::Sprite();
-    player1Sprite->setTexture(*loadedTextures["players"]);
+    player4Sprite->setTexture(*loadedTextures["players"]);
     spriteManager.pushSprite(EntityType::PLAYER4, player4Sprite);
 
     sf::Sprite *wallSprite = new sf::Sprite();
@@ -91,7 +91,8 @@ void GameMenu::initModGameDrawables()
     spriteManager.pushSprite(EntityType::PROJECTILE1, projectile1Sprite);
 
     sf::Sprite *projectile2Sprite = new sf::Sprite();
-    projectile2Sprite->setTexture(*loadedTextures["projectile2"]);
+    projectile2Sprite->setTexture(*loadedTextures["projectile1"]);
+    projectile2Sprite->setColor(sf::Color::Red);
     spriteManager.pushSprite(EntityType::PROJECTILE2, projectile2Sprite);
 
     sf::Sprite *projectile3Sprite = new sf::Sprite();
@@ -101,6 +102,18 @@ void GameMenu::initModGameDrawables()
     Animation *player1Animation = new Animation{sf::Vector2u(5, 5), sf::Vector2u(2, 0), sf::Vector2u(2, 0), 0, 0.05f, 
         sf::IntRect(0, 0, loadedTextures["players"].get()->getSize().x / 5, loadedTextures["players"].get()->getSize().y / 5), false};
     animationManager.pushAnimation(EntityType::PLAYER1, player1Animation);
+
+    Animation *player2Animation = new Animation{sf::Vector2u(5, 5), sf::Vector2u(2, 1), sf::Vector2u(2, 1), 0, 0.05f, 
+        sf::IntRect(0, 0, loadedTextures["players"].get()->getSize().x / 5, loadedTextures["players"].get()->getSize().y / 5), false};
+    animationManager.pushAnimation(EntityType::PLAYER2, player2Animation);
+
+    Animation *player3Animation = new Animation{sf::Vector2u(5, 5), sf::Vector2u(2, 2), sf::Vector2u(2, 2), 0, 0.05f, 
+        sf::IntRect(0, 0, loadedTextures["players"].get()->getSize().x / 5, loadedTextures["players"].get()->getSize().y / 5), false};
+    animationManager.pushAnimation(EntityType::PLAYER3, player3Animation);
+
+    Animation *player4Animation = new Animation{sf::Vector2u(5, 5), sf::Vector2u(2, 3), sf::Vector2u(2, 3), 0, 0.05f, 
+        sf::IntRect(0, 0, loadedTextures["players"].get()->getSize().x / 5, loadedTextures["players"].get()->getSize().y / 5), false};
+    animationManager.pushAnimation(EntityType::PLAYER4, player4Animation);
 
     Animation *wallAnimation = new Animation{sf::Vector2u(0, 0), sf::Vector2u(0, 0), sf::Vector2u(0, 0), 0, 0.05f, 
         sf::IntRect(0, 0, loadedTextures["wall"].get()->getSize().x, loadedTextures["wall"].get()->getSize().y), false};

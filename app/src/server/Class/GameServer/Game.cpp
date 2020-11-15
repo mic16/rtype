@@ -199,11 +199,11 @@ void Game::init() {
                         Velocity{isEnemy?-1.0:1.0, 0, 1000, false},
                         EntityID{id},
                         ProjectileHitbox,
-                        EntityInfo{isEnemy, false, EntityType::PROJECTILE1},
+                        EntityInfo{isEnemy, false, isEnemy?EntityType::PROJECTILE2:EntityType::PROJECTILE1},
                         ProjectileInfo{entityStats->damage}
                     );
 
-                    this->getNetworkHandler().broadcast(SpawnPacket(id, EntityType::PROJECTILE1, x, y, 0));
+                    this->getNetworkHandler().broadcast(SpawnPacket(id, isEnemy?EntityType::PROJECTILE2:EntityType::PROJECTILE1, x, y, 0));
                     entityStats->fireTimer = 0;
                 }
             }
