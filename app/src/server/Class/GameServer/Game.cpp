@@ -363,7 +363,7 @@ void Game::init() {
                     EntityID *playerID = playerIterator.getComponent<EntityID>(2);
                     Hitbox *playerHitbox = playerIterator.getComponent<Hitbox>(3);
                     EntityStats *playerStats = playerIterator.getComponent<EntityStats>(5);
-                
+
                     if (entityPosition->x < playerPosition->x + playerHitbox->w &&
                         entityPosition->x + entityHitbox->w > playerPosition->x &&
                         entityPosition->y < playerPosition->y + playerHitbox->h &&
@@ -425,7 +425,7 @@ void Game::update() {
                 EntityInfo{false, false, EntityType::PLAYER1},
                 EntityStats{100, 100, 20});
 
-                networkHandler.broadcast(SpawnPacket(id, EntityType::PLAYER1, x, y, playerID));
+                networkHandler.broadcast(SpawnPacket(id, EntityType::PLAYER1 + playerID - 1, x, y, playerID));
                 networkHandler.setPlayerEntityID(PERPacket->getNetworkClient()->getId(), id);
                 networkHandler.send(*PERPacket->getNetworkClient(), InstanciatePlayerPacket(id));
 
