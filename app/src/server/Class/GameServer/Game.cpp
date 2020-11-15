@@ -291,9 +291,16 @@ void Game::startGame()
     lastTime = std::chrono::high_resolution_clock::now();
     init();
     compile();
+    auto start = std::chrono::high_resolution_clock::now();
     auto t1 = std::chrono::high_resolution_clock::now();
     networkHandler.getLastTRequestStatus() = std::chrono::high_resolution_clock::now();
     while (true) {
+        // networkHandler.close();
+        if (std::chrono::duration_cast<std::chrono::duration<double>>(std::chrono::high_resolution_clock::now() - start).count() < 1/40.0) {
+            continue;
+        }
+        // networkHandler.open();
+        start = std::chrono::high_resolution_clock::now();
         if (canLogin && getDoubleQueue().isReadOpen()) {
             auto &vector = getDoubleQueue().getReadVector();
             for (std::unique_ptr<IPacket> &packet : *vector) {
@@ -318,12 +325,14 @@ void Game::startGame()
                     networkHandler.broadcast(SpawnPacket(id, EntityType::PLAYER1, x, y, playerID));
                     networkHandler.setPlayerEntityID(PERPacket->getNetworkClient()->getId(), id);
                     networkHandler.send(*PERPacket->getNetworkClient(), InstanciatePlayerPacket(id));
+
                     playerID += 1;
                 }
             }
             getDoubleQueue().closeRead();
         }
         update();
+        networkHandler.flushBroadcast();
         auto t2 = std::chrono::high_resolution_clock::now();
         if (std::chrono::duration_cast<std::chrono::duration<double>>(t2 - networkHandler.getLastTRequestStatus()).count() > 0.1) {
             networkHandler.broadcast(PingPacket());

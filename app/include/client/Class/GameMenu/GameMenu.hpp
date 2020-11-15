@@ -112,7 +112,7 @@ class GameMenu : public IGameMenu {
         void initModEndDrawables();
 
         Synchronizer synchronizer;
-        NetworkHandler networkHandler = {1024};
+        NetworkHandler networkHandler = {512};
 
         EntitySpriteManager spriteManager;
         EntityAnimationManager animationManager;

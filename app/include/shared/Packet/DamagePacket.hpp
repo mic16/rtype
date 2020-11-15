@@ -18,10 +18,14 @@ class DamagePacket : public ABasePacket {
         ~DamagePacket() {}
 
         virtual void fromBuffer(ByteBuffer &buffer) override {
+            int err = 0;
             ABasePacket::fromBuffer(buffer);
-            damage = buffer.readInt(nullptr);
-            hp = buffer.readInt(nullptr);
-            maxHP = buffer.readInt(nullptr);
+            damage = buffer.readInt(&err);
+            if (err) setErrored();
+            hp = buffer.readInt(&err);
+            if (err) setErrored();
+            maxHP = buffer.readInt(&err);
+            if (err) setErrored();
         }
 
         virtual void toBuffer(ByteBuffer &buffer) override {

@@ -51,11 +51,9 @@ void GameEntities::init()
                 PacketData &data = readMap->at(entityID->id);
 
                 if (!data.isAlive) {
-                    entity.remove();
-                    if (entityID->id == getGameMenu()->getPlayerID()) {
-                        this->getExplosionSound().play(10.0f);
+                    if (entityID->id == getGameMenu()->getPlayerID())
                         this->setDead();
-                    }
+                    entity.remove();
                     continue;
                 }
 
@@ -81,11 +79,11 @@ void GameEntities::init()
                 || data.entityType == EntityType::PLAYER3
                 || data.entityType == EntityType::PLAYER4
                 ) {
-                    playerGenerator.instanciate(1,
-                    Position{data.x, data.y},
-                    EntityID{id},
-                    animationManager.getAnimation(data.entityType),
-                    Drawable{true, spriteManager.getSprite(data.entityType)});
+                    // playerGenerator.instanciate(1,
+                    // Position{data.x, data.y},
+                    // EntityID{id},
+                    // animationManager.getAnimation(data.entityType),
+                    // Drawable{true, spriteManager.getSprite(data.entityType)});
                 } else {
                     entityGenerator.instanciate(1,
                     Position{data.x, data.y},

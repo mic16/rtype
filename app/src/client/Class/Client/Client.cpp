@@ -24,7 +24,7 @@ bool Client::isRunning() const
 void Client::run(std::string ip)
 {
     std::cout << "Client Running." << std::endl;
-    this->connectTo(boost::asio::ip::tcp::endpoint(boost::asio::ip::address::from_string(ip), 3000));
+    this->connectTo(boost::asio::ip::tcp::endpoint(boost::asio::ip::address::from_string(ip), 4000));
     boost::thread t(boost::bind(&boost::asio::io_context::run, &ioService));
     t.join();
 }
