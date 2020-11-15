@@ -95,7 +95,7 @@ void Game::init() {
     .each([this](float delta, EntityIterator<EntityID> &entity) {
         auto enemyGenerator = this->getECS().getEntityGenerator("Enemy");
         if (entity.getSize() == 0) {
-            size_t spawnType = rand() % 2;
+            size_t spawnType = rand() % 3;
             if (spawnType == 0) {
                 for (int i = 0; i < 5; i++) {
                     double x = this->getMapWidth();
@@ -127,6 +127,22 @@ void Game::init() {
                         EntityStats{100, 100, 20, 0}
                     );
                     this->getNetworkHandler().broadcast(SpawnPacket(id, EntityType::ENEMY2, x, y, 0));
+                }
+            } else if (spawnType == 2) {
+                for (int i = 0; i < 2; i++) {
+                    double x = this->getMapWidth();
+                    double y = this->getMapHeight()/2.0*i+200;
+                    size_t id = this->getNextEntityID();
+
+                    enemyGenerator.instanciate(1,
+                        Position{x, y},
+                        Velocity{-1, 1, 400, true},
+                        EntityID{id},
+                        Enemy3Hitbox,
+                        EntityInfo{true, true, EntityType::ENEMY3},
+                        EntityStats{150, 150, 30, 0.5}
+                    );
+                    this->getNetworkHandler().broadcast(SpawnPacket(id, EntityType::ENEMY3, x, y, 0));
                 }
             }
         }
@@ -183,8 +199,8 @@ void Game::init() {
             EntityInfo *entityInfo = entity.getComponent<EntityInfo>(3);
             Hitbox *hitbox = entity.getComponent<Hitbox>(4);
 
-            if (entityInfo->entityType == EntityType::ENEMY2) {
-                if (velocity->directionUp == true)
+            if (entityInfo->entityType == EntityType::ENEMY2 || entityInfo->entityType == EntityType::ENEMY3) {
+                if (velocity->directionUp)
                     velocity->dirY -= 0.1;
                 else
                     velocity->dirY += 0.1;
@@ -192,6 +208,16 @@ void Game::init() {
                     velocity->directionUp = false;
                 else if (velocity->dirY > 1)
                     velocity->directionUp = true;
+                if (entityInfo->entityType == EntityType::ENEMY3) {
+                    if (velocity->directionLeft)
+                        velocity->dirX -= 0.1;
+                    else
+                        velocity->dirX += 0.05;
+                    if (velocity->dirX < -2)
+                        velocity->directionLeft = false;
+                    else if (velocity->dirX > 1)
+                        velocity->directionLeft = true;
+                }
             }
 
             double moveX = velocity->dirX * velocity->speed * delta;
