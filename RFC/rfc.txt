@@ -23,7 +23,7 @@ Table of Contents
     1. Introduction . . . . . . . . . . . . . . . . . . . . . . . . . 2
     2. Project Architecture . . . . . . . . . . . . . . . . . . . . . 2
     3. TCP Protocol . . . . . . . . . . . . . . . . . . . . . . . . . 3
-    3a.   part1
+    3a.   lobby
     3b.   etc..
     4. UDP Protocol . . . . . . . . . . . . . . . . . . . . . . . . . 4
     4a. Position Packet . . . . . . . . . . . . . . . . . . . . . . . 4
@@ -68,18 +68,18 @@ RFC 69420                   R-Type Protocol                November 2020
     client communicates to a server that handles the game logic.
 
 
+2. Project Architecture
 
+    The R-Type is a clients and server architecture.
+    In the R-type all the game logic or engine is done in the
+    server, and the client only draw the information received from
+    the server.
 
+    For the commnunication, the project use TCP protocol when in
+    menu/lobby and use UDP protocol in game.
 
-
-
-
-
-
-
-
-
-
+    The entities are managed with an ECS or Entity component system
+    used in both the clients and the server.
 
 
 
@@ -287,7 +287,7 @@ RFC 69420                   R-Type Protocol                November 2020
 
 6. References
 
-. Full Copyright Statement
+7. Full Copyright Statement
 
    Copyright (C) The Internet Society (1997).  All Rights Reserved.
 
@@ -314,6 +314,8 @@ RFC 69420                   R-Type Protocol                November 2020
    BUT NOT LIMITED TO ANY WARRANTY THAT THE USE OF THE INFORMATION
    HEREIN WILL NOT INFRINGE ANY RIGHTS OR ANY IMPLIED WARRANTIES OF
    MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE."
+
+
 
 
 
