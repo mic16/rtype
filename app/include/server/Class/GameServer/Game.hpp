@@ -54,6 +54,8 @@ class Game : public Synchronizer {
         static unsigned int GenPortValue() {
             static unsigned int port = 3333;
             port += 1;
+
+            port = port == 3342 ? 3334 : port;
             return port;
         };
 
