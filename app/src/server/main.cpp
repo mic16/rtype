@@ -12,7 +12,7 @@ int main(int ac, char *av[]) {
     RTypeServer server;
     // GameServer server;
 
-    server.configure(3000);
+    server.configure(4000);
 
     server.run();
     return (0);

@@ -22,7 +22,9 @@ class FirePacket : public ABasePacket {
 
         void fromBuffer(ByteBuffer &buffer) override {
             ABasePacket::fromBuffer(buffer);
-            holding = buffer.readBool(nullptr);
+            int err = 0;
+            holding = buffer.readBool(&err);
+            if (err) setErrored();
         }
 
         void toBuffer(ByteBuffer &buffer) override {

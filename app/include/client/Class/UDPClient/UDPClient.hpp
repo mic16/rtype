@@ -22,11 +22,13 @@ class UDPClient {
         void connect();
 
         void close() {
-            client->socket.close();
-            client->ioService.stop();
+            if (isPlaying) {
+                client->ioService.stop();
+            }
         }
 
     private:
+        bool isPlaying = false;
         RemoteClient *client;
         NetworkHandler &networkHandler;
 };

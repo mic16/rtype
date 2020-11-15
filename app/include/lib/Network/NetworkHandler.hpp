@@ -18,10 +18,13 @@
 #include "AMessageHandler.hpp"
 #include "INetworkClient.hpp"
 
+#include "boost/iostreams/filter/zlib.hpp"
+#include "lib/Compression/Compression.hpp"
+
 class NetworkHandler {
     public:
         NetworkHandler(std::size_t packetMaxSize) : m_packetMaxSize(packetMaxSize) {
-
+            
         }
 
         ~NetworkHandler() {
@@ -59,6 +62,8 @@ class NetworkHandler {
 
         template<typename T>
         void broadcast(T packet) {
+            if (isClosed())
+                return;
 
             static_assert(std::is_pointer<T>::value || std::is_reference<T>::value || std::is_object<T>::value, "Cannot broadcast an unsupported type");
 
@@ -85,11 +90,25 @@ class NetworkHandler {
 
             std::size_t id = packetsID[hashcode];
 
-            prepend.clear();
-            prepend.writeULong(id);
-            prepend.writeCharBuffer(reinterpret_cast<const char *>(buffer.flush()), buffer.getSize());
-            for (auto &client : clients) {
-                client->write(prepend);
+            // if (broadcastBuffer.getSize() + buffer.getSize() + 12 >= m_packetMaxSize) {
+            //     // prepend.clear();
+            //     // prepend.writeULong(id);
+            //     // prepend.writeCharBuffer(reinterpret_cast<const char *>(buffer.flush()), buffer.getSize());
+            //     Compression::compress(broadcastBuffer);
+            //     flushBroadcast();
+            // } else {
+                broadcastBuffer.writeULong(id);
+                broadcastBuffer.writeCharBuffer(reinterpret_cast<const char *>(buffer.flush()), buffer.getSize());
+                // flushBroadcast();
+            // }
+        }
+
+        void flushBroadcast() {
+            if (broadcastBuffer.getSize() > 0) {
+                for (auto &client : clients) {
+                    client->write(broadcastBuffer);
+                }
+                broadcastBuffer.clear();
             }
         }
 
@@ -207,10 +226,23 @@ class NetworkHandler {
             }
         }
 
+        void close() {
+            isClose = true;
+        }
+
+        void open() {
+            isClose = false;
+        }
+
+        bool isClosed() {
+            return isClose;
+        }
+
     protected:
     private:
-
+        bool isClose = false;
         ByteBuffer prepend = {1024};
+        ByteBuffer broadcastBuffer = {1024};
         ByteBuffer buffer = {1024};
         std::vector<std::unique_ptr<INetworkClient>> clients;
         std::map<unsigned int, std::chrono::high_resolution_clock::time_point> lastClientRes;

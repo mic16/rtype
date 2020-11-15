@@ -29,7 +29,9 @@ class AMessageHandler : IMessageHandler {
         void processMessage(NetworkHandler &handler, INetworkClient &client, ByteBuffer &buffer) {
             T packet;
             packet.fromBuffer(buffer);
-            onMessage(handler, client, packet);
+            if (!packet.isErrored()) {
+                onMessage(handler, client, packet);
+            }
         }
 
     protected:

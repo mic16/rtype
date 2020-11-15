@@ -22,9 +22,13 @@ class PositionPacket : public ABasePacket {
 
         void fromBuffer(ByteBuffer &buffer) override {
             ABasePacket::fromBuffer(buffer);
-            x = buffer.readDouble(nullptr);
-            y = buffer.readDouble(nullptr);
-            entityType = buffer.readUInt(nullptr);
+            int err = 0;
+            x = buffer.readDouble(&err);
+            if (err) setErrored();
+            y = buffer.readDouble(&err);
+            if (err) setErrored();
+            entityType = buffer.readUInt(&err);
+            if (err) setErrored();
         }
 
         void toBuffer(ByteBuffer &buffer) override {

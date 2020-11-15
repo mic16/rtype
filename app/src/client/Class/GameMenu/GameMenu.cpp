@@ -63,7 +63,7 @@ GameMenu::~GameMenu()
 int GameMenu::run()
 {
     try {
-        client->connectTo(boost::asio::ip::tcp::endpoint(boost::asio::ip::address::from_string("127.0.0.1"), 3000));
+        client->connectTo(boost::asio::ip::tcp::endpoint(boost::asio::ip::address::from_string("127.0.0.1"), 4000));
         client->run();
         handleDisplay();
         client->join();
@@ -100,12 +100,11 @@ void GameMenu::draw(float deltaTime)
             beginingTime = value.count();
             startCounting = false;
         }
-        if (music.getisMenu())
-            music.play();
         window.clear(sf::Color::White);
         background.update(deltaTime);
         background.draw();
         gameEntities.update(isDirectionMaintained, deltaTime);
+        networkHandler.flushBroadcast();
         window.display();
     }
 }

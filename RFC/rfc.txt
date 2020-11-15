@@ -23,13 +23,11 @@ Table of Contents
     1. Introduction . . . . . . . . . . . . . . . . . . . . . . . . . 2
     2. Project Architecture . . . . . . . . . . . . . . . . . . . . . 2
     3. TCP Protocol . . . . . . . . . . . . . . . . . . . . . . . . . 3
-    3a.   lobby
-    3b.   etc..
     4. UDP Protocol . . . . . . . . . . . . . . . . . . . . . . . . . 4
     4a. Position Packet . . . . . . . . . . . . . . . . . . . . . . . 4
     4b. Move Packet . . . . . . . . . . . . . . . . . . . . . . . . . 4
     4c. Player Instanciate Packet . . . . . . . . . . . . . . . . . . 4
-    4d. Spawn Packet. . . . . . . . . . . . . . . . . . . . . . . . . 5
+    4d. Spawn Packet. . . . . . . . . . . . . . . . . . . . . . . . . 4
     4e. Fire Packet . . . . . . . . . . . . . . . . . . . . . . . . . 5
     4f. Damage Packet . . . . . . . . . . . . . . . . . . . . . . . . 5
     4g. Death Packet. . . . . . . . . . . . . . . . . . . . . . . . . 5
@@ -37,6 +35,8 @@ Table of Contents
     5. Security Considerations. . . . . . . . . . . . . . . . . . . . 6
     6. References . . . . . . . . . . . . . . . . . . . . . . . . . . 6
     7. Full Copyright Statement . . . . . . . . . . . . . . . . . . . 6
+
+
 
 
 

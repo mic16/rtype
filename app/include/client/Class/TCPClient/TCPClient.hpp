@@ -40,7 +40,7 @@ class TCPClient {
         void handleListPlayersInRoom();
         void handleInfoServer();
 
-        void closeClientServer() { gameClient->close(); };
+        void closeClientServer() { if (gameClient.get() != nullptr && menu->getScene() != sceneName::END) { gameClient->close(); } };
 
         std::unique_ptr<UDPClient> &getGameClient();
     private:
