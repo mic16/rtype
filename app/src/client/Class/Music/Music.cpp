@@ -16,7 +16,6 @@ Music::Music(std::string dir, short volume)
 
     for (boost::filesystem::directory_iterator itr(path); itr != end; ++itr) {
         std::string file = itr->path().string();
-        std::cout << file << std::endl;
         if (file.find(".ogg") != std::string::npos) {
             if (file.find("menu") != std::string::npos)
                 if (!menu.openFromFile(file))
@@ -52,7 +51,7 @@ void Music::play()
     isMenu = false;
     srand (time(NULL));
     int rand = std::rand() % list.size();
-    std::cout << "music :" << rand + 1<< std::endl;
+    std::cout << "music playing:" << rand + 1<< std::endl;
     menu.stop();
     list[rand]->setVolume(volume);
     list[rand]->setLoop(true);
