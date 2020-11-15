@@ -147,6 +147,8 @@ class GameMenu : public IGameMenu {
         size_t playerId;
         Sound movementSound;
         Sound laserSound;
+        long beginingTime;
+        long endingTime;
 };
 
 static const std::string menuButtons[] = {

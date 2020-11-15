@@ -19,15 +19,8 @@ class ClientEndGameMessageHandler : public AMessageHandler<EndGamePacket> {
         ~ClientEndGameMessageHandler() {}
 
         void onMessage(NetworkHandler &handler, INetworkClient &client, EndGamePacket &packet) {
-            auto &writeMap = synchronizer.getDoubleMap().getWriteMap();
-
-            if (writeMap->find(packet.getEntityID()) == writeMap->end()) {
-                writeMap->insert({packet.getEntityID(), PacketData()});
-            }
-            auto &packetData = writeMap->at(packet.getEntityID());
-
-            packetData.isAlive = false;
-
+            auto &vector = synchronizer.getDoubleQueue().getWriteVector();
+            vector->emplace_back(new EndGamePacket(packet));
             synchronizer.update();
         }
 
