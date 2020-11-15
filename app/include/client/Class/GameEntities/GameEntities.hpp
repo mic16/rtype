@@ -22,6 +22,8 @@
 #include "client/Interfaces/IGame.hpp"
 #include "EntityAnimationManager.hpp"
 
+#include "client/Class/Sound/Sound.hpp"
+
 struct Drawable {
     bool visible;
     sf::Sprite *sprite;
@@ -50,17 +52,14 @@ class GameEntities {
             RIGHT
         };
 
-        void setDead() {
-            dead = true;
-        }
-
-        bool getDead() {
-            return (dead);
-        }
+        void setDead() { dead = true; }
+        bool getDead() { return (dead); }
 
         bool isGamePlaying() { return (gamePlaying); };
         void setGamePlaying(bool gamePlaying) { this->gamePlaying = gamePlaying; };
         IGame *getGameMenu() { return gameMenu; }
+
+        Sound &getExplosionSound() { return (explosionSound); }
 
     protected:
     private:
@@ -76,7 +75,7 @@ class GameEntities {
         EntityAnimationManager &animationManager;
 
         bool dead = false;
-
+        Sound explosionSound;
 };
 
 #endif /* !GAMEENTITIES_HPP_ */

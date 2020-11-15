@@ -15,17 +15,21 @@ GameEntities::GameEntities(IGame *gameMenu, sf::RenderWindow &window, Synchroniz
 {
     for (int i = 0; i != 4 ; i++)
         isDirectionMaintained[i] = false;
+    this->getExplosionSound().load("app/assets/sounds/explosion.wav");
 }
 
 void GameEntities::init()
 {
-
     ecs.newEntityModel<Position, Animation, EntityID, Drawable>("Player")
         .addTags({ "PlayerControlled", "Drawable" })
         .finish();
 
     ecs.newEntityModel<Position, Animation, EntityID, Drawable>("Entity")
         .addTags({"Entity", "Drawable"})
+        .finish();
+
+    ecs.newEntityModel<Position, Animation, EntityID, Drawable>("Wall")
+        .addTags({"Wall", "Drawable"})
         .finish();
 
     ecs.newSystem<Position, EntityID>("UpdateEntities")
@@ -47,8 +51,10 @@ void GameEntities::init()
 
                 if (!data.isAlive) {
                     entity.remove();
-                    if (entityID->id == getGameMenu()->getPlayerID())
+                    if (entityID->id == getGameMenu()->getPlayerID()) {
+                        this->getExplosionSound().play(10.0f);
                         this->setDead();
+                    }
                     continue;
                 }
 
