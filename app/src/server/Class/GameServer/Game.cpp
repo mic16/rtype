@@ -133,7 +133,6 @@ void Game::init() {
                     this->getNetworkHandler().broadcast(SpawnPacket(id, EntityType::WALL, x, y, 0));
                 }
                 if (spawnType == 3) {
-                    y = this->getMapHeight()/4.0*i+100;
 
                     enemyGenerator.instanciate(1,
                         Position{x, y},
@@ -146,7 +145,6 @@ void Game::init() {
                     this->getNetworkHandler().broadcast(SpawnPacket(id, EntityType::ENEMY2, x, y, 0));
                 }
                 if (spawnType == 4) {
-                    y = this->getMapHeight()/2.0*i+200;
 
                     enemyGenerator.instanciate(1,
                         Position{x, y},
