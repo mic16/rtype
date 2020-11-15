@@ -16,6 +16,20 @@ TCPServer::~TCPServer(void)
     if (acceptor->is_open()) acceptor->close();
 }
 
+bool TCPServer::configure(const std::string &addr, const unsigned int port)
+{
+    if (!std::regex_match(addr, std::regex("^([0-9]{1,3}(\\.|$)){4}")))
+        throw EConnection("Address has invalid pattern. Please test with 127.0.0.1");
+    acceptor = std::make_unique<boost::asio::ip::tcp::acceptor>(
+        ioService,
+        boost::asio::ip::tcp::endpoint(boost::asio::ip::address:: from_string(addr), port)
+    );
+
+    if (!acceptor->is_open()) { return (false); }
+    this->port = port;
+    return (true);
+}
+
 bool TCPServer::configure(const unsigned int port)
 {
     acceptor = std::make_unique<boost::asio::ip::tcp::acceptor>(

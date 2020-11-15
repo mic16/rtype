@@ -16,7 +16,7 @@ BOOST_AUTO_TEST_CASE(configuration)
 
   BOOST_TEST(server->getPort() == 0);
 
-  BOOST_TEST(server->configure(3000) == true);
+  BOOST_TEST(server->configure("127.0.0.1", 3000) == true);
 
   BOOST_TEST(server->getPort() == 3000);
   if (server) delete server;
