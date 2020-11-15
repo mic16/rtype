@@ -8,6 +8,7 @@
 #include "server/Class/GameServer/Game.hpp"
 #include "server/Class/MessageHandlers/ServerSpawnMessageHandler.hpp"
 #include "server/Class/MessageHandlers/ServerDeathMessageHandler.hpp"
+#include "server/Class/MessageHandlers/ServerEndGameMessageHandler.hpp"
 #include "server/Class/MessageHandlers/ServerPingMessageHandler.hpp"
 #include "server/Class/MessageHandlers/ServerDamageMessageHandler.hpp"
 #include "server/Class/MessageHandlers/ServerFireMessageHandler.hpp"
@@ -24,6 +25,7 @@ Game::Game():
 {
     networkHandler.registerMessageHandler(new ServerSpawnMessageHandler(*this));
     networkHandler.registerMessageHandler(new ServerDeathMessageHandler(*this));
+    networkHandler.registerMessageHandler(new ServerEndGameMessageHandler(*this));
     networkHandler.registerMessageHandler(new ServerPingMessageHandler(*this));
     networkHandler.registerMessageHandler(new ServerDamageMessageHandler(*this));
     networkHandler.registerMessageHandler(new ServerFireMessageHandler(*this));
